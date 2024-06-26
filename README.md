@@ -17,7 +17,20 @@ python AAA.py
 在打开的浏览器窗口内登录BiliBili账号，并安装篡改猴和油猴脚本  
 6，关闭浏览器，在命令窗口中继续输入  
 ```cmd
-python Getuid.py
+python GetUid.py
 ```
 命令窗口将开始输出关键词搜索情况，程序成功运行。  
-**引用信息和项目逻辑（施工中）**  
+
+**程序逻辑**   
+1，GetUid使用代码所提供的关键词进行搜索，从返回页面抓取uid，并将uid和关键词写入文件保存  
+2，读取所有uid，去重，过排除列表，重新写入文件  
+3，启动Report进行举报，如果中途出错将重新启动Report，如果运行结束则重新运行搜索  
+4，Report脚本读取uid，逐个调用油猴脚本进行举报，举报完成后删除该uid  
+5，油猴脚本会自动运行，跳转到该UP主投稿的最后一页向前举报  
+6，每60秒进行一次人机验证，并检查一次举报进度  
+
+
+**引用信息**  
+1，项目中过人机验证的代码来自于[MgArcher/Text_select_captcha: 实现文字点选、选字、选择、点触验证码识别，基于pytorch训练](https://github.com/MgArcher/Text_select_captcha/)，感谢大佬  
+2，油猴脚本的手动版在[这里](https://greasyfork.org/zh-CN/scripts/497079-bilibili%E7%A8%BF%E4%BB%B6%E6%89%B9%E9%87%8F%E4%B8%BE%E6%8A%A5)  
+3，ChromeDriver的[官方下载地址](https://developer.chrome.com/docs/chromedriver?hl=zh-cn)  
