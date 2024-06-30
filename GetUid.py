@@ -1,4 +1,5 @@
 import os
+import shutil
 import time
 import subprocess
 from urllib.parse import urlencode
@@ -8,22 +9,34 @@ from bs4 import BeautifulSoup
 
 # 定义搜索关键词列表
 keywords = [
-    '安卓 直装',
+    'ACT游戏',
+    '总站',
+    '弹力摇',
+    'AKT 合集 同人',
+    '双端黄油',
+    '里番',
+    '合集 黄油 同人',
     '原神 同人',
-    'SLG',
-    '自取',
-    'GAL',
-    'RPG',
-    '三连关注',
-    '月入',
-    '本子',
-    '黄油'
+    'SLG游戏',
+    '自取 动态 评论',
+    'GAL游戏',
+    'RPG 游戏 黄油',
+    '月入 代价',
+
+
 
     # 可以根据需要添加更多关键词
 ]
 
 # 文件路径和文件名
 output_file = os.path.join(os.getcwd(), 'uid.txt')
+whitelist_file = os.path.join(os.getcwd(), 'whitelist.txt')
+
+# 如果文件存在则删除
+if os.path.exists(output_file):
+    os.remove(output_file)
+else:
+    print(f"文件 {output_file} 不存在，无需删除。")
 
 
 # 定义搜索函数
@@ -33,9 +46,12 @@ def search_and_extract_uid(keyword):
     search_params = {
         'keyword': keyword,
         'from_source': 'webtop_search',
-        'order': 'pubdate'
+        # 'order': 'pubdate'
+
     }
     search_url = base_url + urlencode(search_params)
+
+
 
     try:
         # 添加头部信息
@@ -44,7 +60,7 @@ def search_and_extract_uid(keyword):
         }
 
         # 发起HTTP GET请求获取搜索结果页面内容
-        response = requests.get(search_url, headers=headers)
+        response = requests.get(search_url, headers=headers, )
         response.raise_for_status()  # 检查请求是否成功
 
         # 使用BeautifulSoup加载HTML内容
@@ -83,8 +99,87 @@ def process_uid_list(keyword, uid_list):
 # 主函数，循环运行搜索和处理
 def main():
     while True:
+        unique_uids = set()  # 使用集合存储唯一的 UID
+
+        # 遍历关键词列表，进行搜索和处理
         for keyword in keywords:
             search_and_extract_uid(keyword)
+
+        # 读取当前文件中所有的 UID，并添加到集合中去重
+        with open(output_file, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+            for line in lines:
+                uid = line.strip()
+                if uid.isdigit():  # 假设 UID 是数字格式
+                    unique_uids.add(uid)
+
+        # 处理 whitelist_file
+        with open(whitelist_file, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+            for line in lines:
+                uid = line.strip()
+                if uid.isdigit():  # 假设 UID 是数字格式
+                    unique_uids.add(uid)
+
+        whitelist_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliAutoReport/main/whitelist.txt'
+        whitelist_filename = 'whitelist.txt'
+        try:
+            response = requests.get(whitelist_url, timeout=(5, 10))
+            if response.status_code == 200:
+                with open(whitelist_filename, 'wb') as f_out:
+                    f_out.write(response.content)
+                print(f"成功下载文件 {whitelist_url} 并保存为 {whitelist_filename}")
+            else:
+                print(f"无法访问 {whitelist_url}，状态码：{response.status_code}")
+        except requests.exceptions.RequestException as e:
+            print(f"下载文件时发生请求异常：{e}")
+        except IOError as e:
+            print(f"文件操作发生错误：{e}")
+        except Exception as e:
+            print(f"发生未知错误：{e}")
+
+
+        try:
+            shutil.copy('uid.txt', 'uid_backup.txt')
+            print(f"成功保存备份")
+        except IOError as e:
+            print(f"复制保存备份时发生错误：{e}")
+        blacklist_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliAutoReport/main/blacklist.txt'
+        blacklist_filename = 'blacklist.txt'
+
+
+        try:
+            response = requests.get(blacklist_url, timeout=(5, 10))
+            if response.status_code == 200:
+                with open(blacklist_filename, 'wb') as f_out:
+                    f_out.write(response.content)
+                print(f"成功下载文件 {blacklist_url} 并保存为 {blacklist_filename}")
+            else:
+                print(f"无法访问 {blacklist_url}，状态码：{response.status_code}")
+        except requests.exceptions.RequestException as e:
+            print(f"下载文件时发生请求异常：{e}")
+        except IOError as e:
+            print(f"文件操作发生错误：{e}")
+        except Exception as e:
+            print(f"发生未知错误：{e}")
+
+        # 继续执行其他操作，不受文件下载错误的影响
+        print("继续执行其他操作...")
+        exclude_uids = set()
+        with open('blacklist.txt', 'r', encoding='utf-8') as exclude_file:
+            exclude_lines = exclude_file.readlines()
+            for line in exclude_lines:
+                exclude_uid = line.strip()
+                if exclude_uid.isdigit():  # 假设 UID 是数字格式
+                    exclude_uids.add(exclude_uid)
+
+        # 从 unique_uids 中移除在 exclude_uids 中存在的 UID
+        unique_uids -= exclude_uids
+
+        # 将唯一的 UID 列表按格式写入文件
+        with open(output_file, 'w', encoding='utf-8') as f:
+            for uid in unique_uids:
+                f.write(uid + '\n')
 
         # 所有关键词搜索和处理完成后，通过虚拟机在指定路径运行 report.py
         report_script = r"D:\BiliBiliAutoReport\venv\Scripts\python.exe D:\BiliBiliAutoReport\Report.py"
