@@ -40,3 +40,8 @@ python GetUid.py
 1，项目中过人机验证的代码来自于[MgArcher/Text_select_captcha: 实现文字点选、选字、选择、点触验证码识别，基于pytorch训练](https://github.com/MgArcher/Text_select_captcha/)，感谢大佬  
 2，油猴脚本的手动版在[这里](https://greasyfork.org/zh-CN/scripts/497079-bilibili%E7%A8%BF%E4%BB%B6%E6%89%B9%E9%87%8F%E4%B8%BE%E6%8A%A5)  
 3，ChromeDriver的[官方下载地址](https://developer.chrome.com/docs/chromedriver?hl=zh-cn)  
+
+
+  
+**甲级战犯**  
+![3546674746100411](/逆天账号截图/3546674746100411.png "3546674746100411")
