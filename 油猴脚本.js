@@ -347,17 +347,21 @@ function checkPage() {
         }
     }
 
-// 在页面加载完成后添加复制用户ID的按钮
 
 
-window.onload = function() {
-        if (window.location.hostname === "space.bilibili.com") {
-            checkPage();
-            addButton(); // 添加举报按钮
-            addProfileSwitchButton(); // 添加切换profile的按钮
-            addCopyIdButton(); // 添加复制用户ID的按钮
-            fuckBilibiliShitVideo();
-        }
-    };
+async function runAfterDelay() {
+    await new Promise(resolve => setTimeout(resolve, 2000)); // 等待5秒钟
 
+    if (window.location.hostname === "space.bilibili.com") {
+        checkPage();
+        addButton(); // 添加举报按钮
+        addProfileSwitchButton(); // 添加切换profile的按钮
+        addCopyIdButton(); // 添加复制用户ID的按钮
+        fuckBilibiliShitVideo();
+    }
+}
+
+window.addEventListener('load', () => {
+    runAfterDelay();
+});
 
