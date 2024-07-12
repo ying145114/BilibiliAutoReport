@@ -7,7 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 import requests
 from src import captcha
-from urlextract import URLExtract
+
 
 
 def remove_completed_uid(uid):
@@ -65,6 +65,8 @@ def main():
         for uid in uids:
             url = f"https://space.bilibili.com/{uid}/video?tid=0&pn=1&keyword=&order=pubdate"
             driver.get(url)
+            # time.sleep(2)
+            # driver.refresh()
             print(f"UID: {uid} 页面已打开")
             current_window = driver.current_window_handle
 
@@ -76,25 +78,24 @@ def main():
                 driver.switch_to.new_window('tab')
                 driver.get("https://www.bilibili.com/appeal/?avid=14692212")
 
-                element = WebDriverWait(driver, 20, 0.5).until(
+                element = WebDriverWait(driver, 20, 1).until(
                     EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[3]/div[2]/textarea'))
                 )
                 element.send_keys('Python')
+                print('已输入理由')
 
-                element = WebDriverWait(driver, 20, 0.5).until(
+                element = WebDriverWait(driver, 20, 1).until(
                     EC.presence_of_element_located(
                         (By.XPATH, '/html/body/div/div/div[2]/div[1]/div[2]/div[1]/div'))
                 )
-                element.click()
-                try:
-                    alert = driver.switch_to.alert
-                    alert.accept()
-                except:
-                    pass
-                element = WebDriverWait(driver, 20, 0.5).until(
+                element.click() #选择分类
+                print('已选择分类')
+
+                element = WebDriverWait(driver, 20, 1).until(
                     EC.presence_of_element_located((By.XPATH, '/html/body/div/div/div[5]/div[2]'))
                 )
-                element.click()
+                element.click() #生成验证码
+                print('已点击确认')
 
                 time.sleep(4)
                 while True:
@@ -103,7 +104,8 @@ def main():
                         img = WebDriverWait(driver, 10).until(
                             EC.presence_of_element_located((By.XPATH, '//*[@class="geetest_item_wrap"]')))
                         f = img.get_attribute('style')
-                        extractor = URLExtract()
+                        print('验证码已出现')
+
                         url = re.search(r'url\("([^"]+?)\?[^"]*"\);', f).group(1)
 
                         print(url)
@@ -142,19 +144,23 @@ def main():
                                                                 -(b + y * lan_y)).perform()  # 将鼠标位置恢复到移动前
                             time.sleep(0.5)
 
+
                         # 执行点击确认按钮的操作
                         try:
                             element = WebDriverWait(driver, 10).until(
                                 EC.element_to_be_clickable((By.CLASS_NAME, 'geetest_commit_tip')))
                             element.click()  # 点击确认按钮
+                            print('已提交验证码')
                         except:
                             refresh_element = WebDriverWait(driver, 10).until(
                                 EC.element_to_be_clickable((By.CLASS_NAME, 'geetest_refresh')))
                             refresh_element.click()  # 点击刷新验证按钮
+                            print('已点击刷新按钮')
 
                         # 等待 'geetest_item_wrap' 元素消失，表示验证码验证成功
                         WebDriverWait(driver, 3).until(
                             EC.invisibility_of_element_located((By.XPATH, '//*[@class="geetest_item_wrap"]')))
+                        print('验证码已消失')
 
                         print("验证码验证成功！")
                         break  # 成功验证后跳出循环
@@ -172,7 +178,7 @@ def main():
 
                 # 检查当前页面URL是否符合条件
                 current_url = driver.current_url
-                if "pn=1" in current_url:
+                if "pn=1&" in current_url:
                     print("地址栏中包含 'pn=1'，等待下一个UID")
                     remove_completed_uid(uid)  # 删除已完成的UID
                     break

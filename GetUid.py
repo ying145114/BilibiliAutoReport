@@ -9,19 +9,15 @@ from bs4 import BeautifulSoup
 
 # 定义搜索关键词列表
 keywords = [
-    'ACT游戏',
-    '总站',
+    'ACT安卓直装',
     '弹力摇',
-    'AKT 合集 同人',
-    '双端黄油',
-    '里番',
-    '合集 黄油 同人',
-    '原神 同人',
-    'SLG游戏',
-    '自取 动态 评论',
-    'GAL游戏',
-    'RPG 游戏 黄油',
+    '原神崩铁同人AKT',
+    '安卓直装',
+    'SLG黄油安卓直装',
+    'RPG安卓直装',
+    '红绿灯倒计时盯榨',
     '月入 代价',
+    '免费白嫖百度网盘会员svip365天体验劵'
 
 
 
@@ -50,9 +46,7 @@ def search_and_extract_uid(keyword):
 
     }
     search_url = base_url + urlencode(search_params)
-
-
-
+    print( search_url)
     try:
         # 添加头部信息
         headers = {
@@ -60,7 +54,7 @@ def search_and_extract_uid(keyword):
         }
 
         # 发起HTTP GET请求获取搜索结果页面内容
-        response = requests.get(search_url, headers=headers, )
+        response = requests.get(search_url, headers=headers)
         response.raise_for_status()  # 检查请求是否成功
 
         # 使用BeautifulSoup加载HTML内容
@@ -70,10 +64,14 @@ def search_and_extract_uid(keyword):
         uid_list = []
 
         # 使用CSS选择器定位搜索结果的链接，并提取UID
+        count = 0  # 计数器，用于限制获取的UID数量
         for link in soup.select('.bili-video-card .bili-video-card__info--owner'):
+            if count >= 30:
+                break
             href = link['href']
             uid = href.split('/')[-1]  # 获取链接中最后的数字部分作为UID
             uid_list.append(uid)
+            count += 1
 
         # 将UID列表传递给处理函数（这里假设是process_uid_list函数）
         process_uid_list(keyword, uid_list)
