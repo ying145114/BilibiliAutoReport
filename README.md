@@ -1,5 +1,5 @@
-# BiliBili全自动举报———我能跑一整天！  
-# BiliBiliAutoReport———I can do this all day!
+# BiliBili视频全自动举报———我能跑一整天！  
+# BiliBiliVideoAutoReport———I can do this all day!
 20240803更新  
 **推荐使用方法（可能仅限Windows，需要下载PyCharm）** 
 1，下载安装[PyCharm](https://www.jetbrains.com/pycharm/download/download-thanks.html?platform=windows&code=PCC)  
