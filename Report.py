@@ -1,13 +1,17 @@
+import os
 import re
+import sys
+
 from selenium import webdriver
 import time
+from selenium.common import TimeoutException
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 import requests
 from src import captcha
-
 
 
 def remove_completed_uid(uid):
@@ -38,25 +42,33 @@ def read_uid_list(filename):
 
 
 # 设置 ChromeOptions
-def set_chrome_options(user_data_dir=None):
+def set_chrome_options(user_data_dir=None, chrome_binary_path=None):
     options = webdriver.ChromeOptions()
     options.add_experimental_option("detach", True)
     options.add_argument('--enable-logging')  # 启用控制台日志
     if user_data_dir:
-        options.add_argument(f'--user-data-dir={user_data_dir} ')
-
-        # 设置用户数据目录
+        options.add_argument(f'--user-data-dir={user_data_dir}')  # 设置用户数据目录
+    if chrome_binary_path:
+        options.binary_location = chrome_binary_path  # 指定 Chrome 浏览器的可执行文件路径
     return options
 
 
 def main():
     uids = read_uid_list('uid.txt')  # 从 uid.txt 中读取 uid 列表
-
-    # 设置用户数据目录，如果不需要可以设为 None
+    print('设置用户数据目录')
     user_data_dir = r'D:\BilibiliAutoReport\User Data'  # 修改为你自己的目录
-    options = set_chrome_options(user_data_dir)
+    print('设置 Chrome 可执行文件路径')
+    chrome_binary_path = r'D:\BilibiliAutoReport\chrome-win\chrome.exe'  # 修改为你自己 Chrome 的可执行文件路径
 
-    driver = webdriver.Chrome(options=options)
+    # 确保自定义的 ChromeDriver 路径也是正确的
+    chrome_driver_path = r'D:\BilibiliAutoReport\chromedriver.exe'  # 替换为你的 chromedriver 路径
+
+    options = set_chrome_options(user_data_dir, chrome_binary_path)
+    print('启动浏览器')
+
+    # 使用 Service 来指定 ChromeDriver 的路径
+    service = Service(executable_path=chrome_driver_path)
+    driver = webdriver.Chrome(service=service, options=options)
 
     try:
         if not uids:
@@ -71,8 +83,8 @@ def main():
             current_window = driver.current_window_handle
 
             while True:
-                # 等待60秒
-                time.sleep(60)
+                # 等待50秒
+                time.sleep(50)
 
                 # 在当前标签页A中打开新标签页B执行其他任务
                 driver.switch_to.new_window('tab')
@@ -88,18 +100,20 @@ def main():
                     EC.presence_of_element_located(
                         (By.XPATH, '/html/body/div/div/div[2]/div[1]/div[2]/div[1]/div'))
                 )
-                element.click() #选择分类
+                element.click()  #选择分类
                 print('已选择分类')
 
                 element = WebDriverWait(driver, 20, 1).until(
                     EC.presence_of_element_located((By.XPATH, '/html/body/div/div/div[5]/div[2]'))
                 )
-                element.click() #生成验证码
+                element.click()  # 生成验证码
                 print('已点击确认')
 
-                time.sleep(4)
+
                 while True:
                     try:
+                        time.sleep(3)
+
                         # 等待并获取元素
                         img = WebDriverWait(driver, 10).until(
                             EC.presence_of_element_located((By.XPATH, '//*[@class="geetest_item_wrap"]')))
@@ -144,13 +158,13 @@ def main():
                                                                 -(b + y * lan_y)).perform()  # 将鼠标位置恢复到移动前
                             time.sleep(0.5)
 
-
                         # 执行点击确认按钮的操作
                         try:
                             element = WebDriverWait(driver, 10).until(
                                 EC.element_to_be_clickable((By.CLASS_NAME, 'geetest_commit_tip')))
                             element.click()  # 点击确认按钮
                             print('已提交验证码')
+
                         except:
                             refresh_element = WebDriverWait(driver, 10).until(
                                 EC.element_to_be_clickable((By.CLASS_NAME, 'geetest_refresh')))
@@ -165,9 +179,30 @@ def main():
                         print("验证码验证成功！")
                         break  # 成功验证后跳出循环
 
-                    except Exception as e:
-                        print(f"发生异常: {e}")
-                        time.sleep(1)  # 等待1秒后重新执行整个过程
+
+                    except TimeoutException:
+
+                        print('验证码未找到，准备重新点击确认')
+
+                        try:
+
+                            # 验证码不存在，点击确认
+
+                            element = WebDriverWait(driver, 20, 1).until(
+                                EC.presence_of_element_located((By.XPATH, '/html/body/div/div/div[5]/div[2]'))
+                            )
+                            element.click()  # 点击确认
+
+                            print('已重新点击确认')
+
+
+                        except TimeoutException:
+
+                            print('确认按钮未找到，无法进行点击')
+
+                        except Exception as e:
+
+                            print(f'发生错误: {e}')
 
                 time.sleep(3)
 
@@ -182,13 +217,13 @@ def main():
                     print("地址栏中包含 'pn=1'，等待下一个UID")
                     remove_completed_uid(uid)  # 删除已完成的UID
                     break
-
     except Exception as e:
         print(f"发生异常: {e}")
+        sys.exit(10086)
+
 
     finally:
         driver.quit()
-        exit(0)
 
 
 if __name__ == "__main__":

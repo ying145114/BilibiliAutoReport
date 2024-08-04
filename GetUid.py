@@ -1,5 +1,6 @@
 import os
 import shutil
+import sys
 import time
 import subprocess
 from urllib.parse import urlencode
@@ -103,7 +104,7 @@ def main():
         for keyword in keywords:
             search_and_extract_uid(keyword)
 
-        # 读取当前文件中所有的 UID，并添加到集合中去重
+        print('读取当前文件中所有的 UID，并添加到集合中去重')
         with open(output_file, 'r', encoding='utf-8') as f:
             lines = f.readlines()
             for line in lines:
@@ -161,8 +162,7 @@ def main():
         except Exception as e:
             print(f"发生未知错误：{e}")
 
-        # 继续执行其他操作，不受文件下载错误的影响
-        print("继续执行其他操作...")
+        print('继续执行其他操作，不受文件下载错误的影响')
         exclude_uids = set()
         with open('blacklist.txt', 'r', encoding='utf-8') as exclude_file:
             exclude_lines = exclude_file.readlines()
@@ -171,31 +171,32 @@ def main():
                 if exclude_uid.isdigit():  # 假设 UID 是数字格式
                     exclude_uids.add(exclude_uid)
 
-        # 从 unique_uids 中移除在 exclude_uids 中存在的 UID
+        print('从 unique_uids 中移除在 exclude_uids 中存在的 UID')
         unique_uids -= exclude_uids
 
-        # 将唯一的 UID 列表按格式写入文件
+        print('将唯一的 UID 列表按格式写入文件')
         with open(output_file, 'w', encoding='utf-8') as f:
             for uid in unique_uids:
                 f.write(uid + '\n')
 
-        # 所有关键词搜索和处理完成后，通过虚拟机在指定路径运行 report.py
+        print('所有关键词搜索和处理完成后，通过虚拟机在指定路径运行 report.py')
         report_script = r"D:\BiliBiliAutoReport\venv\Scripts\python.exe D:\BiliBiliAutoReport\Report.py"
-        try:
-            subprocess.run(report_script, shell=True, check=True)
-        except subprocess.CalledProcessError as e:
-            print(f"report.py 执行错误: {e}")
 
-        # 等待 report.py 执行完成
-        # 监控 report.py 进程是否结束
-        report_process = subprocess.Popen(report_script, shell=True)
+        while True:  # 无限循环以重启 report.py
+            # 启动 report.py
+            report_process = subprocess.Popen(
+                [r"D:\BiliBiliAutoReport\venv\Scripts\python.exe", r"D:\BiliBiliAutoReport\Report.py"], shell=True)
 
-        while report_process.poll() is None:
-            time.sleep(1)  # 等待1秒钟
+            while report_process.poll() is None:  # 等待 report.py 结束
+                time.sleep(1)  # 等待1秒钟
 
-        # 清空当前的 UID 文件，准备下一轮搜索
-        with open(output_file, 'w') as f:
-            f.write('')  # 清空文件内容
+            # 检查 report.py 的退出状态
+            if report_process.returncode == 0:
+                print("report.py 正常退出，正在重新启动 getuid.py...")
+                subprocess.run([sys.executable, __file__])  # 重新启动 getuid.py
+                break  # 跳出循环，防止再次进入无限循环
+            else:
+                print(f"report.py 出现错误，返回码: {report_process.returncode}，正在重新运行 report.py...")
 
 
 if __name__ == "__main__":
