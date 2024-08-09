@@ -1,12 +1,12 @@
 # Bilibili视频全自动举报———我能跑一整天！  
 # BilibiliVideoAutoReport———I can do this all day!
-20240803更新  
+20240809更新  
 **推荐使用方法（可能仅限Windows，需要下载PyCharm）** 
 1，下载安装[PyCharm](https://www.jetbrains.com/pycharm/download/download-thanks.html?platform=windows&code=PCC)  
 2，按照[教程](https://www.bing.com/search?q=PyCharm%E5%AE%89%E8%A3%85%E6%B1%89%E5%8C%96%E6%95%99%E7%A8%8B)安装和汉化PyCharm  
 3，下载Relaease，解压至D盘  
 4，在Pycharm中打开“D:\BilibiliAutoReport”文件夹，在软件的最上方会有一个绿色三角形，点击可以运行指定文件，用左边向下的三角来切换脚本  
-5，脚本解释：AAA可以打开浏览器进行配置，并测试Bilibili是否登录成功，Getuid用于运行搜索+举报功能，Report仅会举报当前文件内的uid  
+5，脚本解释：AAA可以打开浏览器进行配置，并测试Bilibili是否登录成功，Getuid用于运行搜索+举报功能，Report仅会举报当前文件内的uid，Start是全自动运行所有功能，且出错后不会停止，会一直运行    
 6，先运行AAA，在打开的浏览器中[登录Bilibili](https://www.bing.com/search?q=%E5%A6%82%E4%BD%95%E7%99%BB%E5%BD%95%E5%93%94%E5%93%A9%E5%93%94%E5%93%A9)，并[安装油猴脚本](https://www.bing.com/search?q=%E5%A6%82%E4%BD%95%E5%AE%89%E8%A3%85%E6%B2%B9%E7%8C%B4%E8%84%9A%E6%9C%AC)  
 7，双击上方红色按钮关闭脚本，点击左边向下三角，切换并运行Getuid  
 8，脚本已运行  
@@ -27,7 +27,7 @@ python AAA.py
 在打开的浏览器窗口内登录BiliBili账号，并安装篡改猴和两个油猴脚本  
 5，在命令窗口使用“Ctrl+C”关闭浏览器，在命令窗口中继续输入  
 ```cmd
-python GetUid.py
+python Start.py
 ```
 命令窗口将开始输出关键词搜索情况，程序成功运行。  
 
@@ -38,6 +38,7 @@ python GetUid.py
 4，Report脚本读取uid，逐个调用油猴脚本进行举报，举报完成后删除该uid  
 5，油猴脚本会自动运行，跳转到该UP主投稿的最后一页向前举报  
 6，每秒50进行一次人机验证，并检查一次举报进度  
+7，Start脚本用于启动搜索和举报功能，并自动在程序出错后重新运行  
   
 **目前问题**  
 1，采用关键词搜索寻找目标的方法容易误杀，将在未来采取更好的方法来避免  
