@@ -1,0 +1,16 @@
+numpy==1.26.4
+pillow==10.4.0
+selenium==4.23.1
+requests==2.32.3
+onnxruntime==1.18.1
+uvicorn==0.30.5
+fastapi==0.112.0
+opencv-python-headless==4.10.0.82
+pydantic==2.8.2
+starlette==0.37.2
+beautifulsoup4==4.12.3
+cryptography
+Cython
+fastapi-restful[all]
+python-multipart
+#matplotlib
