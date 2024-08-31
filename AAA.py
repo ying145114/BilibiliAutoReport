@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 import os
 
+
 def set_chrome_options(user_data_dir=None, chrome_binary_path=None):
     options = webdriver.ChromeOptions()
     options.add_experimental_option("detach", True)
@@ -14,7 +15,6 @@ def set_chrome_options(user_data_dir=None, chrome_binary_path=None):
 
 
 def main():
-
     base_dir = os.path.dirname(os.path.abspath(__file__))
 
     print('设置用户数据目录')
@@ -34,8 +34,6 @@ def main():
 
     url = f"https://space.bilibili.com/"
     driver.get(url)
-
-
 
 
 if __name__ == "__main__":

@@ -17,10 +17,6 @@ keywords = [
     'SLG黄油安卓直装',
     'RPG安卓直装',
     '红绿灯倒计时盯榨'
-    #'月入 代价',
-
-
-
 
     # 可以根据需要添加更多关键词
 ]
@@ -57,33 +53,12 @@ def search_and_extract_uid(keyword):
     try:
         # 添加头部信息
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                          'Chrome/91.0.4472.124 Safari/537.36',
         }
 
         # 发起HTTP GET请求获取搜索结果页面内容
-        response = requests.get(search_url1, headers=headers,timeout=(5, 10))
-        response.raise_for_status()  # 检查请求是否成功
-
-
-        # 使用BeautifulSoup加载HTML内容
-        soup = BeautifulSoup(response.text, 'html.parser')
-
-        # 存储解析出的UID列表
-        uid_list = []
-
-        # 使用CSS选择器定位搜索结果的链接，并提取UID
-        count = 0  # 计数器，用于限制获取的UID数量
-        for link in soup.select('.bili-video-card .bili-video-card__info--owner'):
-            if count >= 10:
-                break
-            href = link['href']
-            uid = href.split('/')[-1]  # 获取链接中最后的数字部分作为UID
-            uid_list.append(uid)
-            count += 1
-
-        # 将UID列表传递给处理函数（这里假设是process_uid_list函数）
-        process_uid_list(keyword, uid_list)
-        response = requests.get(search_url2 , headers=headers,timeout=(5, 10))
+        response = requests.get(search_url1, headers=headers, timeout=(5, 10))
         response.raise_for_status()  # 检查请求是否成功
 
         # 使用BeautifulSoup加载HTML内容
@@ -104,7 +79,27 @@ def search_and_extract_uid(keyword):
 
         # 将UID列表传递给处理函数（这里假设是process_uid_list函数）
         process_uid_list(keyword, uid_list)
+        response = requests.get(search_url2, headers=headers, timeout=(5, 10))
+        response.raise_for_status()  # 检查请求是否成功
 
+        # 使用BeautifulSoup加载HTML内容
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        # 存储解析出的UID列表
+        uid_list = []
+
+        # 使用CSS选择器定位搜索结果的链接，并提取UID
+        count = 0  # 计数器，用于限制获取的UID数量
+        for link in soup.select('.bili-video-card .bili-video-card__info--owner'):
+            if count >= 10:
+                break
+            href = link['href']
+            uid = href.split('/')[-1]  # 获取链接中最后的数字部分作为UID
+            uid_list.append(uid)
+            count += 1
+
+        # 将UID列表传递给处理函数（这里假设是process_uid_list函数）
+        process_uid_list(keyword, uid_list)
 
     except requests.exceptions.RequestException as e:
         print(f"关键词 \"{keyword}\" 搜索页面请求失败：", e)
@@ -146,7 +141,6 @@ def main():
         except IOError as e:
             print(f"复制保存备份时发生错误：{e}")
 
-
         whitelist_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/whitelist.txt'
         whitelist_filename = '附加文件/whitelist.txt'
         try:
@@ -173,7 +167,6 @@ def main():
 
         blacklist_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/blacklist.txt'
         blacklist_filename = '附加文件/blacklist.txt'
-
 
         try:
             response = requests.get(blacklist_url, timeout=(5, 10))
@@ -209,7 +202,6 @@ def main():
                 f.write(uid + '\n')
 
         print('所有关键词搜索和处理完成后，通过虚拟机在指定路径运行 report.py')
-        report_script = r"D:\BiliBiliAutoReport\venv\Scripts\python.exe D:\BiliBiliAutoReport\Report.py"
 
         while True:  # 无限循环以重启 report.py
             # 启动 report.py
