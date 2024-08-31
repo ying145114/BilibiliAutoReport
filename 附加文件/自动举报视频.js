@@ -259,24 +259,41 @@ async function getVideoAid(id) {
       };
       document.body.appendChild(continueButton);
     } else {
-      GM_xmlhttpRequest({
+    const timeoutDuration = 5000; // 设置超时时间（例如5秒）
+    let timeout;
+
+    GM_xmlhttpRequest({
         url: `https://www.bilibili.com/video/${id}/?spm_id_from=333.999.0.0`,
         method: "GET",
         headers: {
-          'Cookie': document.cookie // Pass the cookies from the page to the request
+            'Cookie': document.cookie // 传递页面的 cookie
         },
         onload: function (response) {
-          const aid = response.responseText.match(/"aid":(\d+)/);
-          if (aid) {
-            updateDiagnosticInfo(`成功获取到稿件，aid: ${aid[1]}<br>`);
-            resolve(aid[1]);
-          } else {
-            updateDiagnosticInfo('无法获取稿件 aid<br>');
-            resolve(null);
-          }
+            clearTimeout(timeout); // 请求成功后清除超时
+
+            const aid = response.responseText.match(/"aid":(\d+)/);
+            if (aid) {
+                updateDiagnosticInfo(`成功获取到稿件，aid: ${aid[1]}<br>`);
+                resolve(aid[1]); // 成功获取到 aid
+            } else {
+                // 超时处理
+                timeout = setTimeout(() => {
+                    updateDiagnosticInfo('请求超时，返回默认 aid: 1650935368<br>');
+                    resolve("1650935368"); // 超时则返回默认的 aid
+                }, timeoutDuration);
+
+                updateDiagnosticInfo('无法获取稿件 aid<br>');
+                resolve(null); // 无法获取时返回 null
+            }
+        },
+        onerror: function () {
+            clearTimeout(timeout); // 请求错误时清除超时
+            updateDiagnosticInfo('请求发生错误<br>');
+            resolve(null); // 如果请求出错，也返回 null
         }
-      });
-    }
+    });
+}
+
   });
 }
 async function getPageAllVideoAid() {
