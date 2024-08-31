@@ -12,6 +12,7 @@
 // @grant        GM_unregisterMenuCommand
 // @connect      api.bilibili.com
 // @connect      www.bilibili.com
+// @icon         https://i2.hdslb.com/bfs/app/8920e6741fc2808cce5b81bc27abdbda291655d3.png@240w_240h_1c_1s_!web-avatar-space-header.avif
 // @run-at       document-end
 
 // ==/UserScript==
@@ -21,15 +22,20 @@
 const profiles = [
   {
     tid: 10014,
-    reason: '色情视频，色情游戏，视频侮辱国家领导人习近平，宣扬“台独”，有政治隐喻 #此视频为违规视频，请直接违规下架'
+    reason: '视频鼓励“翻墙”，宣传“台独”思想，散布谣言侮辱国家领导人，同时在置顶动态和评论发布境外反华网站链接，封面标题以及内容违规，推广以原神、碧蓝档案等二次元游戏人物为主角的色情视频，以未成年人为主角的色情游戏，关键词为“盯榨、捣蒜、红绿灯”的性暗示内容视频，并在充电视频，置顶动态以及评论内向站外色情网站引流'
   },
   {
-    tid: 10018,
-    reason: '傻逼审核，粉丝多发黄游就不管是吧，我操死你们的妈，一帮傻逼玩意，愿你们马上猝死'
+    tid: 10014,
+    reason: '视频鼓励“翻墙，”宣传“台独”思想，散布谣言侮辱国家领导人，同时在置顶动态和评论发布境外反华网站链接'
   },
+  {
+    tid: 10017,
+    reason: '视频封面标题以及内容违规，推广以原神、碧蓝档案等二次元游戏人物为主角的色情视频，以未成年人为主角的色情游戏，关键词为“盯榨、捣蒜、红绿灯”的性暗示内容视频，并在充电视频，置顶动态以及评论内向站外色情网站引流'
+  },
+
   {
     tid: 10014, // 占位备用
-    reason: '发布低俗图文及视频信息，或诱导他人私聊并推介线下色情服务；在账号资料、评论等环节，发布性暗示信息。利用黑话暗语、谐音词发布色情低俗动漫、视频、小说、游戏以及其他违法违规信息'
+    reason: '视频封面标题以及内容违规，推广以原神、碧蓝档案等二次元游戏人物为主角的色情视频，以未成年人为主角的色情游戏，关键词为“盯榨、捣蒜、红绿灯”的性暗示内容视频，并在充电视频，置顶动态以及评论内向站外色情网站引流'
   }
 ];
 
@@ -172,12 +178,17 @@ function clickPreviousPageButton() {
       errorMessage.textContent = '未找到上一页按钮';
       errorMessage.style.color = 'red';
       document.body.appendChild(errorMessage);
+
       return; // 提前结束函数执行
     } else if (previousPageButton.classList.contains('be-pager-disabled')) {
       const errorMessage = document.createElement('div');
       errorMessage.textContent = '上一页按钮已被禁用';
       updateDiagnosticInfo('<strong style="font-size: 2em; color: red;">上一页按钮已被禁用</strong><br>');
       errorMessage.style.color = 'red';
+      const spaceIdMatches = window.location.href.match(/space.bilibili.com\/(\d+)\//);
+      const spaceId = spaceIdMatches[1];
+      const jumpUrl = `https://space.bilibili.com/${spaceId}/dynamic`;
+      window.location.href = jumpUrl;
       document.body.appendChild(errorMessage);
       return; // 提前结束函数执行
     } else {

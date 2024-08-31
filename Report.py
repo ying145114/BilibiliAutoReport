@@ -72,6 +72,7 @@ def main():
     # 使用 Service 来指定 ChromeDriver 的路径
     service = Service(executable_path=chrome_driver_path)
     driver = webdriver.Chrome(service=service, options=options)
+    firstrun = 1
 
     try:
         if not uids:
@@ -83,12 +84,22 @@ def main():
             # time.sleep(2)
             # driver.refresh()
             print(f"UID: {uid} 页面已打开")
-            remove_completed_uid(uid)
+            #remove_completed_uid(uid)
             current_window = driver.current_window_handle
 
             while True:
                 # 等待60秒
-                time.sleep(60   )
+                if firstrun == 1:
+                    print('首次运行，等待2秒')
+                    time.sleep(2)
+                    firstrun = 0
+
+                else:
+                    print('非首次运行，等待58秒')
+                    time.sleep(58)
+
+
+
 
                 # 在当前标签页A中打开新标签页B执行其他任务
                 driver.switch_to.new_window('tab')
@@ -97,7 +108,7 @@ def main():
                 element = WebDriverWait(driver, 20, 1).until(
                     EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[3]/div[2]/textarea'))
                 )
-                element.send_keys('Python')
+                element.send_keys('视频封面标题以及内容违规，推广以原神、碧蓝档案等二次元游戏人物为主角的色情视频')
                 print('已输入理由')
 
                 element = WebDriverWait(driver, 20, 1).until(
@@ -120,7 +131,7 @@ def main():
                     try:
                         # 等待并获取元素，增加了对超时的处理
                         try:
-                            img = WebDriverWait(driver, 10).until(
+                            img = WebDriverWait(driver, 20).until(
                                 EC.presence_of_element_located((By.XPATH, '//*[@class="geetest_item_wrap"]'))
                             )
                         except TimeoutException:
@@ -204,9 +215,9 @@ def main():
 
                 # 检查当前页面URL是否符合条件
                 current_url = driver.current_url
-                if "pn=1&" in current_url:
-                    print("地址栏中包含 'pn=1'，等待下一个UID")
-                    #remove_completed_uid(uid)  # 删除已完成的UID
+                if "dynamic" in current_url:
+                    print("地址栏中包含 'dynamic'，等待下一个UID")
+                    remove_completed_uid(uid)  # 删除已完成的UID
                     break
     except Exception as e:
         print(f"发生异常: {e}")
