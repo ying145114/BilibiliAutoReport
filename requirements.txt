@@ -12,5 +12,7 @@ beautifulsoup4==4.12.3
 cryptography
 Cython
 fastapi-restful[all]
+fastapi==0.112.0
 python-multipart
+requests
 #matplotlib

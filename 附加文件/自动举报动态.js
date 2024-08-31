@@ -166,24 +166,38 @@ function getCsrf() {
     return csrfText;
 }
 function reportDynamic(uid, dyid) {
-    const reason ='在动态发布色情游戏和视频漫画，在置顶动态进行引流到QQ群，并由加密工具分享色情内容链接'
+    const reason = '在动态发布色情游戏和视频漫画，在置顶动态进行引流到QQ群，并由加密工具分享色情内容链接';
     const csrf = getCsrf();
-    //const url = `https://api.bilibili.com/x/v2/reply/report?type=1&oid=${oid}&rpid=${rpid}&reason=1&content=&add_blacklist=false&ordering=heat&gaia_source=main_web&csrf=${csrf}`;
-    const url = `https://api.bilibili.com/x/dynamic/feed/dynamic_report/add?accused_uid=${uid}&dynamic_id=${dyid}&reason_type=0&reason_desc=${reason}&csrf=${csrf}`;
+    const url = 'https://api.bilibili.com/x/dynamic/feed/dynamic_report/add';
 
+    // 创建 XMLHttpRequest 对象
+    const xhr = new XMLHttpRequest();
 
-    GM.xmlHttpRequest({
-        method: "POST",
-        url: url,
-        headers: {
-            'Cookie': document.cookie // Pass the cookies from the page to the request
-        },
-        responseType: "text",
-        onload: function(response) {
-            updateDiagnosticInfo(response.responseText+'\n');
+    // 配置请求
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); // 设置请求头
+    xhr.withCredentials = true; // 允许发送 cookies
+
+    // 处理响应
+    xhr.onload = function() {
+        if (xhr.status >= 200 && xhr.status < 300) {
+            updateDiagnosticInfo(xhr.responseText + '\n');
+        } else {
+            console.error("请求失败，状态码:", xhr.status);
         }
-    });
+    };
+
+    xhr.onerror = function() {
+        console.error("请求错误");
+    };
+
+    // 构建请求体
+    const body = `accused_uid=${uid}&dynamic_id=${dyid}&reason_type=0&reason_desc=${encodeURIComponent(reason)}&csrf=${csrf}`;
+
+    // 发送请求
+    xhr.send(body); // 在这里发送请求体
 }
+
 
 
 
