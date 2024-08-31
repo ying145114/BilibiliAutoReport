@@ -166,9 +166,10 @@ function getCsrf() {
     return csrfText;
 }
 function reportDynamic(uid, dyid) {
+    const reason ='在动态发布色情游戏和视频漫画，在置顶动态进行引流到QQ群，并由加密工具分享色情内容链接'
     const csrf = getCsrf();
     //const url = `https://api.bilibili.com/x/v2/reply/report?type=1&oid=${oid}&rpid=${rpid}&reason=1&content=&add_blacklist=false&ordering=heat&gaia_source=main_web&csrf=${csrf}`;
-    const url = `https://api.bilibili.com/x/dynamic/feed/dynamic_report/add?accused_uid=${uid}&dynamic_id=${dyid}&reason_type=9&reason_desc=null&csrf=${csrf}`;
+    const url = `https://api.bilibili.com/x/dynamic/feed/dynamic_report/add?accused_uid=${uid}&dynamic_id=${dyid}&reason_type=0&reason_desc=${reason}&csrf=${csrf}`;
 
 
     GM.xmlHttpRequest({
