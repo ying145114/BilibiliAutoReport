@@ -20,10 +20,10 @@ keywords = [
     '汉化安卓',
 
     #PC色情游戏
-    'RPG PC',
-    'SLG PC',
-    'GAL PC',
-    'ACT PC',
+    'RPG PC 黄油',
+    'SLG PC 黄油',
+    'GAL PC 黄油',
+    'ACT PC 黄油',
     '黄油pc',
     '动态pc',
     '汉化pc',
@@ -94,7 +94,7 @@ def search_and_extract_uid(keyword):
         # 使用CSS选择器定位搜索结果的链接，并提取UID
         count = 0  # 计数器，用于限制获取的UID数量
         for link in soup.select('.bili-video-card .bili-video-card__info--owner'):
-            if count >= 10:
+            if count >= 5:
                 break
             href = link['href']
             uid = href.split('/')[-1]  # 获取链接中最后的数字部分作为UID
@@ -115,7 +115,7 @@ def search_and_extract_uid(keyword):
         # 使用CSS选择器定位搜索结果的链接，并提取UID
         count = 0  # 计数器，用于限制获取的UID数量
         for link in soup.select('.bili-video-card .bili-video-card__info--owner'):
-            if count >= 10:
+            if count >= 5:
                 break
             href = link['href']
             uid = href.split('/')[-1]  # 获取链接中最后的数字部分作为UID
