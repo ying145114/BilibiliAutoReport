@@ -2,7 +2,7 @@
 // @name         BiliBli动态批量举报（全自动）
 // @namespace    https://github.com/ayyayyayy2002/BlibiliDynamicBatchReport
 // @version      0.0.1
-// @description  以“涉政谣言”理由举报评论区的前二十个评论
+// @description  以“其他”理由举报目标的前十三个动态
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_xmlhttpRequest

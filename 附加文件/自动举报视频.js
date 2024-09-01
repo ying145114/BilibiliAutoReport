@@ -4,7 +4,7 @@
 // @version      0.0.1
 // @description  BiliBili屎太多，黑名单不够用了，我很痛苦，于是写了这个脚本尝试将痛苦转移到发布视频的人身上，我准备了三个举报理由，点击按钮即可切换
 // @author       You
-// @match        *://*/*
+// @match        https://space.bilibili.com/*/video?*
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_xmlhttpRequest
@@ -14,6 +14,7 @@
 // @connect      www.bilibili.com
 // @icon         https://i2.hdslb.com/bfs/app/8920e6741fc2808cce5b81bc27abdbda291655d3.png@240w_240h_1c_1s_!web-avatar-space-header.avif
 // @run-at       document-end
+
 
 // ==/UserScript==
 
