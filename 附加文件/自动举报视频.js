@@ -177,6 +177,10 @@ function clickPreviousPageButton() {
       updateDiagnosticInfo('<strong style="font-size: 2em; color: red;">未找到上一页按钮</strong><br>');
       errorMessage.textContent = '未找到上一页按钮';
       errorMessage.style.color = 'red';
+      const spaceIdMatches = window.location.href.match(/space.bilibili.com\/(\d+)\//);
+      const spaceId = spaceIdMatches[1];
+      const jumpUrl = `https://space.bilibili.com/${spaceId}/dynamic`;
+      window.location.href = jumpUrl;
       document.body.appendChild(errorMessage);
 
       return; // 提前结束函数执行
