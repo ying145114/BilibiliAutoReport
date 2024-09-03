@@ -84,14 +84,14 @@ def main():
             # time.sleep(2)
             # driver.refresh()
             print(f"UID: {uid} 页面已打开")
-            #remove_completed_uid(uid)
+            remove_completed_uid(uid)
             current_window = driver.current_window_handle
 
             while True:
                 # 等待60秒
                 if firstrun == 1:
-                    print('首次运行，等待2秒')
-                    time.sleep(2)
+                    print('首次运行，等待1秒')
+                    time.sleep(1)
                     firstrun = 0
 
                 else:
@@ -137,7 +137,7 @@ def main():
                         except TimeoutException:
                             print("等待验证码超时，程序退出")
                             sys.exit(100)  # 超时退出
-                        time.sleep(5)
+                        time.sleep(2)
                         f = img.get_attribute('style')
                         print('验证码已出现')
 
@@ -217,7 +217,7 @@ def main():
                 current_url = driver.current_url
                 if "dynamic" in current_url:
                     print("地址栏中包含 'dynamic'，等待下一个UID")
-                    remove_completed_uid(uid)  # 删除已完成的UID
+                    #remove_completed_uid(uid)  # 删除已完成的UID
                     break
     except Exception as e:
         print(f"发生异常: {e}")
