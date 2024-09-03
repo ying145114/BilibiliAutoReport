@@ -20,17 +20,17 @@ keywords = [
     '汉化安卓',
 
     #PC色情游戏
-    'RPG PC 黄油',
-    'SLG PC 黄油',
-    'GAL PC 黄油',
-    'ACT PC 黄油',
+    'RPGPC黄油',
+    'SLGPC黄油',
+    'GALPC黄油',
+    'ACTPC黄油',
     '黄油pc',
     '动态pc',
     '汉化pc',
 
     #同人色情视频
     '原神同人',
-    'akt 同人 大佬',
+    'akt同人大佬',
     '同人总站',
 
 
