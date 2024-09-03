@@ -1,5 +1,9 @@
 import re
 import sys
+import smtplib
+import os
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 from selenium import webdriver
 import time
@@ -217,6 +221,46 @@ def main():
                 current_url = driver.current_url
                 if "dynamic" in current_url:
                     print("地址栏中包含 'dynamic'，等待下一个UID")
+
+                    file_path = os.path.join('附加文件', 'emailconfig.txt')
+                    recipient_email = 'help@bilibili.com'  # 替换为目标邮件地址
+                    subject = f'举报uid：{uid}'
+                    content = (f'违规用户UID：{uid} \n违规类型：色情\n违规信息发布形式：\n1，在视频封面和标题内进行暗示，多次发布以"SLG","ACT","RPG",'
+                               f'"GAL"等为关键词的色情游戏内容，并在置顶动态和评论用群号和加密链接等方式传播色情内容\n2'
+                               f'，在视频封面和标题内进行暗示，多次发布以《原神》、《崩坏·星穹铁道》、《蔚蓝档案》游戏人物为主题的色情二创内容，并在置顶动态和评论用群号和加密链接等方式传播色情内容\n3'
+                               f'，在视频封面和标题内进行暗示，视频内容是以“捣蒜舞”、“盯榨”、“倒数”等为关键词的软色情擦边内容，并多次在充电专属视频中发布色情内容获利\n破坏了B'
+                               f'站的和谐环境，严重危害广大用户的身心健康\n诉求：移除违规内容，封禁该账号')
+
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        lines = f.readlines()
+
+                    if len(lines) % 2 != 0:
+                        print("文件格式错误，请检查邮箱和密码是否成对出现。")
+                    else:
+                        for i in range(0, len(lines), 2):
+                            email = lines[i].strip()  # 获取邮箱
+                            password = lines[i + 1].strip()  # 获取密码
+
+                            try:
+                                # 创建邮件对象
+                                msg = MIMEMultipart()
+                                msg['From'] = email
+                                msg['To'] = recipient_email
+                                msg['Subject'] = subject
+
+                                # 邮件正文
+                                msg.attach(MIMEText(content, 'plain'))
+
+                                # 连接到Outlook SMTP服务器并发送邮件
+                                with smtplib.SMTP('smtp.office365.com', 587) as server:
+                                    server.starttls()  # 启用TLS加密
+                                    server.login(email, password)  # 登录
+                                    server.send_message(msg)  # 发送邮件
+
+                                print(f"成功发送邮件：{email}")
+                            except Exception as e:
+                                print(f"发送失败，邮箱：{email}，错误信息：{e}")
+
                     #remove_completed_uid(uid)  # 删除已完成的UID
                     break
     except Exception as e:
