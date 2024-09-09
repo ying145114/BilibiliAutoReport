@@ -46,10 +46,18 @@ def read_uid_list(filename):
 
 
 # 设置 ChromeOptions
-def set_chrome_options(user_data_dir=None, chrome_binary_path=None):
+import os
+import subprocess
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+
+
+def set_chrome_options(user_data_dir=None, chrome_binary_path=None, proxy=None):
     options = webdriver.ChromeOptions()
     options.add_experimental_option("detach", True)
     options.add_argument('--enable-logging')  # 启用控制台日志
+    if proxy:
+        options.add_argument(f'--proxy-server={proxy}')  # 设置代理
     if user_data_dir:
         options.add_argument(f'--user-data-dir={user_data_dir}')  # 设置用户数据目录
     if chrome_binary_path:
@@ -57,6 +65,39 @@ def set_chrome_options(user_data_dir=None, chrome_binary_path=None):
     return options
 
 
+def read_proxy_file(file_path):
+    with open(file_path, 'r') as file:
+        proxies = file.readlines()
+    return [proxy.strip() for proxy in proxies if proxy.strip()]  # 去除空行
+
+
+def remove_proxy_from_file(file_path, proxy):
+    with open(file_path, 'r') as file:
+        proxies = file.readlines()
+    with open(file_path, 'w') as file:
+        for line in proxies:
+            if line.strip() != proxy:
+                file.write(line)
+
+def check_proxy(proxy):
+    try:
+        # 使用 requests 测试代理的连接
+        response = requests.get('https://www.bilibili.com', proxies={'http': proxy, 'https': proxy}, timeout=5)
+        if response.status_code == 200:
+            return True
+    except requests.exceptions.RequestException:
+        return False
+    return False
+
+def measure_latency(proxy):
+    start_time = time.time()
+    try:
+        # 发送请求并计算响应时间
+        response = requests.get('https://www.bilibili.com', proxies={'http': proxy, 'https': proxy}, timeout=5)
+        latency = (time.time() - start_time) * 1000  # 转换为毫秒
+        return latency
+    except requests.exceptions.RequestException:
+        return float('inf')  # 返回无穷大表示失败
 def main():
     uids = read_uid_list('附加文件/uid.txt')  # 从 uid.txt 中读取 uid 列表
 
@@ -70,7 +111,36 @@ def main():
     # 确保自定义的 ChromeDriver 路径也是正确的
     chrome_driver_path = os.path.join(base_dir, '附加文件', 'chromedriver.exe')  # 使用相对路径
 
-    options = set_chrome_options(user_data_dir, chrome_binary_path)
+    # 读取代理文件
+    proxy_file_path = os.path.join(base_dir, '附加文件', 'proxy.txt')
+    proxies = read_proxy_file(proxy_file_path)
+
+    selected_proxy = None
+
+    if proxies:
+        for proxy in proxies:
+            # 检测代理是否可用
+            if check_proxy(proxy):
+                latency = measure_latency(proxy)
+                print(f'代理 {proxy} 的延迟: {latency:.2f} ms')
+                if latency < 300:  # 可以根据需求调整延迟阈值
+                    selected_proxy = proxy
+                    break
+            else:
+                print(f'代理 {proxy} 不可用')
+
+        if selected_proxy:
+            remove_proxy_from_file(proxy_file_path, selected_proxy)  # 从文件中删除已选代理
+            print(f'使用代理: {selected_proxy}')
+        else:
+            print('所有代理均不可用，启动 proxy.py')
+            venv_python = os.path.join(base_dir, 'venv', 'Scripts', 'python.exe')  # 虚拟环境的 Python 路径
+            try:
+                subprocess.run([venv_python, 'proxy.py'], check=True)  # 使用虚拟环境中的 Python 启动 proxy.py
+            except subprocess.CalledProcessError:
+                print('proxy.py 执行过程中出现错误，但将继续运行。')
+
+    options = set_chrome_options(user_data_dir, chrome_binary_path, selected_proxy if selected_proxy else None)
     print('启动浏览器')
 
     # 使用 Service 来指定 ChromeDriver 的路径
@@ -88,6 +158,58 @@ def main():
             screenshot_path = os.path.join('附加文件', 'screenshot.png')
             driver.save_screenshot(screenshot_path)
             print(f"截图已保存为 {screenshot_path}")
+            screenshot_path = os.path.join('附加文件', 'screenshot.png')  # 确保这个路径是正确的，截图在此处保存
+
+            file_path = os.path.join('附加文件', 'emailconfig.txt')
+            recipient_email = 'jubao@12377.cn'  # 替换为目标邮件地址
+            subject = f'举报Bilbili用户uid：{uid}'
+            content = (
+                f'违规用户UID：{uid} \n违规类型：色情\n违规信息发布形式：\n1，在视频封面和标题内进行暗示，多次发布以"SLG","ACT","RPG",'
+                f'"GAL"等为关键词的色情游戏内容，并在置顶动态和评论用群号和加密链接等方式传播色情内容\n2'
+                f'，在视频封面和标题内进行暗示，多次发布以《原神》、《崩坏·星穹铁道》、《蔚蓝档案》游戏人物为主题的色情二创内容，并在置顶动态和评论用群号和加密链接等方式传播色情内容\n3'
+                f'，在视频封面和标题内进行暗示，视频内容是以“捣蒜舞”、“盯榨”、“倒数”等为关键词的软色情擦边内容，并多次在充电专属视频中发布色情内容获利\n破坏了B'
+                f'站的和谐环境，严重危害广大用户的身心健康\n诉求：移除违规内容，封禁该账号')
+
+            with open(file_path, 'r', encoding='utf-8') as f:
+                lines = f.readlines()
+
+            if len(lines) % 2 != 0:
+                print("文件格式错误，请检查邮箱和密码是否成对出现。")
+            else:
+                for i in range(0, len(lines), 2):
+                    email = lines[i].strip()  # 获取邮箱
+                    password = lines[i + 1].strip()  # 获取密码
+
+                    try:
+                        # 创建邮件对象
+                        msg = MIMEMultipart()
+                        msg['From'] = email
+                        msg['To'] = recipient_email
+                        msg['Subject'] = subject
+
+                        # 邮件正文
+                        msg.attach(MIMEText(content, 'plain'))
+
+                        # 附加截图
+                        with open(screenshot_path, 'rb') as attachment:
+                            part = MIMEBase('application', 'octet-stream')
+                            part.set_payload(attachment.read())
+                            encoders.encode_base64(part)
+                            part.add_header(
+                                'Content-Disposition',
+                                f'attachment; filename=screenshot.png'
+                            )
+                            msg.attach(part)
+
+                        # 连接到Outlook SMTP服务器并发送邮件
+                        with smtplib.SMTP('smtp.office365.com', 587) as server:
+                            server.starttls()  # 启用TLS加密
+                            server.login(email, password)  # 登录
+                            server.send_message(msg)  # 发送邮件
+
+                        print(f"成功发送邮件：{email}")
+                    except Exception as e:
+                        print(f"发送失败，邮箱：{email}，错误信息：{e}")
             # time.sleep(2)
             # driver.refresh()
             print(f"UID: {uid} 页面已打开")
@@ -225,58 +347,7 @@ def main():
                 if "dynamic" in current_url:
                     print("地址栏中包含 'dynamic'，等待下一个UID")
 
-                    screenshot_path = os.path.join('附加文件', 'screenshot.png')  # 确保这个路径是正确的，截图在此处保存
 
-                    file_path = os.path.join('附加文件', 'emailconfig.txt')
-                    recipient_email = 'jubao@12377.cn'  # 替换为目标邮件地址
-                    subject = f'举报Bilbili用户uid：{uid}'
-                    content = (
-                        f'违规用户UID：{uid} \n违规类型：色情\n违规信息发布形式：\n1，在视频封面和标题内进行暗示，多次发布以"SLG","ACT","RPG",'
-                        f'"GAL"等为关键词的色情游戏内容，并在置顶动态和评论用群号和加密链接等方式传播色情内容\n2'
-                        f'，在视频封面和标题内进行暗示，多次发布以《原神》、《崩坏·星穹铁道》、《蔚蓝档案》游戏人物为主题的色情二创内容，并在置顶动态和评论用群号和加密链接等方式传播色情内容\n3'
-                        f'，在视频封面和标题内进行暗示，视频内容是以“捣蒜舞”、“盯榨”、“倒数”等为关键词的软色情擦边内容，并多次在充电专属视频中发布色情内容获利\n破坏了B'
-                        f'站的和谐环境，严重危害广大用户的身心健康\n诉求：移除违规内容，封禁该账号')
-
-                    with open(file_path, 'r', encoding='utf-8') as f:
-                        lines = f.readlines()
-
-                    if len(lines) % 2 != 0:
-                        print("文件格式错误，请检查邮箱和密码是否成对出现。")
-                    else:
-                        for i in range(0, len(lines), 2):
-                            email = lines[i].strip()  # 获取邮箱
-                            password = lines[i + 1].strip()  # 获取密码
-
-                            try:
-                                # 创建邮件对象
-                                msg = MIMEMultipart()
-                                msg['From'] = email
-                                msg['To'] = recipient_email
-                                msg['Subject'] = subject
-
-                                # 邮件正文
-                                msg.attach(MIMEText(content, 'plain'))
-
-                                # 附加截图
-                                with open(screenshot_path, 'rb') as attachment:
-                                    part = MIMEBase('application', 'octet-stream')
-                                    part.set_payload(attachment.read())
-                                    encoders.encode_base64(part)
-                                    part.add_header(
-                                        'Content-Disposition',
-                                        f'attachment; filename=screenshot.png'
-                                    )
-                                    msg.attach(part)
-
-                                # 连接到Outlook SMTP服务器并发送邮件
-                                with smtplib.SMTP('smtp.office365.com', 587) as server:
-                                    server.starttls()  # 启用TLS加密
-                                    server.login(email, password)  # 登录
-                                    server.send_message(msg)  # 发送邮件
-
-                                print(f"成功发送邮件：{email}")
-                            except Exception as e:
-                                print(f"发送失败，邮箱：{email}，错误信息：{e}")
 
                     #remove_completed_uid(uid)  # 删除已完成的UID
                     break
