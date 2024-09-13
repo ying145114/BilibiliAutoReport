@@ -46,18 +46,10 @@ def read_uid_list(filename):
 
 
 # 设置 ChromeOptions
-import os
-import subprocess
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-
-
-def set_chrome_options(user_data_dir=None, chrome_binary_path=None, proxy=None):
+def set_chrome_options(user_data_dir=None, chrome_binary_path=None):
     options = webdriver.ChromeOptions()
     options.add_experimental_option("detach", True)
     options.add_argument('--enable-logging')  # 启用控制台日志
-    if proxy:
-        options.add_argument(f'--proxy-server={proxy}')  # 设置代理
     if user_data_dir:
         options.add_argument(f'--user-data-dir={user_data_dir}')  # 设置用户数据目录
     if chrome_binary_path:
@@ -65,39 +57,6 @@ def set_chrome_options(user_data_dir=None, chrome_binary_path=None, proxy=None):
     return options
 
 
-def read_proxy_file(file_path):
-    with open(file_path, 'r') as file:
-        proxies = file.readlines()
-    return [proxy.strip() for proxy in proxies if proxy.strip()]  # 去除空行
-
-
-def remove_proxy_from_file(file_path, proxy):
-    with open(file_path, 'r') as file:
-        proxies = file.readlines()
-    with open(file_path, 'w') as file:
-        for line in proxies:
-            if line.strip() != proxy:
-                file.write(line)
-
-def check_proxy(proxy):
-    try:
-        # 使用 requests 测试代理的连接
-        response = requests.get('https://www.bilibili.com', proxies={'http': proxy, 'https': proxy}, timeout=5)
-        if response.status_code == 200:
-            return True
-    except requests.exceptions.RequestException:
-        return False
-    return False
-
-def measure_latency(proxy):
-    start_time = time.time()
-    try:
-        # 发送请求并计算响应时间
-        response = requests.get('https://www.bilibili.com', proxies={'http': proxy, 'https': proxy}, timeout=5)
-        latency = (time.time() - start_time) * 1000  # 转换为毫秒
-        return latency
-    except requests.exceptions.RequestException:
-        return float('inf')  # 返回无穷大表示失败
 def main():
     uids = read_uid_list('附加文件/uid.txt')  # 从 uid.txt 中读取 uid 列表
 
@@ -111,36 +70,7 @@ def main():
     # 确保自定义的 ChromeDriver 路径也是正确的
     chrome_driver_path = os.path.join(base_dir, '附加文件', 'chromedriver.exe')  # 使用相对路径
 
-    # 读取代理文件
-    proxy_file_path = os.path.join(base_dir, '附加文件', 'proxy.txt')
-    proxies = read_proxy_file(proxy_file_path)
-
-    selected_proxy = None
-
-    if proxies:
-        for proxy in proxies:
-            # 检测代理是否可用
-            if check_proxy(proxy):
-                latency = measure_latency(proxy)
-                print(f'代理 {proxy} 的延迟: {latency:.2f} ms')
-                if latency < 300:  # 可以根据需求调整延迟阈值
-                    selected_proxy = proxy
-                    break
-            else:
-                print(f'代理 {proxy} 不可用')
-
-        if selected_proxy:
-            remove_proxy_from_file(proxy_file_path, selected_proxy)  # 从文件中删除已选代理
-            print(f'使用代理: {selected_proxy}')
-        else:
-            print('所有代理均不可用，启动 proxy.py')
-            venv_python = os.path.join(base_dir, 'venv', 'Scripts', 'python.exe')  # 虚拟环境的 Python 路径
-            try:
-                subprocess.run([venv_python, 'proxy.py'], check=True)  # 使用虚拟环境中的 Python 启动 proxy.py
-            except subprocess.CalledProcessError:
-                print('proxy.py 执行过程中出现错误，但将继续运行。')
-
-    options = set_chrome_options(user_data_dir, chrome_binary_path, selected_proxy if selected_proxy else None)
+    options = set_chrome_options(user_data_dir, chrome_binary_path)
     print('启动浏览器')
 
     # 使用 Service 来指定 ChromeDriver 的路径
@@ -158,6 +88,7 @@ def main():
             screenshot_path = os.path.join('附加文件', 'screenshot.png')
             driver.save_screenshot(screenshot_path)
             print(f"截图已保存为 {screenshot_path}")
+
             screenshot_path = os.path.join('附加文件', 'screenshot.png')  # 确保这个路径是正确的，截图在此处保存
 
             file_path = os.path.join('附加文件', 'emailconfig.txt')
@@ -210,6 +141,8 @@ def main():
                         print(f"成功发送邮件：{email}")
                     except Exception as e:
                         print(f"发送失败，邮箱：{email}，错误信息：{e}")
+
+                        
             # time.sleep(2)
             # driver.refresh()
             print(f"UID: {uid} 页面已打开")
