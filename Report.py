@@ -50,6 +50,7 @@ def set_chrome_options(user_data_dir=None, chrome_binary_path=None):
     options = webdriver.ChromeOptions()
     options.add_experimental_option("detach", True)
     options.add_argument('--enable-logging')  # 启用控制台日志
+    options.add_argument("--disable-blink-features=AutomationControlled")
     if user_data_dir:
         options.add_argument(f'--user-data-dir={user_data_dir}')  # 设置用户数据目录
     if chrome_binary_path:
@@ -76,6 +77,7 @@ def main():
     # 使用 Service 来指定 ChromeDriver 的路径
     service = Service(executable_path=chrome_driver_path)
     driver = webdriver.Chrome(service=service, options=options)
+    driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
     firstrun = 1
 
     try:

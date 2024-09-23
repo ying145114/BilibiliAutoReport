@@ -10,28 +10,19 @@ from bs4 import BeautifulSoup
 
 # 定义搜索关键词列表
 keywords = [
-    #安卓色情游戏
-    'ACT安卓',
-    'SLG安卓',
-    'RPG安卓',
-    'gal安卓',
-    '黄油安卓',
-    '动态安卓',
-    '汉化安卓',
+    #色情游戏
+    'ACT SLG GAL 安卓直装',
+    '黄油 动态 汉化 PC 新作',
 
-    #PC色情游戏
-    'RPGPC黄油',
-    'SLGPC黄油',
-    'GALPC黄油',
-    'ACTPC黄油',
-    '黄油pc',
-    '动态pc',
-    '汉化pc',
-
-    #同人色情视频
-    '原神同人',
-    'akt同人大佬',
+    #同人色情视频,
     '同人总站',
+    'sodeno19 AKT',
+    '是小七漫剪呀',
+
+    #其他内容
+    '盯榨倒数红绿灯',
+    '弹力摇',
+
 
 
     # 可以根据需要添加更多关键词
@@ -86,7 +77,7 @@ def search_and_extract_uid(keyword):
         # 使用CSS选择器定位搜索结果的链接，并提取UID
         count = 0  # 计数器，用于限制获取的UID数量
         for link in soup.select('.bili-video-card .bili-video-card__info--owner'):
-            if count >= 1:
+            if count >= 5:
                 break
             href = link['href']
             uid = href.split('/')[-1]  # 获取链接中最后的数字部分作为UID
@@ -107,7 +98,7 @@ def search_and_extract_uid(keyword):
         # 使用CSS选择器定位搜索结果的链接，并提取UID
         count = 0  # 计数器，用于限制获取的UID数量
         for link in soup.select('.bili-video-card .bili-video-card__info--owner'):
-            if count >= 1:
+            if count >= 3:
                 break
             href = link['href']
             uid = href.split('/')[-1]  # 获取链接中最后的数字部分作为UID
