@@ -1,7 +1,9 @@
 import json
 import os
 import time
-from telnetlib import EC
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 import requests
 from selenium import webdriver
@@ -34,7 +36,7 @@ def check_uid_banned(driver, uid):
 
         # 使用WebDriverWait等待元素可见
         element = WebDriverWait(driver, 20).until(
-            EC.visibility_of_element_located((By.XPATH, xpath))
+            EC.presence_of_element_located((By.XPATH, xpath))
         )
 
         # 如果元素可见且可用，返回True（表示被封禁）
