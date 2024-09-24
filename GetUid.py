@@ -12,12 +12,11 @@ from bs4 import BeautifulSoup
 keywords = [
     #色情游戏
     'ACT SLG GAL 安卓直装',
-    '黄油 动态 汉化 PC 新作',
 
     #同人色情视频,
     '同人总站',
-    'sodeno19 AKT',
-    '是小七漫剪呀',
+    'sodeno19 AKT VICINEKO',
+
 
     #其他内容
     '盯榨倒数红绿灯',
@@ -134,6 +133,26 @@ def main():
         # 遍历关键词列表，进行搜索和处理
         for keyword in keywords:
             search_and_extract_uid(keyword)
+        blacklist_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/blacklist.txt'
+        blacklist_filename = '附加文件/blacklist.txt'
+
+        try:
+            response = requests.get(blacklist_url, timeout=(5, 10))
+
+            if response.status_code == 200:
+                with open(blacklist_filename, 'wb') as f_out:
+                    f_out.write(response.content)
+                print(f"成功下载文件 {blacklist_url} 并保存为 {blacklist_filename}")
+            else:
+                print(f"无法访问 {blacklist_url}，状态码：{response.status_code}")
+        except requests.exceptions.RequestException as e:
+            print(f"下载文件时发生请求异常：{e}")
+        except IOError as e:
+            print(f"文件操作发生错误：{e}")
+        except Exception as e:
+            print(f"发生未知错误：{e}")
+
+        print('继续执行其他操作，不受文件下载错误的影响')
 
         print('读取当前文件中所有的 UID，并添加到集合中去重')
         with open(output_file, 'r', encoding='utf-8') as f:
