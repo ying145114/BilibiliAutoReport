@@ -87,11 +87,12 @@ def main():
         for uid in uids:
             url = f"https://space.bilibili.com/{uid}/video?tid=0&pn=1&keyword=&order=pubdate"
             driver.get(url)
-            screenshot_path = os.path.join('附加文件', 'screenshot.png')
+            time.sleep(2)
+            screenshot_path = os.path.join('附加文件','记录', f'{uid}.png')
             driver.save_screenshot(screenshot_path)
             print(f"截图已保存为 {screenshot_path}")
 
-            screenshot_path = os.path.join('附加文件', 'screenshot.png')  # 确保这个路径是正确的，截图在此处保存
+            screenshot_path = os.path.join('附加文件','记录', f'{uid}.png')  # 确保这个路径是正确的，截图在此处保存
 
             file_path = os.path.join('附加文件', 'emailconfig.txt')
             recipient_email = 'jubao@12377.cn'  # 替换为目标邮件地址
@@ -130,7 +131,7 @@ def main():
                             encoders.encode_base64(part)
                             part.add_header(
                                 'Content-Disposition',
-                                f'attachment; filename=screenshot.png'
+                                f'attachment; filename={uid}.png'
                             )
                             msg.attach(part)
 
