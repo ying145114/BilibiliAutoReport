@@ -14,8 +14,9 @@ def get_name_by_uid(uid, output_file):
         # 发起HTTP GET请求获取用户信息
         response = requests.get(search_url, headers=headers, timeout=(5, 10))
         response.raise_for_status()  # 检查请求是否成功
+
         print(response.text)
-        sleep(3)
+        sleep(1.5)
 
         # 加载JSON响应数据
         data = json.loads(response.text)
@@ -39,6 +40,11 @@ def main():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     input_file = os.path.join(base_dir, '附加文件', 'uid.txt')  # uid.txt在附加文件文件夹下
     output_file = os.path.join(base_dir, '附加文件', 'organized.txt')  # organized.txt也在附加文件夹下
+    if os.path.exists(output_file):
+        os.remove(output_file)
+
+    with open(input_file, 'r') as f:
+        uids = f.read().splitlines()
 
     # 清空或创建输出文件
     with open(output_file, 'w', encoding='utf-8') as f:

@@ -63,6 +63,11 @@ def main():
 
     input_file = os.path.join(base_dir, '附加文件', 'uid.txt')  # uid.txt在附加文件文件夹下
     output_file = os.path.join(base_dir, '附加文件', 'banned.txt')  # banned.txt也在附加文件夹下
+    if os.path.exists(output_file):
+        os.remove(output_file)
+
+    with open(input_file, 'r') as f:
+        uids = f.read().splitlines()
 
     with open(input_file, 'r') as f:
         uids = f.read().splitlines()
@@ -70,9 +75,7 @@ def main():
     banned_uids = []
 
     for uid in uids:
-
         if check_uid_banned(driver, uid):
-
             banned_uids.append(uid)
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
@@ -93,6 +96,10 @@ def main():
             current_level = data["data"]["card"]["level_info"]["current_level"]
             print(f"UID {uid} 被封禁. 昵称: {name}, 粉丝数: {fans}, 账号等级: {current_level}")
 
+            # 动态写入被封禁的UID到文件
+            with open(output_file, 'a') as f:
+                f.write(uid + '\n')
+
         else:
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
@@ -112,9 +119,6 @@ def main():
             fans = data["data"]["card"]["fans"]
             current_level = data["data"]["card"]["level_info"]["current_level"]
             print(f"UID {uid} 未被封禁. 昵称: {name}, 粉丝数: {fans}, 账号等级: {current_level}")
-    with open(output_file, 'w') as f:
-        for uid in banned_uids:
-            f.write(uid + '\n')
 
     print(f"被封禁的UID已写入 {output_file}.")
 
