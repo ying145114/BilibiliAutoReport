@@ -52,17 +52,17 @@ def check_uid_banned(driver, uid):
 def main():
     base_dir = os.path.dirname(os.path.abspath(__file__))
 
-    user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
-    chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
-    chrome_driver_path = os.path.join(base_dir, '附加文件', 'chromedriver.exe')
+    user_data_dir = os.path.join(base_dir,  'User Data')
+    chrome_binary_path = os.path.join(base_dir,  'chrome-win', 'chrome.exe')
+    chrome_driver_path = os.path.join(base_dir, 'chromedriver.exe')
 
     options = set_chrome_options(user_data_dir, chrome_binary_path)
 
     service = Service(executable_path=chrome_driver_path)
     driver = webdriver.Chrome(service=service, options=options)
 
-    input_file = os.path.join(base_dir, '附加文件', 'uid.txt')  # uid.txt在附加文件文件夹下
-    output_file = os.path.join(base_dir, '附加文件', 'banned.txt')  # banned.txt也在附加文件夹下
+    input_file = os.path.join(base_dir,  'uid.txt')  # uid.txt在附加文件文件夹下
+    output_file = os.path.join(base_dir,  'banned.txt')  # banned.txt也在附加文件夹下
     if os.path.exists(output_file):
         os.remove(output_file)
 
