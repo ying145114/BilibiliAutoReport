@@ -8,25 +8,44 @@ from urllib.parse import urlencode
 import requests
 from bs4 import BeautifulSoup
 
-# 定义搜索关键词列表
-keywords = [
-    #色情游戏
-    'ACT SLG GAL 安卓直装',
 
-    #同人色情视频,
-    '同人总站',
-    'sodeno19 AKT VICINEKO',
-    'rinhee yesui',
+# 定义获取关键词的函数
+def fetch_keywords():
+    keywords_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/keywords.txt'  # 替换为实际的GitHub URL
+    keywords_filename = '附加文件/keywords.txt'
 
+    try:
+        response = requests.get(keywords_url, timeout=(5, 10))
+        if response.status_code == 200:
+            with open(keywords_filename, 'wb') as f_out:
+                f_out.write(response.content)
+            print(f"成功下载关键词文件 {keywords_url} 并保存为 {keywords_filename}")
+        else:
+            print(f"无法访问 {keywords_url}，状态码：{response.status_code}")
+            return load_local_keywords(keywords_filename)  # 返回本地关键词
+    except requests.exceptions.RequestException as e:
+        print(f"下载关键词文件时发生请求异常：{e}")
+        return load_local_keywords(keywords_filename)  # 返回本地关键词
 
-    #其他内容
-    '盯榨倒数红绿灯',
-    '弹力摇',
+    return load_local_keywords(keywords_filename)
 
+# 定义从本地文件加载关键词的函数
+def load_local_keywords(filename):
+    keywords = []
+    if os.path.exists(filename):
+        with open(filename, 'r', encoding='utf-8') as f:
+            for line in f:
+                stripped_line = line.strip()
+                if stripped_line and not stripped_line.startswith('#'):  # 排除空行和以“#”开头的行
+                    keywords.append(stripped_line)
+    else:
+        print(f"本地关键词文件 {filename} 不存在。")
 
+    return keywords
 
-    # 可以根据需要添加更多关键词
-]
+# 使用fetch_keywords函数替代原有的keywords定义
+keywords = fetch_keywords()
+
 
 # 文件路径和文件名
 output_file = os.path.join(os.getcwd(), '附加文件/uid.txt')
