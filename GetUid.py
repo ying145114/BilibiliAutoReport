@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 
 # 定义获取关键词的函数
 def fetch_keywords():
-    keywords_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/keyword.txt'  # 替换为实际的GitHub URL
+    keywords_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/云端文件/keyword.txt'  # 替换为实际的GitHub URL
     keywords_filename = '附加文件/keyword.txt'
 
     try:
@@ -29,6 +29,7 @@ def fetch_keywords():
 
     return load_local_keywords(keywords_filename)
 
+
 # 定义从本地文件加载关键词的函数
 def load_local_keywords(filename):
     keywords = []
@@ -43,9 +44,9 @@ def load_local_keywords(filename):
 
     return keywords
 
+
 # 使用fetch_keywords函数替代原有的keywords定义
 keywords = fetch_keywords()
-
 
 # 文件路径和文件名
 output_file = os.path.join(os.getcwd(), '附加文件/uid.txt')
@@ -154,7 +155,6 @@ def main():
         for keyword in keywords:
             search_and_extract_uid(keyword)
 
-
         print('读取当前文件中所有的 UID，并添加到集合中去重')
         with open(output_file, 'r', encoding='utf-8') as f:
             lines = f.readlines()
@@ -168,7 +168,7 @@ def main():
         except IOError as e:
             print(f"复制保存备份时发生错误：{e}")
 
-        whitelist_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/whitelist.txt'
+        whitelist_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/云端文件/whitelist.txt'
         whitelist_filename = '附加文件/whitelist.txt'
         try:
             response = requests.get(whitelist_url, timeout=(5, 10))
@@ -192,7 +192,7 @@ def main():
                 if uid.isdigit():  # 假设 UID 是数字格式
                     unique_uids.add(uid)
 
-        blacklist_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/blacklist.txt'
+        blacklist_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/云端文件/blacklist.txt'
         blacklist_filename = '附加文件/blacklist.txt'
 
         try:
