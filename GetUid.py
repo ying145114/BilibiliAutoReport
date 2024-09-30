@@ -11,8 +11,8 @@ from bs4 import BeautifulSoup
 
 # 定义获取关键词的函数
 def fetch_keywords():
-    keywords_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/keywords.txt'  # 替换为实际的GitHub URL
-    keywords_filename = '附加文件/keywords.txt'
+    keywords_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/keyword.txt'  # 替换为实际的GitHub URL
+    keywords_filename = '附加文件/keyword.txt'
 
     try:
         response = requests.get(keywords_url, timeout=(5, 10))
