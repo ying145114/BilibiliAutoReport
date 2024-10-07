@@ -97,7 +97,7 @@ def search_and_extract_uid(keyword):
         # 使用CSS选择器定位搜索结果的链接，并提取UID
         count = 0  # 计数器，用于限制获取的UID数量
         for link in soup.select('.bili-video-card .bili-video-card__info--owner'):
-            if count >= 5:
+            if count >= 10:
                 break
             href = link['href']
             uid = href.split('/')[-1]  # 获取链接中最后的数字部分作为UID
@@ -118,7 +118,7 @@ def search_and_extract_uid(keyword):
         # 使用CSS选择器定位搜索结果的链接，并提取UID
         count = 0  # 计数器，用于限制获取的UID数量
         for link in soup.select('.bili-video-card .bili-video-card__info--owner'):
-            if count >= 3:
+            if count >= 6:
                 break
             href = link['href']
             uid = href.split('/')[-1]  # 获取链接中最后的数字部分作为UID

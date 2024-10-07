@@ -16,7 +16,7 @@ def get_name_by_uid(uid, output_file):
         response.raise_for_status()  # 检查请求是否成功
 
         print(response.text)
-        sleep(1.5)
+        sleep(1)
 
         # 加载JSON响应数据
         data = json.loads(response.text)
