@@ -60,6 +60,10 @@ def main():
 
     service = Service(executable_path=chrome_driver_path)
     driver = webdriver.Chrome(service=service, options=options)
+    # 设置浏览器窗口大小（宽度, 高度）
+    driver.set_window_size(1000, 700)
+    # 设置浏览器窗口位置（x, y）
+    driver.set_window_position(-850, 775)
 
     input_file = os.path.join(base_dir,  'uid.txt')  # uid.txt在附加文件文件夹下
     output_file = os.path.join(base_dir,  'banned.txt')  # banned.txt也在附加文件夹下
