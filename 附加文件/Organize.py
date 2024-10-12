@@ -43,19 +43,16 @@ def main():
     if os.path.exists(output_file):
         os.remove(output_file)
 
-    with open(input_file, 'r') as f:
-        uids = f.read().splitlines()
+    with open(input_file, 'r', encoding='utf-8') as f:
+        uids = [line.strip() for line in f if not line.startswith('#')]
 
     # 清空或创建输出文件
     with open(output_file, 'w', encoding='utf-8') as f:
         pass  # 创建或清空文件
 
-    # 使用utf-8编码读取输入文件
-    with open(input_file, 'r', encoding='utf-8') as f:
-        uids = f.read().splitlines()
-
     for uid in uids:
-        get_name_by_uid(uid, output_file)
+        if uid:  # 确保UID不为空
+            get_name_by_uid(uid, output_file)
 
     print(f"UID与名称已写入 {output_file}.")
 
