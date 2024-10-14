@@ -180,7 +180,7 @@ function clickPreviousPageButton() {
       errorMessage.style.color = 'red';
       const spaceIdMatches = window.location.href.match(/space.bilibili.com\/(\d+)\//);
       const spaceId = spaceIdMatches[1];
-      const jumpUrl = `https://space.bilibili.com/${spaceId}/dynamic`;
+      const jumpUrl = `https://space.bilibili.com/${spaceId}/article`;
       window.location.href = jumpUrl;
       document.body.appendChild(errorMessage);
 
@@ -192,7 +192,7 @@ function clickPreviousPageButton() {
       errorMessage.style.color = 'red';
       const spaceIdMatches = window.location.href.match(/space.bilibili.com\/(\d+)\//);
       const spaceId = spaceIdMatches[1];
-      const jumpUrl = `https://space.bilibili.com/${spaceId}/dynamic`;
+      const jumpUrl = `https://space.bilibili.com/${spaceId}/article`;
       window.location.href = jumpUrl;
       document.body.appendChild(errorMessage);
       return; // 提前结束函数执行
