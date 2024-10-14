@@ -9,6 +9,8 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @author       You
+// @connect      api.bilibili.com
+// @connect      www.bilibili.com
 // @match        https://space.bilibili.com/*/dynamic
 // @icon         https://i2.hdslb.com/bfs/app/8920e6741fc2808cce5b81bc27abdbda291655d3.png@240w_240h_1c_1s_!web-avatar-space-header.avif
 // @grant        GM.xmlHttpRequest
