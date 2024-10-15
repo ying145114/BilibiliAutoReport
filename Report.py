@@ -101,6 +101,7 @@ def main():
 
                 data = json.loads(response.text)
                 name = data["data"]["card"]["name"]
+                print(f"检查完成，UID:{uid} ,名称: {name}")
 
                 if name == "账号已注销":
                     with open(blacklist_file, 'a', encoding='utf-8') as bf:
