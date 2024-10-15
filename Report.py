@@ -290,7 +290,7 @@ def main():
 
                 # 检查当前页面URL是否符合条件
                 current_url = driver.current_url
-                if "dynamic" in current_url:
+                if "bi" in current_url:
                     print("地址栏中包含 'dynamic'，等待下一个UID")
 
 
