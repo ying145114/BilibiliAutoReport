@@ -1,10 +1,5 @@
 import re
 import sys
-import smtplib
-from email import encoders
-from email.mime.base import MIMEBase
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from selenium import webdriver
 import time
 from selenium.common import TimeoutException
@@ -16,6 +11,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 import requests
 from src import captcha
 import os
+import json
 
 
 def remove_completed_uid(uid):
@@ -67,6 +63,7 @@ def main():
     user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')  # 使用相对路径
     print('设置 Chrome 可执行文件路径')
     chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')  # 使用相对路径
+    blacklist_file = os.path.join(base_dir, '云端文件', 'blacklist.txt')  # black_list在云端文件文件夹下
 
     # 确保自定义的 ChromeDriver 路径也是正确的
     chrome_driver_path = os.path.join(base_dir, '附加文件', 'chromedriver.exe')  # 使用相对路径
@@ -91,73 +88,37 @@ def main():
             print("uid.txt 文件中没有可处理的UID，程序退出")
             exit(0)
         for uid in uids:
+
+            # 判断代码
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            }
+            search_url = f"https://api.bilibili.com/x/web-interface/card?mid={uid}"
+
+            try:
+                response = requests.get(search_url, headers=headers, timeout=(5, 10))
+                response.raise_for_status()
+
+                data = json.loads(response.text)
+                name = data["data"]["card"]["name"]
+
+                if name == "账号已注销":
+                    with open(blacklist_file, 'a', encoding='utf-8') as bf:
+                        bf.write(f"\n{uid}")  # 在写入 UID 前添加换行符
+                        remove_completed_uid(uid)
+                    continue  # 账号已注销，跳过后续操作
+
+            except Exception as e:
+                print(f"获取UID {uid} 的名称时发生错误: {e}")
+                continue  # 如果出现错误，也跳过此UID
             url = f"https://space.bilibili.com/{uid}/video?tid=0&pn=1&keyword=&order=pubdate"
             driver.get(url)
+
             time.sleep(2)
-            screenshot_path = os.path.join('附加文件','记录', f'{uid}.png')
+            screenshot_path = os.path.join('附加文件', '记录', f'{uid}.png')
             driver.save_screenshot(screenshot_path)
             print(f"截图已保存为 {screenshot_path}")
 
-            #
-            # file_path = os.path.join('附加文件', 'emailconfig.txt')
-            # recipient_email = 'jubao@12377.cn'  # 替换为目标邮件地址
-            # subject = f'举报Bilbili用户uid：{uid}'
-            # content = (
-            #     f'违规用户UID：{uid} \n违规类型：色情\n违规信息发布形式：\n1，在视频封面和标题内进行暗示，多次发布以"SLG","ACT","RPG",'
-            #     f'"GAL"等为关键词的色情游戏内容，并在置顶动态和评论用群号和加密链接等方式传播色情内容\n2'
-            #     f'，在视频封面和标题内进行暗示，多次发布以《原神》、《崩坏·星穹铁道》、《蔚蓝档案》游戏人物为主题的色情二创内容，并在置顶动态和评论用群号和加密链接等方式传播色情内容\n3'
-            #     f'，在视频封面和标题内进行暗示，视频内容是以“捣蒜舞”、“盯榨”、“倒数”等为关键词的软色情擦边内容，并多次在充电专属视频中发布色情内容获利\n破坏了B'
-            #     f'站的和谐环境，严重危害广大用户的身心健康\n诉求：移除违规内容，封禁该账号')
-            #
-            # with open(file_path, 'r', encoding='utf-8') as f:
-            #     lines = f.readlines()
-            #
-            # if len(lines) % 2 != 0:
-            #     print("文件格式错误，请检查邮箱和密码是否成对出现。")
-            # else:
-            #     for i in range(0, len(lines), 2):
-            #         email = lines[i].strip()  # 获取邮箱
-            #         password = lines[i + 1].strip()  # 获取密码
-            #
-            #         try:
-            #             # 创建邮件对象
-            #             msg = MIMEMultipart()
-            #             msg['From'] = email
-            #             msg['To'] = recipient_email
-            #             msg['Subject'] = subject
-            #
-            #             # 邮件正文
-            #             msg.attach(MIMEText(content, 'plain'))
-            #
-            #             # 附加截图
-            #             with open(screenshot_path, 'rb') as attachment:
-            #                 part = MIMEBase('application', 'octet-stream')
-            #                 part.set_payload(attachment.read())
-            #                 encoders.encode_base64(part)
-            #                 part.add_header(
-            #                     'Content-Disposition',
-            #                     f'attachment; filename={uid}.png'
-            #                 )
-            #                 msg.attach(part)
-            #
-            #             # 连接到Outlook SMTP服务器并发送邮件
-            #             with smtplib.SMTP('smtp.office365.com', 587) as server:
-            #                 server.starttls()  # 启用TLS加密
-            #                 server.login(email, password)  # 登录
-            #                 server.send_message(msg)  # 发送邮件
-            #
-            #             print(f"成功发送邮件：{email}")
-            #         except Exception as e:
-            #             print(f"发送失败，邮箱：{email}，错误信息：{e}")
-
-
-
-
-
-
-                        
-            # time.sleep(2)
-            # driver.refresh()
             print(f"UID: {uid} 页面已打开")
             remove_completed_uid(uid)
             current_window = driver.current_window_handle
@@ -172,9 +133,6 @@ def main():
                 else:
                     print('非首次运行，等待58秒')
                     time.sleep(58)
-
-
-
 
                 # 在当前标签页A中打开新标签页B执行其他任务
                 driver.switch_to.new_window('tab')
@@ -199,8 +157,6 @@ def main():
                 element.click()  # 生成验证码
                 print('已点击确认')
 
-
-
                 time.sleep(4)
                 while True:
                     try:
@@ -215,7 +171,6 @@ def main():
                         time.sleep(2)
                         f = img.get_attribute('style')
                         print('验证码已出现')
-
 
                         url = re.search(r'url\("([^"]+?)\?[^"]*"\);', f).group(1)
 
@@ -292,8 +247,6 @@ def main():
                 current_url = driver.current_url
                 if "bi" in current_url:
                     print("地址栏中包含 'dynamic'，等待下一个UID")
-
-
 
                     #remove_completed_uid(uid)  # 删除已完成的UID
                     break
