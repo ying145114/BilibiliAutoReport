@@ -1,6 +1,3 @@
-/附加文件/User Data/
-/附加文件/chrome-win/
-/附加文件/记录/
 附加文件/whitelist.txt
 附加文件/blacklist.txt
 附加文件/uid_backup.txt
@@ -9,3 +6,6 @@
 附加文件/uid.txt
 附加文件/organized.txt
 附加文件/banned.txt
+/附加文件/User Data/
+/附加文件/chrome-win/
+/附加文件/记录/
