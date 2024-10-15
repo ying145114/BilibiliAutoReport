@@ -96,7 +96,7 @@ function updateDiagnosticInfo(content) {
   scrollToBottom();
 }
 
-let delayInMilliseconds = 2400; // 设置延迟时间
+let delayInMilliseconds = 100; // 设置延迟时间
 
 // 更新 sendReportRequest 函数，在显示完最后一次举报返回值后显示“本页全部举报完成”，然后调用 clickPreviousPageButton 函数
 function sendReportRequest() {
