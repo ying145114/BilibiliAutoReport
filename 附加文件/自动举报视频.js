@@ -271,9 +271,9 @@ function fuckVideo(aid) {
                 const data = new URLSearchParams({
                     'rid': aid,
                     'type': '2',
-                    'add_media_ids': '2464499243', // 根据实际需求调整3349162143
+                    'add_media_ids': fidValue, // 根据实际需求调整3349162143
                     'del_media_ids': '',
-                    'csrf': csrf
+                    'csrf': csrfValue
                 });
 
                 // 获取当前浏览器的 Cookies
