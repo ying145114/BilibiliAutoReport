@@ -271,7 +271,7 @@ function fuckVideo(aid) {
                 const data = new URLSearchParams({
                     'rid': aid,
                     'type': '2',
-                    'add_media_ids': '3349162143', // 根据实际需求调整
+                    'add_media_ids': '2464499243', // 根据实际需求调整3349162143
                     'del_media_ids': '',
                     'csrf': csrf
                 });
