@@ -246,7 +246,7 @@ function fuckVideo(aid) {
         const data = new URLSearchParams({
           'rid': aid, // 将rid替换为传入的aid
           'type': '2',
-          'add_media_ids': '2464499243', // 根据实际需求调整
+          'add_media_ids': '3184950341', // 根据实际需求调整
           'del_media_ids': '',
           'csrf': csrf // 使用获取的 CSRF token
         });
