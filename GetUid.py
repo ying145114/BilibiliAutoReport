@@ -65,12 +65,13 @@ def search_and_extract_uid(keyword):
     base_url = 'https://search.bilibili.com/video?'
     search_params1 = {
         'keyword': keyword,
-        'from_source': 'webtop_search',
+        'from_source': 'video_tag',
+        'order': 'click'
 
     }
     search_params2 = {
         'keyword': keyword,
-        'from_source': 'webtop_search',
+        'from_source': 'video_tag',
         'order': 'pubdate'
     }
     search_url1 = base_url + urlencode(search_params1)

@@ -137,7 +137,7 @@ def main():
 
                 # 在当前标签页A中打开新标签页B执行其他任务
                 driver.switch_to.new_window('tab')
-                driver.get("https://www.bilibili.com/appeal/?avid=1650935368")
+                driver.get("https://www.bilibili.com/appeal/?avid=1205435530")
 
                 element = WebDriverWait(driver, 20, 1).until(
                     EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[3]/div[2]/textarea'))
