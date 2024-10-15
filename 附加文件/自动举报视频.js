@@ -235,6 +235,48 @@ function fuckVideo(aid) {
       encounteredError352 = false;
     } else {
       updateDiagnosticInfo(`举报结果：<strong>${this.response}</strong><br>`);
+           // ----------------------- 追加收藏请求 -----------------------
+      const csrf = getCsrf(); // 使用从函数获取的 CSRF token
+
+      // 设置延迟时间
+      const delayInMilliseconds = 1000; // 根据需要调整延迟时间
+
+      setTimeout(() => {
+        // 第二部分: 收藏请求
+        const data = new URLSearchParams({
+          'rid': aid, // 将rid替换为传入的aid
+          'type': '2',
+          'add_media_ids': '2464499243', // 根据实际需求调整
+          'del_media_ids': '',
+          'csrf': csrf // 使用获取的 CSRF token
+        });
+
+        // 获取当前浏览器的 Cookies
+        const cookies = document.cookie;
+
+        // 创建收藏请求的 XMLHttpRequest 对象
+        const favXhr = new XMLHttpRequest();
+        favXhr.withCredentials = true;
+        favXhr.open('POST', 'https://api.bilibili.com/x/v3/fav/resource/deal');
+
+        // 设置请求头，使用当前浏览器的 User-Agent 和其他参数
+        favXhr.setRequestHeader('accept', 'application/json, text/plain, */*');
+        favXhr.setRequestHeader('accept-language', 'zh-CN,zh;q=0.9');
+        favXhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
+        favXhr.setRequestHeader('cookie', cookies); // 使用当前浏览器的 Cookies
+        favXhr.setRequestHeader('origin', 'https://www.bilibili.com');
+        favXhr.setRequestHeader('referer', 'https://www.bilibili.com/video/BV1H82hY2Eq7/?spm_id_from=333.1007.tianma.1-1-1.click&vd_source=9a6de7a432be5793d27ccc435c7c65bd');
+        favXhr.setRequestHeader('user-agent', navigator.userAgent); // 使用当前浏览器的 User-Agent
+
+        // 监听收藏请求响应
+        favXhr.onload = function() {
+          console.log(favXhr.response); // 打印返回值
+        };
+
+        // 发送收藏请求
+        favXhr.send(data);
+      }, delayInMilliseconds);
+      // -----------------------------------------------------------------
     }
   };
 
