@@ -18,6 +18,33 @@
 
 // ==/UserScript==
 
+
+
+
+ // 注册菜单命令用以打开设置
+    GM_registerMenuCommand("设置 CSRF", () => openSetting('mycsrf'));
+    GM_registerMenuCommand("设置 FID", () => openSetting('myfid'));
+
+    function openSetting(key) {
+        const currentSetting = GM_getValue(key); // 获取当前设置
+        const newSetting = prompt(`请输入新的值 for ${key}:`, currentSetting); // 创建输入框
+
+        if (newSetting !== null) { // 检查用户是否输入了值
+            GM_setValue(key, newSetting); // 保存新设置
+            alert(`${key} 已更新为: ${newSetting}`);
+        }
+    }
+
+    // 示例：使用设置的值
+    const csrfValue = GM_getValue('mycsrf'); // 不提供默认值
+    const fidValue = GM_getValue('myfid');     // 不提供默认值
+
+    console.log("当前 CSRF 设置值:", csrfValue);
+    console.log("当前 FID 设置值:", fidValue);
+
+
+
+
 // 存储三个profile的举报理由和tid
 
 const profiles = [
@@ -208,78 +235,78 @@ function clickPreviousPageButton() {
 
 let encounteredError352 = false; // 添加一个全局变量来跟踪是否遇到了错误 -352
 
-let reportCount = 0; // 添加一个变量用于记录举报次数
-
 function fuckVideo(aid) {
-  reportCount++; // 每次举报增加序号
-  const profile = profiles[currentProfileIndex];
-  updateDiagnosticInfo(`开始举报稿件 <span style="color: red; font-weight: bold;">${reportCount}</span>，aid: ${aid}<br>`);
+    reportCount++; // 每次举报增加序号
+    const profile = profiles[currentProfileIndex];
+    updateDiagnosticInfo(`开始举报稿件 <span style="color: red; font-weight: bold;">${reportCount}</span>，aid: ${aid}<br>`);
 
-  const xhr = new XMLHttpRequest();
-  xhr.open("POST", 'https://api.bilibili.com/x/web-interface/appeal/v2/submit', true);
-  xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  xhr.withCredentials = true;
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", 'https://api.bilibili.com/x/web-interface/appeal/v2/submit', true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.withCredentials = true;
 
-  xhr.onload = function () {
-    const responseJson = JSON.parse(this.response);
+    xhr.onload = function () {
+        const responseJson = JSON.parse(this.response);
 
-    if (responseJson.code === -352) {
-      updateDiagnosticInfo('<strong style="font-size: 2em; color: red;">遇到错误 -352，请完成人机验证</strong><br>');
-      if (encounteredError352 === true) {
-        var newURL = `https://www.bilibili.com/appeal/?avid=${aid}`;
-        window.open(newURL, '_blank');
-      }
-        // encounteredError352 = true;
-    } else {
-      updateDiagnosticInfo(`举报结果：<strong>${this.response}</strong><br>`);
-    }
+        if (responseJson.code === -352) {
+            updateDiagnosticInfo('<strong style="font-size: 2em; color: red;">遇到错误 -352，请完成人机验证</strong><br>');
+            if (encounteredError352 === true) {
+                var newURL = `https://www.bilibili.com/appeal/?avid=${aid}`;
+                window.open(newURL, '_blank');
+            }
+            // encounteredError352 = true;
+        } else {
+            updateDiagnosticInfo(`举报结果：<strong>${this.response}</strong><br>`);
+        }
 
-    // ----------------------- 追加收藏请求 -----------------------
-    const csrf = getCsrf(); // 使用从函数获取的 CSRF token
+        // 获取 CSRF token
+        const csrf = getCsrf();
 
-    // 设置延迟时间
-    const delayInMilliseconds = 100; // 根据需要调整延迟时间
+        // 设置延迟时间
+        const shoucangdelayInMilliseconds = 3500; // 根据需要调整延迟时间
 
-    setTimeout(() => {
-      // 第二部分: 收藏请求
-      const data = new URLSearchParams({
-        'rid': aid, // 将rid替换为传入的aid
-        'type': '2',
-        'add_media_ids': '3349162143', // 根据实际需求调整
-        'del_media_ids': '',
-        'csrf': csrf // 使用获取的 CSRF token
-      });
+        // 仅在第一次、十次、二十次等时执行收藏请求
+        if (reportCount % 10 === 1) { // 每10次的第一条记录
+            setTimeout(() => {
+                const data = new URLSearchParams({
+                    'rid': aid,
+                    'type': '2',
+                    'add_media_ids': '3349162143', // 根据实际需求调整
+                    'del_media_ids': '',
+                    'csrf': csrf
+                });
 
-      // 获取当前浏览器的 Cookies
-      const cookies = document.cookie;
+                // 获取当前浏览器的 Cookies
+                const cookies = document.cookie;
 
-      // 创建收藏请求的 XMLHttpRequest 对象
-      const favXhr = new XMLHttpRequest();
-      favXhr.withCredentials = true;
-      favXhr.open('POST', 'https://api.bilibili.com/x/v3/fav/resource/deal');
+                // 创建收藏请求的 XMLHttpRequest 对象
+                const favXhr = new XMLHttpRequest();
+                favXhr.withCredentials = true;
+                favXhr.open('POST', 'https://api.bilibili.com/x/v3/fav/resource/deal');
 
-      // 设置请求头，使用当前浏览器的 User-Agent 和其他参数
-      favXhr.setRequestHeader('accept', 'application/json, text/plain, */*');
-      favXhr.setRequestHeader('accept-language', 'zh-CN,zh;q=0.9');
-      favXhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
-      favXhr.setRequestHeader('cookie', cookies); // 使用当前浏览器的 Cookies
-      favXhr.setRequestHeader('origin', 'https://www.bilibili.com');
-     // favXhr.setRequestHeader('referer', 'https://www.bilibili.com/video/BV1H82hY2Eq7/?spm_id_from=333.1007.tianma.1-1-1.click&vd_source=9a6de7a432be5793d27ccc435c7c65bd');
-      favXhr.setRequestHeader('user-agent', navigator.userAgent); // 使用当前浏览器的 User-Agent
+                // 设置请求头
+                favXhr.setRequestHeader('accept', 'application/json, text/plain, */*');
+                favXhr.setRequestHeader('accept-language', 'zh-CN,zh;q=0.9');
+                favXhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
+                favXhr.setRequestHeader('cookie', cookies);
+                favXhr.setRequestHeader('origin', 'https://www.bilibili.com');
+                favXhr.setRequestHeader('user-agent', navigator.userAgent);
 
-      // 监听收藏请求响应
-      favXhr.onload = function() {
-        console.log(favXhr.response); // 打印返回值
-      };
+                // 监听收藏请求响应
+                favXhr.onload = function() {
+                    console.log(favXhr.response); // 打印返回值
+                };
 
-      // 发送收藏请求
-      favXhr.send(data);
-    }, delayInMilliseconds);
-    // -----------------------------------------------------------------
-  };
+                // 发送收藏请求
+                favXhr.send(data);
+            }, shoucangdelayInMilliseconds);
+        }
+        // -----------------------------------------------------------------
+    };
 
-  xhr.send(`aid=${aid}&attach=&block_author=false&csrf=${getCsrf()}&desc=${encodeURIComponent(profile.reason)}&tid=${profile.tid}`);
+    xhr.send(`aid=${aid}&attach=&block_author=false&csrf=${getCsrf()}&desc=${encodeURIComponent(profile.reason)}&tid=${profile.tid}`);
 }
+
 
 
 
