@@ -177,30 +177,32 @@ function submitAppeal(aid, csrfToken, desc) {
 
             if (xhr.status === 200) {
                 const result = JSON.parse(xhr.responseText);
+                updateDiagnosticInfo(`举报结果：<strong>${this.response}</strong><br>`);
+
                 if (result.code === -999) { // 检查返回值是否为-352
                     showContinueButton(aid);
                     window.open(`https://www.bilibili.com/appeal/?avid=${aid}`, '_blank');
                     reject(`Encountered code -352 for AID ${aid}.`); // 返回拒绝
+                } else {
+                    // 忽略其他状态和返回值，不做处理
+                    resolve(result); // 解析其他返回结果并成功解决 Promise
                 }
-                // 如果不是-352，不做任何事情
             } else {
-                console.error(`请求返回错误，状态码: ${xhr.status}`);
-                // 无需调用 resolve() 或 reject()
+                console.warn(`请求返回错误，状态码: ${xhr.status}`);
+                resolve(); // 只打印警告，不做处理
             }
         };
 
         xhr.onerror = function(err) {
             clearTimeout(timeoutId); // 清除超时
             console.error(`请求失败，AID ${aid}:`, err);
-            // 无需调用 resolve() 或 reject()
+            // 忽略请求失败的情况
         };
 
         // 发送请求
         xhr.send(data);
     });
 }
-
-
 
 
 
