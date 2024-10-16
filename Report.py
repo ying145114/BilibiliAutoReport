@@ -225,9 +225,7 @@ def main():
 
                 else:
                     print(f"UID {uid} 没有找到视频，继续下一个 UID。")
-                    with open(blacklist_file, 'a', encoding='utf-8') as bf:
-                        bf.write(f"\n{uid}")  # 添加到黑名单文件，并在前面加上换行符
-                        remove_completed_uid(uid)
+                    remove_completed_uid(uid)
                     continue  # 找不到任何视频，继续下一个 UID
 
             except Exception as e:
