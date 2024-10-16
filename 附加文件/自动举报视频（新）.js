@@ -252,6 +252,55 @@ function submitAppeal(aid, csrfToken, desc) {
             console.error(`请求失败，AID ${aid}:`, err);
             // 忽略请求失败的情况
         };
+        //*****************************************************************************************************
+
+
+
+
+
+        const shoucangdelayInMilliseconds = 3500
+        if (reportCount % 20 === 1) { // 每20次的第一条记录
+            setTimeout(() => {
+                const data = new URLSearchParams({
+                    'rid': aid,
+                    'type': '2',
+                    'add_media_ids': 收藏夹编号, // 根据实际需求调整
+                    'del_media_ids': '',
+                    'csrf': getCsrf()
+                });
+
+                // 获取当前浏览器的 Cookies
+                const cookies = document.cookie;
+
+                // 创建收藏请求的 XMLHttpRequest 对象
+                const favXhr = new XMLHttpRequest();
+                favXhr.withCredentials = true;
+                favXhr.open('POST', 'https://api.bilibili.com/x/v3/fav/resource/deal');
+
+                // 设置请求头
+                favXhr.setRequestHeader('accept', 'application/json, text/plain, */*');
+                favXhr.setRequestHeader('accept-language', 'zh-CN,zh;q=0.9');
+                favXhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
+                favXhr.setRequestHeader('cookie', cookies);
+                favXhr.setRequestHeader('origin', 'https://www.bilibili.com');
+                favXhr.setRequestHeader('user-agent', navigator.userAgent);
+
+                // 监听收藏请求响应
+                favXhr.onload = function() {
+                    updateDiagnosticInfo(favXhr.response); // 打印返回值
+                };
+
+                // 发送收藏请求
+                favXhr.send(data);
+            }, shoucangdelayInMilliseconds);
+        }
+
+
+
+
+
+
+        //*********************************************************************
 
         // 发送请求
         xhr.send(data);
@@ -300,7 +349,7 @@ function submitNextAppeal() {
 
         // 使用 setTimeout 来添加延迟
         setTimeout(() => {
-            submitAppeal(aid, csrfToken, "视频封面标题以及内容违规，推广以原神、碧蓝档案等二次元游戏人物为主角的色情视频，以未成年人为主角的色情游戏，，并在置顶动态以及评论内向站外色情网站引流，严重危害青少年用户的身心健康") // 提交请求
+            submitAppeal(aid, csrfToken, "性暗示意味的封面和标题，视频内容未色情游戏片段，国外色情及性暗示视频剪辑，推广色情游戏及色情漫画等不良软件，视频评论区唱双簧恶意引流黑产。审核结果：下架此视频并永久封禁该账号。") // 提交请求
                 .then(() => {
                     currentAidIndex++;
                     submitNextAppeal(); // 提交下一个AID
@@ -325,7 +374,7 @@ const spaceId = spaceIdMatches ? spaceIdMatches[1] : null;
 
 window.onload = function() {
 
-    modifyRelation();
+    modifyRelation();//自动关注函数，不用可以直接注释掉
     extractAndSubmitAIDs(); // 创建按钮
 
 
