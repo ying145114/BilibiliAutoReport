@@ -81,176 +81,168 @@ def main():
     driver.set_window_position(-850, 775)
 
     driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
-    firstrun = 1
+
 
     try:
         if not uids:
             print("uid.txt 文件中没有可处理的UID，程序退出")
             exit(0)
+
         for uid in uids:
-
-            # 判断代码
-            headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-            }
-            search_url = f"https://api.bilibili.com/x/web-interface/card?mid={uid}"
-
             try:
+                search_url = f'https://api.bilibili.com/x/series/recArchivesByKeywords?mid={uid}&keywords=&ps=0'
+                headers = {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+                }
+
                 response = requests.get(search_url, headers=headers, timeout=(5, 10))
                 response.raise_for_status()
 
-                data = json.loads(response.text)
-                name = data["data"]["card"]["name"]
-                print(f"检查完成，UID:{uid} ,名称: {name}")
+                data = response.json()
+                # print(response.text)
 
-                if name == "账号已注销":
-                    with open(blacklist_file, 'a', encoding='utf-8') as bf:
-                        bf.write(f"\n{uid}")  # 在写入 UID 前添加换行符
+                # 检查返回数据是否包含 archives
+                if 'data' in data and 'archives' in data['data'] and len(data['data']['archives']) > 0:
+                    first_video = data['data']['archives'][0]
+                    aid = first_video.get('aid')
+                    title = first_video.get('title')
+
+                    if aid and title:
+                        print(f"UID:{uid}, 第一个视频 AID: {aid}, 标题: {title}")
+
+                        # 找到 aid 后，打开链接并进行进一步处理
+                        url = f"https://www.bilibili.com/appeal/?avid={aid}"
+                        driver.get(url)
+
+                        element = WebDriverWait(driver, 20, 1).until(
+                            EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[3]/div[2]/textarea'))
+                        )
+                        element.send_keys(
+                            '视频封面标题以及内容违规，推广以原神、碧蓝档案等二次元游戏人物为主角的色情视频')
+                        print('已输入理由')
+
+                        element = WebDriverWait(driver, 20, 1).until(
+                            EC.presence_of_element_located(
+                                (By.XPATH, '/html/body/div/div/div[2]/div[1]/div[2]/div[1]/div'))
+                        )
+                        element.click()  # 选择分类
+                        print('已选择分类')
+
+                        element = WebDriverWait(driver, 20, 1).until(
+                            EC.presence_of_element_located((By.XPATH, '/html/body/div/div/div[5]/div[2]'))
+                        )
+                        element.click()  # 生成验证码
+                        print('已点击确认')
+
+                        time.sleep(4)
+                        while True:
+                            try:
+                                # 等待并获取元素，增加了对超时的处理
+                                try:
+                                    img = WebDriverWait(driver, 20).until(
+                                        EC.presence_of_element_located((By.XPATH, '//*[@class="geetest_item_wrap"]'))
+                                    )
+                                except TimeoutException:
+                                    print("等待验证码超时，程序退出")
+                                    sys.exit(100)  # 超时退出
+                                time.sleep(2)
+                                f = img.get_attribute('style')
+                                print('验证码已出现')
+
+                                url = re.search(r'url\("([^"]+?)\?[^"]*"\);', f).group(1)
+
+                                print(url)
+                                content = requests.get(url).content
+                                plan = captcha.TextSelectCaptcha().run(content)
+                                print(plan)
+
+                                def get_location(target):
+                                    # 获取元素在屏幕上的位置信息
+                                    location = target.location
+                                    size = target.size
+                                    height = size['height']
+                                    width = size['width']
+                                    left = location['x']
+                                    top = location['y']
+                                    right = left + width
+                                    bottom = top + height
+                                    script = f"return {{'left': {left}, 'top': {top}, 'right': {right}, 'bottom': {bottom}}};"
+                                    rect = driver.execute_script(script)
+                                    left_x = int(rect['left'])
+                                    top_y = int(rect['top'])
+                                    return left_x, top_y
+
+                                a, b = get_location(img)
+                                lan_x = 306 / 334
+                                lan_y = 343 / 384
+
+                                for crop in plan:
+                                    x1, y1, x2, y2 = crop
+                                    x, y = [(x1 + x2) / 2, (y1 + y2) / 2]
+                                    print(x, y, "偏移前坐标")
+                                    print(a + x * lan_x, b + y * lan_y, "点击坐标")
+                                    ActionChains(driver).move_by_offset(a + x * lan_x, b + y * lan_y).click().perform()
+                                    print(a + x * lan_x, b + y * lan_y)
+                                    ActionChains(driver).move_by_offset(-(a + x * lan_x),
+                                                                        -(b + y * lan_y)).perform()  # 将鼠标位置恢复到移动前
+                                    time.sleep(0.5)
+
+                                # 执行点击确认按钮的操作
+                                try:
+                                    element = WebDriverWait(driver, 10).until(
+                                        EC.element_to_be_clickable((By.CLASS_NAME, 'geetest_commit_tip')))
+                                    element.click()  # 点击确认按钮
+                                    print('已提交验证码')
+                                except:
+                                    refresh_element = WebDriverWait(driver, 10).until(
+                                        EC.element_to_be_clickable((By.CLASS_NAME, 'geetest_refresh')))
+                                    refresh_element.click()  # 点击刷新验证按钮
+                                    print('已点击刷新按钮')
+
+                                # 等待 'geetest_item_wrap' 元素消失，表示验证码验证成功
+                                try:
+                                    WebDriverWait(driver, 3).until(
+                                        EC.invisibility_of_element_located(
+                                            (By.XPATH, '//*[@class="geetest_item_wrap"]'))
+                                    )
+                                    print('验证码已消失')
+                                    print("验证码验证成功！")
+                                    break  # 成功验证后跳出循环
+                                except Exception as e:
+                                    print(f"发生异常: {e}")
+
+                            except Exception as e:
+                                print(f"发生异常: {e}")
+                                time.sleep(1)  # 等待1秒后重新执行整个过程
+                                sys.exit(100)  # 如果发生异常也退出程序
+                        time.sleep(2)
+                        userurl = f"https://space.bilibili.com/{uid}"
+                        driver.get(userurl)
+                        time.sleep(60)
                         remove_completed_uid(uid)
-                    continue  # 账号已注销，跳过后续操作
-
-            except Exception as e:
-                print(f"获取UID {uid} 的名称时发生错误: {e}")
-                continue  # 如果出现错误，也跳过此UID
-            url = f"https://space.bilibili.com/{uid}/video?tid=0&pn=1&keyword=&order=pubdate"
-            driver.get(url)
-
-            time.sleep(2)
-            screenshot_path = os.path.join('附加文件', '记录', f'{uid}.png')
-            driver.save_screenshot(screenshot_path)
-            print(f"截图已保存为 {screenshot_path}")
-
-            print(f"UID: {uid} 页面已打开")
-            remove_completed_uid(uid)
-            current_window = driver.current_window_handle
-
-            while True:
-                # 等待60秒
-                if firstrun == 1:
-                    print('首次运行，等待1秒')
-                    time.sleep(1)
-                    firstrun = 0
+                        # 处理完成后继续下一个 UID
+                        continue  # 使用 continue 继续下一个 UID
 
                 else:
-                    print('非首次运行，等待58秒')
-                    time.sleep(58)
+                    print(f"UID {uid} 没有找到视频，继续下一个 UID。")
+                    with open(blacklist_file, 'a', encoding='utf-8') as bf:
+                        bf.write(f"\n{uid}")  # 添加到黑名单文件，并在前面加上换行符
+                        remove_completed_uid(uid)
+                    continue  # 找不到任何视频，继续下一个 UID
 
-                # 在当前标签页A中打开新标签页B执行其他任务
-                driver.switch_to.new_window('tab')
-                driver.get("https://www.bilibili.com/appeal/?avid=1205435530")
+            except Exception as e:
+                print(f"获取 UID {uid} 的数据时发生错误: {e}")
+                sys.exit(10086)
+                # continue  # 如果在处理过程中出现异常，继续下一个 UID
 
-                element = WebDriverWait(driver, 20, 1).until(
-                    EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[3]/div[2]/textarea'))
-                )
-                element.send_keys('视频封面标题以及内容违规，推广以原神、碧蓝档案等二次元游戏人物为主角的色情视频')
-                print('已输入理由')
+        # 完成所有操作后关闭浏览器
+        driver.quit()
 
-                element = WebDriverWait(driver, 20, 1).until(
-                    EC.presence_of_element_located(
-                        (By.XPATH, '/html/body/div/div/div[2]/div[1]/div[2]/div[1]/div'))
-                )
-                element.click()  #选择分类
-                print('已选择分类')
 
-                element = WebDriverWait(driver, 20, 1).until(
-                    EC.presence_of_element_located((By.XPATH, '/html/body/div/div/div[5]/div[2]'))
-                )
-                element.click()  # 生成验证码
-                print('已点击确认')
 
-                time.sleep(4)
-                while True:
-                    try:
-                        # 等待并获取元素，增加了对超时的处理
-                        try:
-                            img = WebDriverWait(driver, 20).until(
-                                EC.presence_of_element_located((By.XPATH, '//*[@class="geetest_item_wrap"]'))
-                            )
-                        except TimeoutException:
-                            print("等待验证码超时，程序退出")
-                            sys.exit(100)  # 超时退出
-                        time.sleep(2)
-                        f = img.get_attribute('style')
-                        print('验证码已出现')
 
-                        url = re.search(r'url\("([^"]+?)\?[^"]*"\);', f).group(1)
 
-                        print(url)
-                        content = requests.get(url).content
-                        plan = captcha.TextSelectCaptcha().run(content)
-                        print(plan)
 
-                        def get_location(target):
-                            # 获取元素在屏幕上的位置信息
-                            location = target.location
-                            size = target.size
-                            height = size['height']
-                            width = size['width']
-                            left = location['x']
-                            top = location['y']
-                            right = left + width
-                            bottom = top + height
-                            script = f"return {{'left': {left}, 'top': {top}, 'right': {right}, 'bottom': {bottom}}};"
-                            rect = driver.execute_script(script)
-                            left_x = int(rect['left'])
-                            top_y = int(rect['top'])
-                            return left_x, top_y
-
-                        a, b = get_location(img)
-                        lan_x = 306 / 334
-                        lan_y = 343 / 384
-
-                        for crop in plan:
-                            x1, y1, x2, y2 = crop
-                            x, y = [(x1 + x2) / 2, (y1 + y2) / 2]
-                            print(x, y, "偏移前坐标")
-                            print(a + x * lan_x, b + y * lan_y, "点击坐标")
-                            ActionChains(driver).move_by_offset(a + x * lan_x, b + y * lan_y).click().perform()
-                            print(a + x * lan_x, b + y * lan_y)
-                            ActionChains(driver).move_by_offset(-(a + x * lan_x),
-                                                                -(b + y * lan_y)).perform()  # 将鼠标位置恢复到移动前
-                            time.sleep(0.5)
-
-                        # 执行点击确认按钮的操作
-                        try:
-                            element = WebDriverWait(driver, 10).until(
-                                EC.element_to_be_clickable((By.CLASS_NAME, 'geetest_commit_tip')))
-                            element.click()  # 点击确认按钮
-                            print('已提交验证码')
-                        except:
-                            refresh_element = WebDriverWait(driver, 10).until(
-                                EC.element_to_be_clickable((By.CLASS_NAME, 'geetest_refresh')))
-                            refresh_element.click()  # 点击刷新验证按钮
-                            print('已点击刷新按钮')
-
-                        # 等待 'geetest_item_wrap' 元素消失，表示验证码验证成功
-                        try:
-                            WebDriverWait(driver, 3).until(
-                                EC.invisibility_of_element_located((By.XPATH, '//*[@class="geetest_item_wrap"]'))
-                            )
-                            print('验证码已消失')
-                            print("验证码验证成功！")
-                            break  # 成功验证后跳出循环
-                        except Exception as e:
-                            print(f"发生异常: {e}")
-
-                    except Exception as e:
-                        print(f"发生异常: {e}")
-                        time.sleep(1)  # 等待1秒后重新执行整个过程
-                        sys.exit(100)  # 如果发生异常也退出程序
-                time.sleep(2)
-                driver.close()
-
-                # 切回到之前的窗口或标签页
-                driver.switch_to.window(current_window)
-
-                # 检查当前页面URL是否符合条件
-                current_url = driver.current_url
-                if "bi" in current_url:
-                    print("地址栏中包含 'dynamic'，等待下一个UID")
-
-                    #remove_completed_uid(uid)  # 删除已完成的UID
-                    break
     except Exception as e:
         print(f"发生异常: {e}")
         sys.exit(10086)
