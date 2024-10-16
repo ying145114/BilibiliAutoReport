@@ -177,7 +177,7 @@ function submitAppeal(aid, csrfToken, desc) {
 
             if (xhr.status === 200) {
                 const result = JSON.parse(xhr.responseText);
-                if (result.code === -352) { // 检查返回值是否为-352
+                if (result.code === -999) { // 检查返回值是否为-352
                     showContinueButton(aid);
                     window.open(`https://www.bilibili.com/appeal/?avid=${aid}`, '_blank');
                     reject(`Encountered code -352 for AID ${aid}.`); // 返回拒绝
