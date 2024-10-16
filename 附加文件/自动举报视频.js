@@ -266,41 +266,7 @@ function fuckVideo(aid) {
         const shoucangdelayInMilliseconds = 3500; // 根据需要调整延迟时间
 
         // 仅在第一次、十次、二十次等时执行收藏请求
-        if (reportCount % 10 === 1) { // 每10次的第一条记录
-            setTimeout(() => {
-                const data = new URLSearchParams({
-                    'rid': aid,
-                    'type': '2',
-                    'add_media_ids': fidValue, // 根据实际需求调整3349162143
-                    'del_media_ids': '',
-                    'csrf': csrfValue
-                });
 
-                // 获取当前浏览器的 Cookies
-                const cookies = document.cookie;
-
-                // 创建收藏请求的 XMLHttpRequest 对象
-                const favXhr = new XMLHttpRequest();
-                favXhr.withCredentials = true;
-                favXhr.open('POST', 'https://api.bilibili.com/x/v3/fav/resource/deal');
-
-                // 设置请求头
-                favXhr.setRequestHeader('accept', 'application/json, text/plain, */*');
-                favXhr.setRequestHeader('accept-language', 'zh-CN,zh;q=0.9');
-                favXhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
-                favXhr.setRequestHeader('cookie', cookies);
-                favXhr.setRequestHeader('origin', 'https://www.bilibili.com');
-                favXhr.setRequestHeader('user-agent', navigator.userAgent);
-
-                // 监听收藏请求响应
-                favXhr.onload = function() {
-                    console.log(favXhr.response); // 打印返回值
-                };
-
-                // 发送收藏请求
-                favXhr.send(data);
-            }, shoucangdelayInMilliseconds);
-        }
         // -----------------------------------------------------------------
     };
 
