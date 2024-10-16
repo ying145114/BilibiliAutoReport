@@ -166,42 +166,33 @@ function submitAppeal(aid, csrfToken, desc) {
         xhr.setRequestHeader('accept-language', 'zh-CN,zh;q=0.9');
         xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
 
-        // 获取当前文档的cookie并添加到请求头中，这里可以根据需要调整
-        const cookies = document.cookie;
-        //xhr.setRequestHeader('cookie', cookies);
-
-        // 其他请求头
-      //  xhr.setRequestHeader('origin', 'https://www.bilibili.com');
-      //  xhr.setRequestHeader('referer', 'https://www.bilibili.com/');
-       // xhr.setRequestHeader('sec-ch-ua', '"Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129"');
-       // xhr.setRequestHeader('sec-ch-ua-mobile', '?0');
-       // xhr.setRequestHeader('sec-ch-ua-platform', '"Windows"');
-       // xhr.setRequestHeader('sec-fetch-dest', 'empty');
-       // xhr.setRequestHeader('sec-fetch-mode', 'cors');
-       // xhr.setRequestHeader('sec-fetch-site', 'same-site');
-        //xhr.setRequestHeader('user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36');
+        let timeoutId = setTimeout(() => {
+            console.warn(`请求超时，AID ${aid}，请检查网络连接。`);
+            xhr.abort(); // 取消请求
+            resolve(); // 超时后直接 resolve，跳过错误处理
+        }, 3000); // 设置为3000毫秒（3秒）
 
         xhr.onload = function() {
+            clearTimeout(timeoutId); // 收到响应后清除超时
+
             if (xhr.status === 200) {
                 const result = JSON.parse(xhr.responseText);
-                if (result.code === -111) { // 检查返回值是否为-352
+                if (result.code === -352) { // 检查返回值是否为-352
                     showContinueButton(aid);
-                    // 打开新的标签页
-                    //window.open(`https://www.bilibili.com/appeal/?avid=${aid}`, '_blank');
-                    reject(`Encountered code -352 for AID ${aid}.`);
-                } else {
-                    updateDiagnosticInfo(`举报结果：<strong>${this.response}</strong><br>`);
-                    resolve();
+                    window.open(`https://www.bilibili.com/appeal/?avid=${aid}`, '_blank');
+                    reject(`Encountered code -352 for AID ${aid}.`); // 返回拒绝
                 }
+                // 如果不是-352，不做任何事情
             } else {
-                updateDiagnosticInfo('举报出错：<strong>${this.response}</strong><br>');
-                reject(`Failed to submit appeal for AID ${aid}.`);
+                console.error(`请求返回错误，状态码: ${xhr.status}`);
+                // 无需调用 resolve() 或 reject()
             }
         };
 
         xhr.onerror = function(err) {
-            console.error(`Request failed for AID ${aid}:`, err);
-            reject(`Request failed for AID ${aid}.`);
+            clearTimeout(timeoutId); // 清除超时
+            console.error(`请求失败，AID ${aid}:`, err);
+            // 无需调用 resolve() 或 reject()
         };
 
         // 发送请求
