@@ -20,6 +20,60 @@
 
 
 
+    function modifyRelation() {
+        const currentUrl = window.location.href; // 获取当前URL
+        const midMatch = currentUrl.match(/space\.bilibili\.com\/(\d+)/);
+        const mid = midMatch && midMatch[1] ? midMatch[1] : null;
+
+        if (!mid) {
+            console.error("未找到 mid");
+            return;
+        }
+
+        const xhr = new XMLHttpRequest();
+
+        // 构建数据数组
+        const params = new URLSearchParams();
+        params.append('fid', mid); // 将 fid 替换为 mid
+        params.append('act', '1');
+        params.append('re_src', '11');
+        params.append('gaia_source', 'web_main');
+        params.append('spmid', '333.999.0.0');
+        params.append('extend_content', JSON.stringify({
+            entity: "user",
+            entity_id: mid,
+            fp: "0\\u00012560,,1440\\u0001Win32\\u00014\\u00018\\u000124\\u00011\\u0001zh-CN\\u00010\\u00010,,0,,0\\u0001Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
+        }));
+        params.append('csrf', getCsrf());
+
+        xhr.open("POST", "https://api.bilibili.com/x/relation/modify", true);
+        xhr.setRequestHeader('Accept', '*/*');
+        xhr.setRequestHeader('Accept-Language', 'zh-CN,zh;q=0.9');
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        //xhr.setRequestHeader('Origin', 'https://space.bilibili.com');
+        //xhr.setRequestHeader('Referer', `https://space.bilibili.com/${mid}?spm_id_from=333.1007.tianma.1-1-1.click`);
+        //xhr.setRequestHeader('User-Agent', navigator.userAgent);
+
+        // 从浏览器获取 Cookie
+        xhr.withCredentials = true; // 确保发送凭证（cookie）
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                updateDiagnosticInfo(xhr.responseText);
+            } else if (xhr.readyState === 4) {
+                updateDiagnosticInfo(`请求失败，状态码: ${xhr.status}`);
+            }
+        };
+
+        xhr.send(params.toString()); // 发送参数
+    }
+
+
+
+
+
+
+
     const floatingWindow = document.createElement('div');
 floatingWindow.style.position = 'fixed';
 floatingWindow.style.top = '100px';
@@ -254,7 +308,7 @@ function submitNextAppeal() {
                 .catch(err => {
                     console.error(err);
                 });
-        }, 20); // 延迟2000毫秒
+        }, 30); // 延迟2000毫秒
     } else {
         updateDiagnosticInfo('<strong style="font-size: 2em">本页全部举报成功</strong><br>');
       const spaceIdMatches = window.location.href.match(/space\.bilibili\.com\/(\d+)(\/|\?|$)/);
@@ -271,8 +325,9 @@ const spaceId = spaceIdMatches ? spaceIdMatches[1] : null;
 
 window.onload = function() {
 
-
+    modifyRelation();
     extractAndSubmitAIDs(); // 创建按钮
+
 
 };
 
