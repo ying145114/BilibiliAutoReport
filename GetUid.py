@@ -4,7 +4,6 @@ import sys
 import time
 import subprocess
 from urllib.parse import urlencode
-
 import requests
 from bs4 import BeautifulSoup
 
