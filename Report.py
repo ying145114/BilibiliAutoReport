@@ -13,7 +13,7 @@ from src import captcha
 import os
 
 
-skip = 3
+skip = 5
 proxies = {
     'http': None,
     'https': None
@@ -117,7 +117,7 @@ def main():
 
                         # 找到 aid 后，打开链接并进行进一步处理
                         global skip
-                        if skip == 3:
+                        if skip == 5:
                             print("不跳过人机验证")
                             url = f"https://www.bilibili.com/appeal/?avid={aid}"
                             driver.get(url)
@@ -235,8 +235,8 @@ def main():
                         print(f"打开UID:{uid}")
                         userurl = f"https://space.bilibili.com/{uid}"
                         driver.get(userurl)
-                        time.sleep(15)
-                        print(f"等待15秒")
+                        time.sleep(10)
+                        print(f"等待10秒")
                         remove_completed_uid(uid)
                         # 处理完成后继续下一个 UID
                         continue  # 使用 continue 继续下一个 UID
