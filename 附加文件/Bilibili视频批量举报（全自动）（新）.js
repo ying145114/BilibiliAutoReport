@@ -21,7 +21,7 @@
 
 
     function sendReportRequest() {
-  const mid = window.location.href.match(/bilibili.com\/(\d+)\/video/)[1];
+  const mid = window.location.href.match(/bilibili.com\/(\d+)/)[1];
   const csrf = getCsrf();
   const xhr = new XMLHttpRequest();
   xhr.open("POST", 'https://space.bilibili.com/ajax/report/add', true);
