@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         BiliBili专栏批量举报（全自动）
+// @name         BiliBili专栏批量举报
 // @namespace    https://github.com/ayyayyayy2002/BilibiliArticleBatchReport
 // @version      0.0.1
 // @description  DEMO
@@ -174,8 +174,8 @@ function updateDiagnosticInfo(content) {
         const csrfToken = getCsrf();
         const data = new URLSearchParams({
             'aid': aid, // 使用传入的 aid 值
-            'cid': '4',
-            'reason': '色情游戏及其他色情内容推广，站外色情内容引流',
+            'cid': '1',
+            'reason': '侮辱国家领导人，宣扬台独反华内容。审核结果：下架此视频并永久封禁该账号',
             'images': '',
             'csrf': csrfToken
         });

@@ -229,7 +229,7 @@ function submitAppeal(aid, csrfToken, desc) {
             'block_author': 'false',
             'csrf': csrfToken,
             'desc': desc,
-            'tid': '10022' //10014
+            'tid': '10014' //10014
         }).toString();
 
         // 创建新的 XMLHttpRequest 对象
@@ -371,7 +371,7 @@ function submitNextAppeal() {
 
         // 使用 setTimeout 来添加延迟
         setTimeout(() => {
-            submitAppeal(aid, csrfToken, "具有性暗示的封面和标题，视频内容为国外擦边视频、二次元同人色情视频剪辑、色情游戏录屏，并在评论区向站外色情内容引流") // 提交请求    侮辱国家领导人，宣扬台独反华内容。审核结果：下架此视频并永久封禁该账号。
+            submitAppeal(aid, csrfToken, "侮辱国家领导人，宣扬台独反华内容。审核结果：下架此视频并永久封禁该账号") // 提交请求    。
                 .then(() => {
                     currentAidIndex++;
                     submitNextAppeal(); // 提交下一个AID

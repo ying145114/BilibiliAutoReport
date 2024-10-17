@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         BiliBili动态批量举报（全自动）
+// @name         BiliBili动态批量举报
 // @namespace    https://github.com/ayyayyayy2002/BlibiliDynamicBatchReport
 // @version      0.0.3
 // @description  以“垃圾广告”理由举报指定账号的所有动态
@@ -183,7 +183,7 @@ async function reportAllDynamic() {
 function reportDynamic(uid, dyid) {
     const csrf = getCsrf();
     //const url = `https://api.bilibili.com/x/v2/reply/report?type=0&oid=${oid}&rpid=${rpid}&reason=1&content=&add_blacklist=false&ordering=heat&gaia_source=main_web&csrf=${csrf}`;
-    const url = `https://api.bilibili.com/x/dynamic/feed/dynamic_report/add?accused_uid=${uid}&dynamic_id=${dyid}&reason_type=0&reason_desc=在动态发布色情游戏和视频漫画，在置顶动态进行引流到QQ群，并由加密工具分享色情内容链接&csrf=${csrf}`;
+    const url = `https://api.bilibili.com/x/dynamic/feed/dynamic_report/add?accused_uid=${uid}&dynamic_id=${dyid}&reason_type=9&reason_desc=侮辱国家领导人，宣扬台独反华内容。审核结果：下架此视频并永久封禁该账号&csrf=${csrf}`;
 
 
     GM.xmlHttpRequest({
