@@ -11,7 +11,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 import requests
 from src import captcha
 import os
-import json
+
 
 
 def remove_completed_uid(uid):
@@ -24,9 +24,9 @@ def remove_completed_uid(uid):
                 if line.strip() != uid:
                     f.write(line)
 
-        print(f"已删除已完成的UID: {uid}")
+        print(f"删除UID: {uid}")
     except Exception as e:
-        print(f"删除已完成的UID时发生错误: {e}")
+        print(f"删除UID时发生错误: {e}")
 
 
 def read_uid_list(filename):
@@ -53,15 +53,15 @@ def set_chrome_options(user_data_dir=None, chrome_binary_path=None):
         options.binary_location = chrome_binary_path  # 指定 Chrome 浏览器的可执行文件路径
     return options
 
-
+skip = 0
 def main():
     uids = read_uid_list('附加文件/uid.txt')  # 从 uid.txt 中读取 uid 列表
 
     base_dir = os.path.dirname(os.path.abspath(__file__))
 
-    print('设置用户数据目录')
+    #print('设置用户数据目录')
     user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')  # 使用相对路径
-    print('设置 Chrome 可执行文件路径')
+    #print('设置 Chrome 可执行文件路径')
     chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')  # 使用相对路径
     blacklist_file = os.path.join(base_dir, '云端文件', 'blacklist.txt')  # black_list在云端文件文件夹下
 
@@ -69,7 +69,7 @@ def main():
     chrome_driver_path = os.path.join(base_dir, '附加文件', 'chromedriver.exe')  # 使用相对路径
 
     options = set_chrome_options(user_data_dir, chrome_binary_path)
-    print('启动浏览器')
+    #print('启动浏览器')
 
     # 使用 Service 来指定 ChromeDriver 的路径
     service = Service(executable_path=chrome_driver_path)
@@ -78,7 +78,7 @@ def main():
     # 设置浏览器窗口大小（宽度, 高度）
     driver.set_window_size(1000, 700)
     # 设置浏览器窗口位置（x, y）
-    driver.set_window_position(-850, 775)
+    driver.set_window_position(-850, 1355)
 
     driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
@@ -111,117 +111,131 @@ def main():
                         print(f"UID:{uid}, 第一个视频 AID: {aid}, 标题: {title}")
 
                         # 找到 aid 后，打开链接并进行进一步处理
-                        url = f"https://www.bilibili.com/appeal/?avid={aid}"
-                        driver.get(url)
+                        global skip
+                        if skip == 0:
+                            print("不跳过人机验证")
+                            url = f"https://www.bilibili.com/appeal/?avid={aid}"
+                            driver.get(url)
 
-                        element = WebDriverWait(driver, 20, 1).until(
-                            EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[3]/div[2]/textarea'))
-                        )
-                        element.send_keys(
-                            '视频封面标题以及内容违规，推广以原神、碧蓝档案等二次元游戏人物为主角的色情视频')
-                        print('已输入理由')
+                            element = WebDriverWait(driver, 20, 1).until(
+                                EC.presence_of_element_located(
+                                    (By.XPATH, '/html/body/div[1]/div/div[3]/div[2]/textarea'))
+                            )
+                            element.send_keys(
+                                '视频封面标题以及内容违规，推广以原神、碧蓝档案等二次元游戏人物为主角的色情视频')
+                            #print('已输入理由')
 
-                        element = WebDriverWait(driver, 20, 1).until(
-                            EC.presence_of_element_located(
-                                (By.XPATH, '/html/body/div/div/div[2]/div[1]/div[2]/div[1]/div'))
-                        )
-                        element.click()  # 选择分类
-                        print('已选择分类')
+                            element = WebDriverWait(driver, 20, 1).until(
+                                EC.presence_of_element_located(
+                                    (By.XPATH, '/html/body/div/div/div[2]/div[1]/div[2]/div[1]/div'))
+                            )
+                            element.click()  # 选择分类
+                            #print('已选择分类')
 
-                        element = WebDriverWait(driver, 20, 1).until(
-                            EC.presence_of_element_located((By.XPATH, '/html/body/div/div/div[5]/div[2]'))
-                        )
-                        element.click()  # 生成验证码
-                        print('已点击确认')
+                            element = WebDriverWait(driver, 20, 1).until(
+                                EC.presence_of_element_located((By.XPATH, '/html/body/div/div/div[5]/div[2]'))
+                            )
+                            element.click()  # 生成验证码
+                            #print('已点击确认')
 
-                        time.sleep(4)
-                        while True:
-                            try:
-                                # 等待并获取元素，增加了对超时的处理
+                            time.sleep(4)
+                            while True:
                                 try:
-                                    img = WebDriverWait(driver, 20).until(
-                                        EC.presence_of_element_located((By.XPATH, '//*[@class="geetest_item_wrap"]'))
-                                    )
-                                except TimeoutException:
-                                    print("等待验证码超时，程序退出")
-                                    sys.exit(100)  # 超时退出
-                                time.sleep(2)
-                                f = img.get_attribute('style')
-                                print('验证码已出现')
+                                    # 等待并获取元素，增加了对超时的处理
+                                    try:
+                                        img = WebDriverWait(driver, 20).until(
+                                            EC.presence_of_element_located(
+                                                (By.XPATH, '//*[@class="geetest_item_wrap"]'))
+                                        )
+                                    except TimeoutException:
+                                        print("等待验证码超时，程序退出")
+                                        sys.exit(100)  # 超时退出
+                                    time.sleep(2)
+                                    f = img.get_attribute('style')
+                                    print('验证码已出现')
 
-                                url = re.search(r'url\("([^"]+?)\?[^"]*"\);', f).group(1)
+                                    url = re.search(r'url\("([^"]+?)\?[^"]*"\);', f).group(1)
 
-                                print(url)
-                                content = requests.get(url).content
-                                plan = captcha.TextSelectCaptcha().run(content)
-                                print(plan)
+                                    print(url)
+                                    content = requests.get(url).content
+                                    plan = captcha.TextSelectCaptcha().run(content)
+                                    print(plan)
 
-                                def get_location(target):
-                                    # 获取元素在屏幕上的位置信息
-                                    location = target.location
-                                    size = target.size
-                                    height = size['height']
-                                    width = size['width']
-                                    left = location['x']
-                                    top = location['y']
-                                    right = left + width
-                                    bottom = top + height
-                                    script = f"return {{'left': {left}, 'top': {top}, 'right': {right}, 'bottom': {bottom}}};"
-                                    rect = driver.execute_script(script)
-                                    left_x = int(rect['left'])
-                                    top_y = int(rect['top'])
-                                    return left_x, top_y
+                                    def get_location(target):
+                                        # 获取元素在屏幕上的位置信息
+                                        location = target.location
+                                        size = target.size
+                                        height = size['height']
+                                        width = size['width']
+                                        left = location['x']
+                                        top = location['y']
+                                        right = left + width
+                                        bottom = top + height
+                                        script = f"return {{'left': {left}, 'top': {top}, 'right': {right}, 'bottom': {bottom}}};"
+                                        rect = driver.execute_script(script)
+                                        left_x = int(rect['left'])
+                                        top_y = int(rect['top'])
+                                        return left_x, top_y
 
-                                a, b = get_location(img)
-                                lan_x = 306 / 334
-                                lan_y = 343 / 384
+                                    a, b = get_location(img)
+                                    lan_x = 306 / 334
+                                    lan_y = 343 / 384
 
-                                for crop in plan:
-                                    x1, y1, x2, y2 = crop
-                                    x, y = [(x1 + x2) / 2, (y1 + y2) / 2]
-                                    print(x, y, "偏移前坐标")
-                                    print(a + x * lan_x, b + y * lan_y, "点击坐标")
-                                    ActionChains(driver).move_by_offset(a + x * lan_x, b + y * lan_y).click().perform()
-                                    print(a + x * lan_x, b + y * lan_y)
-                                    ActionChains(driver).move_by_offset(-(a + x * lan_x),
-                                                                        -(b + y * lan_y)).perform()  # 将鼠标位置恢复到移动前
-                                    time.sleep(0.5)
+                                    for crop in plan:
+                                        x1, y1, x2, y2 = crop
+                                        x, y = [(x1 + x2) / 2, (y1 + y2) / 2]
+                                        #print(x, y, "偏移前坐标")
+                                        print(a + x * lan_x, b + y * lan_y, "点击坐标")
+                                        ActionChains(driver).move_by_offset(a + x * lan_x,
+                                                                            b + y * lan_y).click().perform()
+                                        ActionChains(driver).move_by_offset(-(a + x * lan_x),
+                                                                            -(b + y * lan_y)).perform()  # 将鼠标位置恢复到移动前
+                                        time.sleep(0.5)
 
-                                # 执行点击确认按钮的操作
-                                try:
-                                    element = WebDriverWait(driver, 10).until(
-                                        EC.element_to_be_clickable((By.CLASS_NAME, 'geetest_commit_tip')))
-                                    element.click()  # 点击确认按钮
-                                    print('已提交验证码')
-                                except:
-                                    refresh_element = WebDriverWait(driver, 10).until(
-                                        EC.element_to_be_clickable((By.CLASS_NAME, 'geetest_refresh')))
-                                    refresh_element.click()  # 点击刷新验证按钮
-                                    print('已点击刷新按钮')
+                                    # 执行点击确认按钮的操作
+                                    try:
+                                        element = WebDriverWait(driver, 10).until(
+                                            EC.element_to_be_clickable((By.CLASS_NAME, 'geetest_commit_tip')))
+                                        element.click()  # 点击确认按钮
+                                        #print('已提交验证码')
+                                    except:
+                                        refresh_element = WebDriverWait(driver, 10).until(
+                                            EC.element_to_be_clickable((By.CLASS_NAME, 'geetest_refresh')))
+                                        refresh_element.click()  # 点击刷新验证按钮
+                                        print('已点击刷新按钮')
 
-                                # 等待 'geetest_item_wrap' 元素消失，表示验证码验证成功
-                                try:
-                                    WebDriverWait(driver, 3).until(
-                                        EC.invisibility_of_element_located(
-                                            (By.XPATH, '//*[@class="geetest_item_wrap"]'))
-                                    )
-                                    print('验证码已消失')
-                                    print("验证码验证成功！")
-                                    break  # 成功验证后跳出循环
+                                    # 等待 'geetest_item_wrap' 元素消失，表示验证码验证成功
+                                    try:
+                                        WebDriverWait(driver, 3).until(
+                                            EC.invisibility_of_element_located(
+                                                (By.XPATH, '//*[@class="geetest_item_wrap"]'))
+                                        )
+                                        #print('验证码已消失')
+                                        print("验证码验证成功！")
+                                        break  # 成功验证后跳出循环
+                                    except Exception as e:
+                                        print(f"验证码验证失败！")
+
                                 except Exception as e:
                                     print(f"发生异常: {e}")
+                                    time.sleep(1)  # 等待1秒后重新执行整个过程
+                                    sys.exit(100)  # 如果发生异常也退出程序
+                            time.sleep(2)
+                            skip=1
+                            # 此处可以插入处理数据的代码
+                        else:
+                            print("跳过人机验证")
+                            skip=0
 
-                            except Exception as e:
-                                print(f"发生异常: {e}")
-                                time.sleep(1)  # 等待1秒后重新执行整个过程
-                                sys.exit(100)  # 如果发生异常也退出程序
-                        time.sleep(2)
+                        print(f"打开UID:{uid}")
                         userurl = f"https://space.bilibili.com/{uid}"
                         driver.get(userurl)
-                        time.sleep(60)
+                        time.sleep(29)
+                        print(f"等待29秒")
                         remove_completed_uid(uid)
                         # 处理完成后继续下一个 UID
                         continue  # 使用 continue 继续下一个 UID
+
 
                 else:
                     print(f"UID {uid} 没有找到视频，继续下一个 UID。")
