@@ -26,6 +26,8 @@ def main():
     chrome_driver_path = os.path.join(base_dir, '附加文件', 'chromedriver.exe')  # 使用相对路径
 
     options = set_chrome_options(user_data_dir, chrome_binary_path)
+    options.add_argument('--proxy-server="direct://"')
+    options.add_argument('--proxy-bypass-list=*')
     print('启动浏览器')
 
     # 使用 Service 来指定 ChromeDriver 的路径

@@ -74,7 +74,8 @@ def main():
 
     options = set_chrome_options(user_data_dir, chrome_binary_path)
     #print('启动浏览器')
-
+    options.add_argument('--proxy-server="direct://"')
+    options.add_argument('--proxy-bypass-list=*')
     # 使用 Service 来指定 ChromeDriver 的路径
     service = Service(executable_path=chrome_driver_path)
     driver = webdriver.Chrome(service=service, options=options)
