@@ -1,22 +1,21 @@
 // ==UserScript==
-// @name         BiliBli动态批量举报（全自动）
+// @name         BiliBili动态批量举报（全自动）
 // @namespace    https://github.com/ayyayyayy2002/BlibiliDynamicBatchReport
-// @version      0.0.1
-// @description  以“其他”理由举报目标的前十三个动态
+// @version      0.0.3
+// @description  以“垃圾广告”理由举报指定账号的所有动态
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_xmlhttpRequest
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
-// @author       You
 // @connect      api.bilibili.com
-// @connect      www.bilibili.com
+// @author       You
 // @match        https://space.bilibili.com/*/dynamic
 // @icon         https://i2.hdslb.com/bfs/app/8920e6741fc2808cce5b81bc27abdbda291655d3.png@240w_240h_1c_1s_!web-avatar-space-header.avif
 // @grant        GM.xmlHttpRequest
 
-// @downloadURL https://update.greasyfork.org/scripts/506056/BiliBli%E5%8A%A8%E6%80%81%E6%89%B9%E9%87%8F%E4%B8%BE%E6%8A%A5.user.js
-// @updateURL https://update.greasyfork.org/scripts/506056/BiliBli%E5%8A%A8%E6%80%81%E6%89%B9%E9%87%8F%E4%B8%BE%E6%8A%A5.meta.js
+// @downloadURL https://update.greasyfork.org/scripts/506056/BiliBili%E5%8A%A8%E6%80%81%E6%89%B9%E9%87%8F%E4%B8%BE%E6%8A%A5.user.js
+// @updateURL https://update.greasyfork.org/scripts/506056/BiliBili%E5%8A%A8%E6%80%81%E6%89%B9%E9%87%8F%E4%B8%BE%E6%8A%A5.meta.js
 // ==/UserScript==
 
 // 创建用于显示诊断信息的窗口
@@ -77,8 +76,7 @@ function getUid() {
         return match ? match[1] : null; // 返回UID或null
     }
 
-
-function getAllDynamic() {
+function getAllDynamic(offset = '') {
     const uid = getUid();
     updateDiagnosticInfo('提取的UID:', uid);
     updateDiagnosticInfo("getAllDynamic function called\n");
@@ -87,7 +85,7 @@ function getAllDynamic() {
     return new Promise((resolve, reject) => {
         GM.xmlHttpRequest({
             method: "GET",
-            url: `https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/all?host_mid=${uid}`,
+            url: `https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/all?host_mid=${uid}&offset=${offset}`,
             headers: {
                 'Cookie': document.cookie
             },
@@ -96,11 +94,13 @@ function getAllDynamic() {
                     // 解析 JSON 响应
                     var jsonResponse = JSON.parse(response.responseText);
 
+                    // 打印完整的响应对象
+                    console.log('完整的响应对象:', jsonResponse);
+
                     // 提取所有的 id_str
                     let idStrArray = [];
 
                     if (jsonResponse && jsonResponse.data && jsonResponse.data.items) {
-                        // 假设 id_str 在 items 的某个嵌套结构中
                         jsonResponse.data.items.forEach(item => {
                             if (item && item.id_str) {
                                 idStrArray.push(item.id_str);
@@ -108,10 +108,17 @@ function getAllDynamic() {
                         });
                     }
 
+                    // 提取 offset 值
+                    const nextOffset = jsonResponse.data.offset;
+
                     // 打印所有的 id_str 到控制台
                     console.log('提取的 id_str:', idStrArray);
 
-                    resolve(idStrArray); // 使用 resolve 将结果传递出去
+                    // 打印 offset 到控制台
+                    console.log('提取的 offset:', nextOffset);
+
+                    // 返回提取的 id 和 offset
+                    resolve({ ids: idStrArray, nextOffset: nextOffset }); // 确保这里是 nextOffset
                 } catch (error) {
                     console.error('解析响应失败:', error);
                     reject(error);
@@ -125,28 +132,43 @@ function getAllDynamic() {
     });
 }
 
-
-
 // 在 reportAllComment 函数中，使用 async/await 来处理异步操作
 async function reportAllDynamic() {
     const uid = getUid();
-    try {
-        const dyids = await getAllDynamic(); // 使用 await 来等待 getAllDynamic 的 Promise 结果
-        let index = 0;
-        const interval = 2500;
+    let offset = ''; // 初始化 offset
 
-        function sendReportRequest() {
-            if (index < dyids.length) { // 修改此处，使用 dyids
-                reportDynamic(uid, dyids[index]); // 修改此处，使用 dyids
-                index++;
-                setTimeout(sendReportRequest, interval);
+    while (true) { // 循环处理请求
+        try {
+            const result = await getAllDynamic(offset); // 使用 await 来等待 getAllDynamic 的 Promise 结果
+            const dyids = result.ids; // 当前请求的动态 ID
+            offset = result.nextOffset; // 更新 offset
+
+            // 如果没有动态 ID，跳出循环
+            if (dyids.length === 0) {
+                break;
             }
-        }
 
-        // 调用sendReportRequest函数
-        sendReportRequest();
-    } catch (error) {
-        updateDiagnosticInfo("Error occurred while getting dyids:", error + '\n'); // 修改错误提示
+            let index = 0;
+            const interval = 30;// 延迟
+
+            function sendReportRequest() {
+                if (index < dyids.length) { // 修改此处，使用 dyids
+                    reportDynamic(uid, dyids[index]); // 修改此处，使用 dyids
+                    index++;
+                    setTimeout(sendReportRequest, interval);
+                }
+            }
+
+            // 调用sendReportRequest函数
+            sendReportRequest();
+
+            // 等待当前请求全部处理完成，您可以考虑使用其他方法来确保 sentReportRequest 完成后再继续，例如使用 Promise.all 等
+            await new Promise(resolve => setTimeout(resolve, dyids.length * interval)); // 简单的等待方式，根据需求调整
+
+        } catch (error) {
+            updateDiagnosticInfo("Error occurred while getting dyids:", error + '\n'); // 修改错误提示
+            break; // 出现错误时退出循环
+        }
     }
 }
 
@@ -155,6 +177,27 @@ async function reportAllDynamic() {
 
 
 
+
+
+
+function reportDynamic(uid, dyid) {
+    const csrf = getCsrf();
+    //const url = `https://api.bilibili.com/x/v2/reply/report?type=0&oid=${oid}&rpid=${rpid}&reason=1&content=&add_blacklist=false&ordering=heat&gaia_source=main_web&csrf=${csrf}`;
+    const url = `https://api.bilibili.com/x/dynamic/feed/dynamic_report/add?accused_uid=${uid}&dynamic_id=${dyid}&reason_type=0&reason_desc=在动态发布色情游戏和视频漫画，在置顶动态进行引流到QQ群，并由加密工具分享色情内容链接&csrf=${csrf}`;
+
+
+    GM.xmlHttpRequest({
+        method: "POST",
+        url: url,
+        headers: {
+            'Cookie': document.cookie // Pass the cookies from the page to the request
+        },
+        responseType: "text",
+        onload: function(response) {
+            updateDiagnosticInfo(response.responseText+'\n');
+        }
+    });
+}
 
 
 let csrfText = '';
@@ -167,41 +210,6 @@ function getCsrf() {
     }
     return csrfText;
 }
-function reportDynamic(uid, dyid) {
-    const reason = '在动态发布色情游戏和视频漫画，在置顶动态进行引流到QQ群，并由加密工具分享色情内容链接';
-    const csrf = getCsrf();
-    const url = 'https://api.bilibili.com/x/dynamic/feed/dynamic_report/add';
-
-    // 创建 XMLHttpRequest 对象
-    const xhr = new XMLHttpRequest();
-
-    // 配置请求
-    xhr.open("POST", url, true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); // 设置请求头
-    xhr.withCredentials = true; // 允许发送 cookies
-
-    // 处理响应
-    xhr.onload = function() {
-        if (xhr.status >= 200 && xhr.status < 300) {
-            updateDiagnosticInfo(xhr.responseText + '\n');
-        } else {
-            console.error("请求失败，状态码:", xhr.status);
-        }
-    };
-
-    xhr.onerror = function() {
-        console.error("请求错误");
-    };
-
-    // 构建请求体
-    const body = `accused_uid=${uid}&dynamic_id=${dyid}&reason_type=0&reason_desc=${encodeURIComponent(reason)}&csrf=${csrf}`;
-
-    // 发送请求
-    xhr.send(body); // 在这里发送请求体
-}
-
-
-
 
 
 
@@ -210,7 +218,6 @@ function reportDynamic(uid, dyid) {
 
 
 window.onload = function() {
-    addButton();
     reportAllDynamic();
 
 

@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         BiliBili专栏批量举报
+// @name         BiliBili专栏批量举报（全自动）
 // @namespace    https://github.com/ayyayyayy2002/BilibiliArticleBatchReport
 // @version      0.0.1
 // @description  DEMO
@@ -69,7 +69,7 @@ function updateDiagnosticInfo(content) {
                 setTimeout(() => {
                     console.log(`Waiting 3500ms before processing the next ID...`); // 等待提示
                     processNext(); // 继续处理下一个
-                }, 3500);
+                }, 30); //延迟
             } else {
                 currentPage++;
                 getAid(currentPage); // 处理完毕后请求下一页
@@ -173,8 +173,8 @@ function updateDiagnosticInfo(content) {
         reportCount++
         const csrfToken = getCsrf();
         const data = new URLSearchParams({
-            'aid': aid,  // 使用传入的 aid 值
-            'cid': '9',
+            'aid': aid, // 使用传入的 aid 值
+            'cid': '4',
             'reason': '色情游戏及其他色情内容推广，站外色情内容引流',
             'images': '',
             'csrf': csrfToken

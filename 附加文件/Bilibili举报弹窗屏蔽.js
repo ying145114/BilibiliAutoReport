@@ -1,10 +1,11 @@
 // ==UserScript==
-// @name         阻止弹窗
+// @name         Bilibili举报弹窗屏蔽
 // @namespace    http://tampermonkey.net/
 // @version      0.1
 // @description  用于阻止举报成功后的弹窗，使脚本正常运行
 // @author       You
-// @match        *://*/*
+// @match        https://www.bilibili.com/*
+// @icon         https://i2.hdslb.com/bfs/app/8920e6741fc2808cce5b81bc27abdbda291655d3.png@240w_240h_1c_1s_!web-avatar-space-header.avif
 // @grant        none
 // ==/UserScript==
 

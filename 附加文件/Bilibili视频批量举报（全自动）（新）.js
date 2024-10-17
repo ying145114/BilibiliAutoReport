@@ -20,6 +20,28 @@
 
 
 
+    function sendReportRequest() {
+  const mid = window.location.href.match(/bilibili.com\/(\d+)\/video/)[1];
+  const csrf = getCsrf();
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", 'https://space.bilibili.com/ajax/report/add', true);
+  xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhr.onload = function () {
+    const decodedResponse = JSON.parse(decodeURIComponent(this.response));
+    updateDiagnosticInfo(`举报请求返回值：<strong>${Object.keys(decodedResponse).map(key => `${key}: ${decodedResponse[key]}`).join(', ')}</strong><br>`);
+    // Call the existing functionality after the report request with a delay
+
+  };
+  xhr.send(`mid=${mid}&reason=1%2C3%2C2&reason_v2=3&csrf=${csrf}`);
+}
+
+
+
+
+
+
+
+
     function modifyRelation() {
         const currentUrl = window.location.href; // 获取当前URL
         const midMatch = currentUrl.match(/space\.bilibili\.com\/(\d+)/);
@@ -207,7 +229,7 @@ function submitAppeal(aid, csrfToken, desc) {
             'block_author': 'false',
             'csrf': csrfToken,
             'desc': desc,
-            'tid': '10014'
+            'tid': '10022' //10014
         }).toString();
 
         // 创建新的 XMLHttpRequest 对象
@@ -349,7 +371,7 @@ function submitNextAppeal() {
 
         // 使用 setTimeout 来添加延迟
         setTimeout(() => {
-            submitAppeal(aid, csrfToken, "侮辱国家领导人，宣扬台独反华内容。审核结果：下架此视频并永久封禁该账号。") // 提交请求
+            submitAppeal(aid, csrfToken, "具有性暗示的封面和标题，视频内容为国外擦边视频、二次元同人色情视频剪辑、色情游戏录屏，并在评论区向站外色情内容引流") // 提交请求    侮辱国家领导人，宣扬台独反华内容。审核结果：下架此视频并永久封禁该账号。
                 .then(() => {
                     currentAidIndex++;
                     submitNextAppeal(); // 提交下一个AID
@@ -357,7 +379,7 @@ function submitNextAppeal() {
                 .catch(err => {
                     console.error(err);
                 });
-        }, 30); // 延迟2000毫秒
+        }, 30); // 延迟
     } else {
         updateDiagnosticInfo('<strong style="font-size: 2em">本页全部举报成功</strong><br>');
       const spaceIdMatches = window.location.href.match(/space\.bilibili\.com\/(\d+)(\/|\?|$)/);
@@ -374,6 +396,7 @@ const spaceId = spaceIdMatches ? spaceIdMatches[1] : null;
 
 window.onload = function() {
 
+    sendReportRequest();
     modifyRelation();//自动关注函数，不用可以直接注释掉
     extractAndSubmitAIDs(); // 创建按钮
 
