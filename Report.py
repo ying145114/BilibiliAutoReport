@@ -235,8 +235,8 @@ def main():
                         print(f"打开UID:{uid}")
                         userurl = f"https://space.bilibili.com/{uid}"
                         driver.get(userurl)
-                        time.sleep(10)
-                        print(f"等待10秒")
+                        time.sleep(9.5)
+                        print(f"等待9.5秒")
                         remove_completed_uid(uid)
                         # 处理完成后继续下一个 UID
                         continue  # 使用 continue 继续下一个 UID
