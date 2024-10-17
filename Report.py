@@ -13,7 +13,11 @@ from src import captcha
 import os
 
 
-
+skip = 3
+proxies = {
+    'http': None,
+    'https': None
+}
 def remove_completed_uid(uid):
     try:
         with open('附加文件/uid.txt', 'r', encoding='utf-8') as f:
@@ -53,7 +57,7 @@ def set_chrome_options(user_data_dir=None, chrome_binary_path=None):
         options.binary_location = chrome_binary_path  # 指定 Chrome 浏览器的可执行文件路径
     return options
 
-skip = 0
+
 def main():
     uids = read_uid_list('附加文件/uid.txt')  # 从 uid.txt 中读取 uid 列表
 
@@ -95,7 +99,7 @@ def main():
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
                 }
 
-                response = requests.get(search_url, headers=headers, timeout=(5, 10))
+                response = requests.get(search_url, headers=headers, proxies=proxies, timeout=(5, 10))
                 response.raise_for_status()
 
                 data = response.json()
@@ -112,7 +116,7 @@ def main():
 
                         # 找到 aid 后，打开链接并进行进一步处理
                         global skip
-                        if skip == 0:
+                        if skip == 3:
                             print("不跳过人机验证")
                             url = f"https://www.bilibili.com/appeal/?avid={aid}"
                             driver.get(url)
@@ -157,7 +161,7 @@ def main():
                                     url = re.search(r'url\("([^"]+?)\?[^"]*"\);', f).group(1)
 
                                     print(url)
-                                    content = requests.get(url).content
+                                    content = requests.get(url, proxies=proxies).content
                                     plan = captcha.TextSelectCaptcha().run(content)
                                     print(plan)
 
@@ -221,17 +225,17 @@ def main():
                                     time.sleep(1)  # 等待1秒后重新执行整个过程
                                     sys.exit(100)  # 如果发生异常也退出程序
                             time.sleep(2)
-                            skip=1
+                            skip=0
                             # 此处可以插入处理数据的代码
                         else:
                             print("跳过人机验证")
-                            skip=0
+                            skip=skip+1
 
                         print(f"打开UID:{uid}")
                         userurl = f"https://space.bilibili.com/{uid}"
                         driver.get(userurl)
-                        time.sleep(29)
-                        print(f"等待29秒")
+                        time.sleep(15)
+                        print(f"等待15秒")
                         remove_completed_uid(uid)
                         # 处理完成后继续下一个 UID
                         continue  # 使用 continue 继续下一个 UID

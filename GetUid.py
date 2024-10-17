@@ -8,14 +8,17 @@ from urllib.parse import urlencode
 import requests
 from bs4 import BeautifulSoup
 
-
+proxies = {
+    'http': None,
+    'https': None
+}
 # 定义获取关键词的函数
 def fetch_keywords():
     keywords_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/云端文件/keyword.txt'  # 替换为实际的GitHub URL
     keywords_filename = '附加文件/keyword.txt'
 
     try:
-        response = requests.get(keywords_url, timeout=(5, 10))
+        response = requests.get(keywords_url, proxies=proxies, timeout=(5, 10))
         if response.status_code == 200:
             with open(keywords_filename, 'wb') as f_out:
                 f_out.write(response.content)
@@ -85,7 +88,7 @@ def search_and_extract_uid(keyword):
         }
 
         # 发起HTTP GET请求获取搜索结果页面内容
-        response = requests.get(search_url1, headers=headers, timeout=(5, 10))
+        response = requests.get(search_url1, headers=headers, proxies=proxies, timeout=(5, 10))
         response.raise_for_status()  # 检查请求是否成功
 
         # 使用BeautifulSoup加载HTML内容
@@ -106,7 +109,7 @@ def search_and_extract_uid(keyword):
 
         # 将UID列表传递给处理函数（这里假设是process_uid_list函数）
         process_uid_list(keyword, uid_list)
-        response = requests.get(search_url2, headers=headers, timeout=(5, 10))
+        response = requests.get(search_url2, headers=headers, proxies=proxies, timeout=(5, 10))
         response.raise_for_status()  # 检查请求是否成功
 
         # 使用BeautifulSoup加载HTML内容
