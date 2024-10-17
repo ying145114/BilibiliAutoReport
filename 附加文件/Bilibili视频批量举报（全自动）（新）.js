@@ -396,9 +396,10 @@ const spaceId = spaceIdMatches ? spaceIdMatches[1] : null;
 
 window.onload = function() {
 
+    extractAndSubmitAIDs();
     sendReportRequest();
     modifyRelation();//自动关注函数，不用可以直接注释掉
-    extractAndSubmitAIDs(); // 创建按钮
+
 
 
 };
