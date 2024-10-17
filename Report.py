@@ -162,7 +162,7 @@ def main():
                                     url = re.search(r'url\("([^"]+?)\?[^"]*"\);', f).group(1)
 
                                     print(url)
-                                    content = requests.get(url, proxies=proxies).content
+                                    content = requests.get(url, proxies=proxies, timeout=(5, 10)).content
                                     plan = captcha.TextSelectCaptcha().run(content)
                                     print(plan)
 
