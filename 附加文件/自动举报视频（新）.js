@@ -349,7 +349,7 @@ function submitNextAppeal() {
 
         // 使用 setTimeout 来添加延迟
         setTimeout(() => {
-            submitAppeal(aid, csrfToken, "性暗示意味的封面和标题，视频内容未色情游戏片段，国外色情及性暗示视频剪辑，推广色情游戏及色情漫画等不良软件，视频评论区唱双簧恶意引流黑产。审核结果：下架此视频并永久封禁该账号。") // 提交请求
+            submitAppeal(aid, csrfToken, "侮辱国家领导人，宣扬台独反华内容。审核结果：下架此视频并永久封禁该账号。") // 提交请求
                 .then(() => {
                     currentAidIndex++;
                     submitNextAppeal(); // 提交下一个AID
