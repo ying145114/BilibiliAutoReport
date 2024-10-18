@@ -179,7 +179,6 @@ def main():
             except Exception as e:
                 print(f"发生异常: {e}")
                 time.sleep(1)  # 等待1秒后重新执行整个过程
-                sys.exit(100)  # 如果发生异常也退出程序
         url = f"https://www.bilibili.com/appeal/?avid=1205435530"
         driver.get(url)
 
