@@ -13,7 +13,7 @@ from src.utils.utils import drow_img
 
 
 class TextSelectCaptcha(object):
-    def __init__(self, per_path='pre_model_v3.bin', yolo_path='best_v2.bin', sign=True):
+    def __init__(self, per_path='pre_model_v6.bin', yolo_path='best_v2.bin', sign=True):
         self.jy_click = jy_click.JYClick(per_path=per_path, yolo_path=yolo_path, sign=sign)
         self.yolo = self.jy_click.yolo
 
@@ -28,7 +28,7 @@ class TextSelectCaptcha(object):
 
 if __name__ == '__main__':
     cap = TextSelectCaptcha()
-    image_path = "res.jpg"
+    image_path = r"../docs/res.jpg"
     result = cap.run(image_path)
     print(result)
     cap.yolo.infer(image_path)
