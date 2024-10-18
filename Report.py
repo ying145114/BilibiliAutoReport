@@ -12,12 +12,13 @@ import requests
 from src import captcha
 import os
 
-
 skip = 5
 proxies = {
     'http': None,
     'https': None
 }
+
+
 def remove_completed_uid(uid):
     try:
         with open('附加文件/uid.txt', 'r', encoding='utf-8') as f:
@@ -86,7 +87,6 @@ def main():
     driver.set_window_position(-850, 775)
 
     driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
-
 
     try:
         if not uids:
@@ -226,11 +226,11 @@ def main():
                                     time.sleep(1)  # 等待1秒后重新执行整个过程
                                     sys.exit(100)  # 如果发生异常也退出程序
                             time.sleep(2)
-                            skip=0
+                            skip = 0
                             # 此处可以插入处理数据的代码
                         else:
                             print("跳过人机验证")
-                            skip=skip+1
+                            skip = skip + 1
 
                         print(f"打开UID:{uid}")
                         userurl = f"https://space.bilibili.com/{uid}"
