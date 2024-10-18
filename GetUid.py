@@ -174,7 +174,7 @@ def main():
         whitelist_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/云端文件/whitelist.txt'
         whitelist_filename = '附加文件/whitelist.txt'
         try:
-            response = requests.get(whitelist_url, timeout=(5, 10))
+            response = requests.get(whitelist_url,proxies=proxies, timeout=(5, 10))
             if response.status_code == 200:
                 with open(whitelist_filename, 'wb') as f_out:
                     f_out.write(response.content)
@@ -199,7 +199,7 @@ def main():
         blacklist_filename = '附加文件/blacklist.txt'
 
         try:
-            response = requests.get(blacklist_url, timeout=(5, 10))
+            response = requests.get(blacklist_url, proxies=proxies,timeout=(5, 10))
 
             if response.status_code == 200:
                 with open(blacklist_filename, 'wb') as f_out:
