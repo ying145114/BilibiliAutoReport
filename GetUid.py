@@ -11,6 +11,8 @@ proxies = {
     'http': None,
     'https': None
 }
+
+
 # 定义获取关键词的函数
 def fetch_keywords():
     keywords_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/云端文件/keyword.txt'  # 替换为实际的GitHub URL
@@ -65,88 +67,81 @@ else:
 def search_and_extract_uid(keyword):
     # 构建搜索链接
     base_url = 'https://search.bilibili.com/video?'
-    search_params1 = {
-        'keyword': keyword,
-        'from_source': 'video_tag',
-        'order': 'click'
-
-    }
-    search_params2 = {
-        'keyword': keyword,
-        'from_source': 'video_tag',
-        'order': 'pubdate'
-    }
-    search_url1 = base_url + urlencode(search_params1)
-    search_url2 = base_url + urlencode(search_params2)
-    print(search_url1)
-    print(search_url2)
-    try:
-        # 添加头部信息
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
-                          'Chrome/91.0.4472.124 Safari/537.36',
+    search_params_list = [
+        {
+            'keyword': keyword,
+            'from_source': 'video_tag',
+        },
+        {
+            'keyword': keyword,
+            'from_source': 'video_tag',
+            'page': '2',
+            'o': '30'
+        },
+        {
+            'keyword': keyword,
+            'from_source': 'video_tag',
+            'order': 'pubdate'
+        },
+        {
+            'keyword': keyword,
+            'from_source': 'video_tag',
+            'order': 'pubdate',
+            'page': '2',
+            'o': '30'
         }
+    ]
 
-        # 发起HTTP GET请求获取搜索结果页面内容
-        response = requests.get(search_url1, headers=headers, proxies=proxies, timeout=(5, 10))
-        response.raise_for_status()  # 检查请求是否成功
+    for search_params in search_params_list:
+        search_url = base_url + urlencode(search_params)
+        print(search_url)
 
-        # 使用BeautifulSoup加载HTML内容
-        soup = BeautifulSoup(response.text, 'html.parser')
+        try:
+            # 添加头部信息
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                              'Chrome/91.0.4472.124 Safari/537.36',
+            }
 
-        # 存储解析出的UID列表
-        uid_list = []
+            # 发起HTTP GET请求获取搜索结果页面内容
+            response = requests.get(search_url, headers=headers, proxies=proxies, timeout=(5, 10))
+            response.raise_for_status()  # 检查请求是否成功
 
-        # 使用CSS选择器定位搜索结果的链接，并提取UID
-        count = 0  # 计数器，用于限制获取的UID数量
-        for link in soup.select('.bili-video-card .bili-video-card__info--owner'):
-            if count >= 10:
-                break
-            href = link['href']
-            uid = href.split('/')[-1]  # 获取链接中最后的数字部分作为UID
-            uid_list.append(uid)
-            count += 1
+            # 使用BeautifulSoup加载HTML内容
+            soup = BeautifulSoup(response.text, 'html.parser')
 
-        # 将UID列表传递给处理函数（这里假设是process_uid_list函数）
-        process_uid_list(keyword, uid_list)
-        response = requests.get(search_url2, headers=headers, proxies=proxies, timeout=(5, 10))
-        response.raise_for_status()  # 检查请求是否成功
+            # 存储解析出的UID列表
+            uid_list = []
 
-        # 使用BeautifulSoup加载HTML内容
-        soup = BeautifulSoup(response.text, 'html.parser')
+            # 使用CSS选择器定位搜索结果的链接，并提取UID
+            count = 0  # 计数器，用于限制获取的UID数量
+            for link in soup.select('.bili-video-card .bili-video-card__info--owner'):
+                if count >= 10:
+                    break
+                href = link['href']
+                uid = href.split('/')[-1]  # 获取链接中最后的数字部分作为UID
+                uid_list.append(uid)
+                count += 1
 
-        # 存储解析出的UID列表
-        uid_list = []
+            # 将UID列表传递给处理函数（这里假设是process_uid_list函数）
+            process_uid_list(keyword, uid_list)
 
-        # 使用CSS选择器定位搜索结果的链接，并提取UID
-        count = 0  # 计数器，用于限制获取的UID数量
-        for link in soup.select('.bili-video-card .bili-video-card__info--owner'):
-            if count >= 10:
-                break
-            href = link['href']
-            uid = href.split('/')[-1]  # 获取链接中最后的数字部分作为UID
-            uid_list.append(uid)
-            count += 1
-
-        # 将UID列表传递给处理函数（这里假设是process_uid_list函数）
-        process_uid_list(keyword, uid_list)
-
-    except requests.exceptions.RequestException as e:
-        print(f"关键词 \"{keyword}\" 搜索页面请求失败：", e)
+        except requests.exceptions.RequestException as e:
+            print(f"关键词 \"{keyword}\" 搜索页面请求失败：", e)
 
 
 # 定义处理UID列表的函数（追加写入同一文件）
 def process_uid_list(keyword, uid_list):
-    print(f"关键词 \"{keyword}\" 的UID列表：", uid_list)
+    print(f" \"{keyword}\" UID：", uid_list)
 
     # 将UID列表追加写入文件
     with open(output_file, 'a', encoding='utf-8') as f:
-        f.write(f"关键词 \"{keyword}\" 的UID列表：\n")
+        f.write(f" \"{keyword}\" UID：\n")
         for uid in uid_list:
             f.write(uid + '\n')
         f.write('\n')  # 添加空行分隔每个关键词的UID列表
 
-    print(f"关键词 \"{keyword}\" 的UID列表已追加至文件: uid.txt")
+
 
 
 # 主函数，循环运行搜索和处理
@@ -174,7 +169,7 @@ def main():
         whitelist_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/云端文件/whitelist.txt'
         whitelist_filename = '附加文件/whitelist.txt'
         try:
-            response = requests.get(whitelist_url,proxies=proxies, timeout=(5, 10))
+            response = requests.get(whitelist_url, proxies=proxies, timeout=(5, 10))
             if response.status_code == 200:
                 with open(whitelist_filename, 'wb') as f_out:
                     f_out.write(response.content)
@@ -199,7 +194,7 @@ def main():
         blacklist_filename = '附加文件/blacklist.txt'
 
         try:
-            response = requests.get(blacklist_url, proxies=proxies,timeout=(5, 10))
+            response = requests.get(blacklist_url, proxies=proxies, timeout=(5, 10))
 
             if response.status_code == 200:
                 with open(blacklist_filename, 'wb') as f_out:
