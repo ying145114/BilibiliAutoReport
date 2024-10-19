@@ -84,7 +84,7 @@ def main():
     # 设置浏览器窗口大小（宽度, 高度）
     driver.set_window_size(1000, 700)
     # 设置浏览器窗口位置（x, y）
-    #driver.set_window_position(-850, 775)
+    driver.set_window_position(-850, 775)
 
     driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
