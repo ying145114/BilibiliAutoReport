@@ -220,6 +220,18 @@ def main():
                                         break  # 成功验证后跳出循环
                                     except Exception as e:
                                         print(f"验证码验证失败！")
+                                        save_directory = os.path.join(base_dir, '附加文件', '失败验证码')
+                                        os.makedirs(save_directory, exist_ok=True)  # 创建文件夹，如果已经存在则不会报错
+
+                                        # 从URL中提取文件名
+                                        file_name = url.split('/')[-1]
+                                        file_path = os.path.join(save_directory, file_name)
+
+                                        # 保存图片
+                                        with open(file_path, 'wb') as file:
+                                            file.write(content)
+
+                                        print(f"图片已保存至: {file_path}")
 
                                 except Exception as e:
                                     print(f"发生异常: {e}")
@@ -235,7 +247,7 @@ def main():
                         print(f"打开UID:{uid}")
                         userurl = f"https://space.bilibili.com/{uid}"
                         driver.get(userurl)
-                        time.sleep(9)
+                        time.sleep(9.5)
                         print(f"等待9秒")
                         remove_completed_uid(uid)
                         # 处理完成后继续下一个 UID

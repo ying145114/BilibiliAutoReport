@@ -60,4 +60,3 @@ if __name__ == '__main__':
     utils.drow_img(image_path, result, "jy_click.jpg")
 
 
-

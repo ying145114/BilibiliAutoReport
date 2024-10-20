@@ -83,13 +83,7 @@ def search_and_extract_uid(keyword):
             'from_source': 'video_tag',
             'order': 'pubdate'
         },
-        {
-            'keyword': keyword,
-            'from_source': 'video_tag',
-            'order': 'pubdate',
-            'page': '2',
-            'o': '30'
-        }
+
     ]
 
     for search_params in search_params_list:
