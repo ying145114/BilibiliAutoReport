@@ -229,6 +229,18 @@ def main():
                                         )
                                         #print('验证码已消失')
                                         print("验证码验证成功！")
+                                        save_directory = os.path.join(base_dir, '附加文件', '成功验证码')
+                                        os.makedirs(save_directory, exist_ok=True)  # 创建文件夹，如果已经存在则不会报错
+
+                                        # 从URL中提取文件名
+                                        file_name = url.split('/')[-1]
+                                        file_path = os.path.join(save_directory, file_name)
+
+                                        # 保存图片
+                                        with open(file_path, 'wb') as file:
+                                            file.write(content)
+
+                                        print(f"图片已保存至: {file_path}")
                                         break  # 成功验证后跳出循环
                                     except Exception as e:
                                         print(f"验证码验证失败！")
