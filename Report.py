@@ -208,6 +208,18 @@ def main():
                                             EC.element_to_be_clickable((By.CLASS_NAME, 'geetest_refresh')))
                                         refresh_element.click()  # 点击刷新验证按钮
                                         print('已点击刷新按钮')
+                                        save_directory = os.path.join(base_dir, '附加文件', '失败验证码')
+                                        os.makedirs(save_directory, exist_ok=True)  # 创建文件夹，如果已经存在则不会报错
+
+                                        # 从URL中提取文件名
+                                        file_name = url.split('/')[-1]
+                                        file_path = os.path.join(save_directory, file_name)
+
+                                        # 保存图片
+                                        with open(file_path, 'wb') as file:
+                                            file.write(content)
+
+                                        print(f"图片已保存至: {file_path}")
 
                                     # 等待 'geetest_item_wrap' 元素消失，表示验证码验证成功
                                     try:
