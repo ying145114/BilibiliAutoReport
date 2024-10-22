@@ -255,9 +255,12 @@ function submitAppeal(aid, csrfToken, desc) {
                 const result = JSON.parse(xhr.responseText);
                 updateDiagnosticInfo(`举报结果：<strong>${this.response}</strong><br>`);
 
-                if (result.code === -999) { // 检查返回值是否为-352
+                if (result.code === -352) { // 检查返回值是否为-352
                     showContinueButton(aid);
-                    window.open(`https://www.bilibili.com/appeal/?avid=${aid}`, '_blank');
+                    const spaceIdMatches = window.location.href.match(/space\.bilibili\.com\/(\d+)(\/|\?|$)/);
+                    const spaceId = spaceIdMatches ? spaceIdMatches[1] : null;
+                    const jumpUrl = `https://space.bilibili.com/${spaceId}/article`;
+                    window.location.href = jumpUrl;
                     reject(`Encountered code -352 for AID ${aid}.`); // 返回拒绝
                 } else {
                     // 忽略其他状态和返回值，不做处理
