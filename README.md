@@ -1,5 +1,5 @@
-# Bilibili视频全自动举报———我能跑一整天！  
-# BilibiliVideoAutoReport———I can do this all day!
+# Bilibili全自动举报
+# BilibiliAutoReport
 # 20240907更新  
 ## 写在前面————前言🤓☝️ 
 一切都开始于某个中午，似乎是去年的我在家刷B站时被推广黄油的视频烦破防了，在Google上搜索了“Bilibili批量举报”，在一个中文论坛上找到了这个[bilibili批量举报【高危脚本】-油猴中文网](https://bbs.tampermonkey.net.cn/thread-5222-2-1.html)，下完后发现用不了。  
