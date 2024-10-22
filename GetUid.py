@@ -1,8 +1,10 @@
+import datetime
 import os
 import shutil
 import sys
 import time
 import subprocess
+
 from urllib.parse import urlencode
 import requests
 from bs4 import BeautifulSoup
@@ -243,6 +245,14 @@ def main():
                 break  # 跳出循环，防止再次进入无限循环
             else:
                 print(f"report.py 出现错误，返回码: {report_process.returncode}，正在重新运行 report.py...")
+                current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+                # 创建错误信息
+                error_message = f"报告.py 出现错误，返回码: {report_process.returncode}，输出: {report_process.stderr.decode()}"
+
+                # 将错误信息附加到 log.txt 中
+                with open('log.txt', 'a') as log_file:
+                    log_file.write(f"\n{current_time} - {error_message}\n")
 
 
 if __name__ == "__main__":

@@ -19,7 +19,7 @@ proxies = {
     'http': None,
     'https': None
 }
-log_dir = "附加文件"
+
 
 def remove_completed_uid(uid):
     try:
@@ -174,20 +174,14 @@ def main():
                                             print("等待验证码超时，程序退出")
                                             sys.exit('验证码未出现')  # 超时退出
 
-
-
-
-
-
                                     #time.sleep(2)
                                     f = img.get_attribute('style')
                                     attempt = 0  # 初始化尝试计数
-                                    while ('url("' not in f) and (attempt < 5):
+                                    while ('url("' not in f) and (attempt < 10):
                                         f = img.get_attribute('style')
                                         attempt += 1
                                         time.sleep(0.5)
-
-
+                                    print(attempt)
                                     url = re.search(r'url\("([^"]+?)\?[^"]*"\);', f).group(1)
 
                                     print(url)
@@ -269,8 +263,6 @@ def main():
                                         with open(file_path, 'wb') as file:
                                             file.write(content)
 
-
-
                                         print(f"图片已保存至: {file_path}")
 
                                         try:
@@ -305,13 +297,7 @@ def main():
                                 except Exception as e:
                                     print(f"发生异常，错误: {e}")
                                     #time.sleep(1)  # 等待1秒后重新执行整个过程
-                                    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                                    screenshot_path = os.path.join(log_dir, f"screenshot_{timestamp}.png")
-                                    driver.save_screenshot(screenshot_path)
-
-                                    print(f"截图已保存至: {screenshot_path}")
                                     sys.exit('人机验证循环出错')  # 如果发生异常也退出程序
-
 
                             #time.sleep(2)
                             skip = 0
@@ -365,4 +351,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
