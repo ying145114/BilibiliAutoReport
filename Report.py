@@ -284,8 +284,9 @@ def main():
                                             else:
                                                 sys.exit('意外情况，弹窗出现-352')
                                         except TimeoutException:
-                                            print("多次验证失败，程序退出")
-                                        break  # 成功验证后跳出循环
+                                            sys.exit('多次验证失败，程序退出')
+
+                                        
                                     except Exception as e:
                                         print(f"验证码验证失败！")
                                         save_directory = os.path.join(base_dir, '附加文件', '失败验证码')
