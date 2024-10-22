@@ -144,21 +144,47 @@ def main():
                             element.click()  # 生成验证码
                             #print('已点击确认')
 
-                            time.sleep(4)
+                            #time.sleep(4)
                             while True:
                                 try:
                                     # 等待并获取元素，增加了对超时的处理
                                     try:
-                                        img = WebDriverWait(driver, 20).until(
+                                        img = WebDriverWait(driver, 5).until(
                                             EC.presence_of_element_located(
                                                 (By.XPATH, '//*[@class="geetest_item_wrap"]'))
                                         )
+
+
                                     except TimeoutException:
-                                        print("等待验证码超时，程序退出")
-                                        sys.exit(100)  # 超时退出
-                                    time.sleep(2)
+                                        print('验证码未出现，再次尝试点击')
+                                        element = WebDriverWait(driver, 20, 1).until(
+                                            EC.presence_of_element_located(
+                                                (By.XPATH, '/html/body/div/div/div[5]/div[2]'))
+                                        )
+                                        element.click()  # 再次尝试点击确认
+
+                                        try:
+                                            img = WebDriverWait(driver, 5).until(
+                                                EC.presence_of_element_located(
+                                                    (By.XPATH, '//*[@class="geetest_item_wrap"]'))
+                                            )
+                                        except TimeoutException:
+                                            print("等待验证码超时，程序退出")
+                                            sys.exit('验证码未出现')  # 超时退出
+
+
+
+
+
+
+                                    #time.sleep(2)
                                     f = img.get_attribute('style')
-                                    print('验证码已出现')
+                                    attempt = 0  # 初始化尝试计数
+                                    while ('url("' not in f) and (attempt < 5):
+                                        f = img.get_attribute('style')
+                                        attempt += 1
+                                        time.sleep(0.5)
+
 
                                     url = re.search(r'url\("([^"]+?)\?[^"]*"\);', f).group(1)
 
@@ -241,7 +267,22 @@ def main():
                                         with open(file_path, 'wb') as file:
                                             file.write(content)
 
+
+
                                         print(f"图片已保存至: {file_path}")
+
+                                        try:
+                                            WebDriverWait(driver, 2).until(EC.alert_is_present())  # 等待最多10秒，直到弹窗出现
+                                            alert = driver.switch_to.alert  # 切换到弹窗
+                                            alert_text = alert.text  # 获取弹窗文本
+                                            # 检查弹窗内容
+                                            if not "-352" in alert_text:
+                                                alert.accept()
+                                                break
+                                            else:
+                                                sys.exit('意外情况，弹窗出现-352')
+                                        except TimeoutException:
+                                            print("多次验证失败，程序推出")
                                         break  # 成功验证后跳出循环
                                     except Exception as e:
                                         print(f"验证码验证失败！")
@@ -259,12 +300,14 @@ def main():
                                         print(f"图片已保存至: {file_path}")
 
                                 except Exception as e:
-                                    print(f"发生异常: {e}")
-                                    time.sleep(1)  # 等待1秒后重新执行整个过程
-                                    sys.exit(100)  # 如果发生异常也退出程序
-                            time.sleep(2)
+                                    print("发生异常:", str(e))
+                                    #time.sleep(1)  # 等待1秒后重新执行整个过程
+                                    sys.exit('人机验证循环出错')  # 如果发生异常也退出程序
+
+
+                            #time.sleep(2)
                             skip = 0
-                            # 此处可以插入处理数据的代码
+
                         else:
                             print("跳过人机验证")
                             skip = skip + 1
@@ -272,7 +315,7 @@ def main():
                         print(f"打开UID:{uid}")
                         userurl = f"https://space.bilibili.com/{uid}"
                         driver.get(userurl)
-                        time.sleep(9.4)
+                        time.sleep(9)
                         print(f"等待9秒")
                         remove_completed_uid(uid)
                         # 处理完成后继续下一个 UID
@@ -285,8 +328,8 @@ def main():
                     continue  # 找不到任何视频，继续下一个 UID
 
             except Exception as e:
-                print(f"获取 UID {uid} 的数据时发生错误: {e}")
-                sys.exit(10086)
+                print(f"错误UID为：{uid}，错误: {e}")
+                sys.exit('处理UID的循环内发生错误')
                 # continue  # 如果在处理过程中出现异常，继续下一个 UID
 
         # 完成所有操作后关闭浏览器
@@ -299,7 +342,7 @@ def main():
 
     except Exception as e:
         print(f"发生异常: {e}")
-        sys.exit(10086)
+        sys.exit('从文件获取UID时发生错误')
 
 
     finally:
