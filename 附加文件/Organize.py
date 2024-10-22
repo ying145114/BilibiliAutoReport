@@ -43,9 +43,9 @@ def get_name_by_uid(uid, output_file, blacklist_file):
 
 def main():
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    input_file = os.path.join(base_dir,'附加文件', 'uid.txt')  # uid.txt在附加文件文件夹下
-    output_file = os.path.join(base_dir, '附加文件','organized.txt')  # organized.txt也在附加文件夹下
-    blacklist_file = os.path.join(base_dir, '云端文件', 'blacklist.txt')  # black_list在云端文件文件夹下
+    input_file = os.path.join(base_dir, 'uid.txt')  # uid.txt在附加文件文件夹下
+    output_file = os.path.join(base_dir, 'organized.txt')  # organized.txt也在附加文件夹下
+    blacklist_file = os.path.join(base_dir, 'blacklist.txt')  # black_list在云端文件文件夹下
 
     if os.path.exists(output_file):
         os.remove(output_file)
