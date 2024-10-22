@@ -28,7 +28,7 @@ class TextSelectCaptcha(object):
 
 if __name__ == '__main__':
     cap = TextSelectCaptcha()
-    image_path = r"../docs/res.jpg"
+    image_path = "res.jpg"
     result = cap.run(image_path)
     print(result)
     cap.yolo.infer(image_path)
