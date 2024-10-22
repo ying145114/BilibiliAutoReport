@@ -1,5 +1,7 @@
 import re
 import sys
+from datetime import datetime
+
 from selenium import webdriver
 import time
 from selenium.common import TimeoutException
@@ -12,12 +14,12 @@ import requests
 from src import captcha
 import os
 
-skip = 5
+skip = 9
 proxies = {
     'http': None,
     'https': None
 }
-
+log_dir = "附加文件"
 
 def remove_completed_uid(uid):
     try:
@@ -85,7 +87,7 @@ def main():
     driver.set_window_size(1000, 700)
     # 设置浏览器窗口位置（x, y）
     #driver.set_window_position(-850, 775)
-    #driver.set_window_position(-850, 1355)
+    driver.set_window_position(-850, 1355)
 
     driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
@@ -118,7 +120,7 @@ def main():
 
                         # 找到 aid 后，打开链接并进行进一步处理
                         global skip
-                        if skip == 5:
+                        if skip == 9:
                             print("不跳过人机验证")
                             url = f"https://www.bilibili.com/appeal/?avid={aid}"
                             driver.get(url)
@@ -272,7 +274,7 @@ def main():
                                         print(f"图片已保存至: {file_path}")
 
                                         try:
-                                            WebDriverWait(driver, 2).until(EC.alert_is_present())  # 等待最多10秒，直到弹窗出现
+                                            WebDriverWait(driver, 5).until(EC.alert_is_present())  # 等待最多10秒，直到弹窗出现
                                             alert = driver.switch_to.alert  # 切换到弹窗
                                             alert_text = alert.text  # 获取弹窗文本
                                             # 检查弹窗内容
@@ -282,7 +284,7 @@ def main():
                                             else:
                                                 sys.exit('意外情况，弹窗出现-352')
                                         except TimeoutException:
-                                            print("多次验证失败，程序推出")
+                                            print("多次验证失败，程序退出")
                                         break  # 成功验证后跳出循环
                                     except Exception as e:
                                         print(f"验证码验证失败！")
@@ -302,6 +304,11 @@ def main():
                                 except Exception as e:
                                     print("发生异常:", str(e))
                                     #time.sleep(1)  # 等待1秒后重新执行整个过程
+                                    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                                    screenshot_path = os.path.join(log_dir, f"screenshot_{timestamp}.png")
+                                    driver.save_screenshot(screenshot_path)
+
+                                    print(f"截图已保存至: {screenshot_path}")
                                     sys.exit('人机验证循环出错')  # 如果发生异常也退出程序
 
 
@@ -315,8 +322,8 @@ def main():
                         print(f"打开UID:{uid}")
                         userurl = f"https://space.bilibili.com/{uid}"
                         driver.get(userurl)
-                        time.sleep(9)
-                        print(f"等待9秒")
+                        time.sleep(5)
+                        print(f"等待5秒")
                         remove_completed_uid(uid)
                         # 处理完成后继续下一个 UID
                         continue  # 使用 continue 继续下一个 UID
