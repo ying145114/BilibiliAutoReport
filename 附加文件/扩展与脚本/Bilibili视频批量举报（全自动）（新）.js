@@ -285,13 +285,10 @@ function submitAppeal(aid, csrfToken, desc) {
 
 
         const shoucangdelayInMilliseconds = 3500
-        if (reportCount % 10 === 1) { // 每20次的第一条记录
+        if (reportCount % 10 === 1) { // 每10次的第一条记录
             setTimeout(() => {
                 const data = new URLSearchParams({
-                    'rid': aid,
-                    'type': '2',
-                    'add_media_ids': 345678, // 根据实际需求调整，收藏夹编号
-                    'del_media_ids': '',
+                    'aid': aid,
                     'csrf': getCsrf()
                 });
 
@@ -301,7 +298,7 @@ function submitAppeal(aid, csrfToken, desc) {
                 // 创建收藏请求的 XMLHttpRequest 对象
                 const favXhr = new XMLHttpRequest();
                 favXhr.withCredentials = true;
-                favXhr.open('POST', 'https://api.bilibili.com/x/v3/fav/resource/deal');
+                favXhr.open('POST', 'https://api.bilibili.com/x/web-interface/archive/like/triple');
 
                 // 设置请求头
                 favXhr.setRequestHeader('accept', 'application/json, text/plain, */*');
@@ -320,44 +317,6 @@ function submitAppeal(aid, csrfToken, desc) {
                 favXhr.send(data);
             }, shoucangdelayInMilliseconds);
         }
-
-
-
-        if (reportCount % 10 === 1) {
-        const data = new URLSearchParams({
-        'aid': aid,
-        'like': '1',
-        'eab_x': '2',
-        'ramval': '0',
-        'source': 'web_normal',
-        'ga': '1',
-        'csrf': getCsrf() // 请确保这是从浏览器中获取到的有效值
-    });
-
-    GM_xmlhttpRequest({
-        method: "POST",
-        url: "https://api.bilibili.com/x/web-interface/archive/like",
-        headers: {
-            'accept': 'application/json, text/plain, */*',
-            'accept-language': 'zh-CN,zh-TW;q=0.9,zh;q=0.8,en;q=0.7,ja;q=0.6',
-            'content-type': 'application/x-www-form-urlencoded',
-            'cookie': document.cookie, // 从当前文档获取 cookie
-            'dnt': '1',
-            'origin': 'https://www.bilibili.com',
-            'referer': 'https://www.bilibili.com/video/BV1dny7YtEh6/?spm_id_from=333.1007.tianma.1-2-2.click&vd_source=9a6de7a432be5793d27ccc435c7c65bd',
-            'sec-ch-ua': '"Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129"',
-            'sec-fetch-dest': 'empty',
-            'sec-fetch-mode': 'cors',
-            'sec-fetch-site': 'same-site',
-            'user-agent': navigator.userAgent // 使用浏览器的 User-Agent
-        },
-        data: data.toString(),
-        onload: function(response) {
-            updateDiagnosticInfo(response.responseText);
-        }
-    });
-        }
-
 
 
 
