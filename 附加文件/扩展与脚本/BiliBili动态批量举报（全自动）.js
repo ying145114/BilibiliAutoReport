@@ -11,6 +11,8 @@
 // @connect      api.bilibili.com
 // @author       You
 // @match        https://space.bilibili.com/*/dynamic
+// @exclude      https://space.bilibili.com/*/video
+// @exclude      https://space.bilibili.com/*/article
 // @icon         https://i2.hdslb.com/bfs/app/8920e6741fc2808cce5b81bc27abdbda291655d3.png@240w_240h_1c_1s_!web-avatar-space-header.avif
 // @grant        GM.xmlHttpRequest
 
