@@ -5,9 +5,8 @@ import os
 
 print('启动Getuid.py')
 base_dir = os.path.dirname(os.path.abspath(__file__))
-log_folder = os.path.join(base_dir)  # 确保目录存在
-os.makedirs(log_folder, exist_ok=True)
-log_file_path = os.path.join(log_folder, '错误记录.txt')
+
+log_file_path = os.path.join(base_dir, '错误记录.txt')
 python_executable = os.path.join(base_dir, 'venv', 'Scripts', 'python.exe')
 getuid_script = os.path.join(base_dir, 'Getuid.py')
 report_script = os.path.join(base_dir, 'Report.py')
@@ -24,7 +23,7 @@ while True:
         getuid_process = subprocess.Popen([python_executable, getuid_script], shell=True)
         getuid_process.wait()  # 等待 Getuid.py 结束
 
-        
+
         if getuid_process.returncode == 0:# 检查 Getuid.py 的退出状态
             print("Getuid.py 正常退出，正在启动 Report.py...")
             break  # 退出此循环，开始启动 Report.py
@@ -38,7 +37,7 @@ while True:
         report_process = subprocess.Popen([python_executable, report_script], shell=True)
         report_process.wait()  # 等待 Report.py 结束
 
-       
+
         if report_process.returncode == 0: # 检查 Report.py 的退出状态
             print("Report.py 正常退出，正在重新启动 Getuid.py...")
             break  # 退出此循环，重新开始下一轮
