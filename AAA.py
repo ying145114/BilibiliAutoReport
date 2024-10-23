@@ -1,11 +1,11 @@
-from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+from selenium import webdriver
 import os
 
 
 def set_chrome_options(user_data_dir=None, chrome_binary_path=None):
     options = webdriver.ChromeOptions()
-    options.add_experimental_option("detach", True)
+    options.add_experimental_option("detach", False)  # 去掉 detach
     options.add_argument('--enable-logging')  # 启用控制台日志
     if user_data_dir:
         options.add_argument(f'--user-data-dir={user_data_dir}')  # 设置用户数据目录
@@ -33,6 +33,7 @@ def main():
     # 使用 Service 来指定 ChromeDriver 的路径
     service = Service(executable_path=chrome_driver_path)
     driver = webdriver.Chrome(service=service, options=options)
+
     # 设置浏览器窗口大小（宽度, 高度）
     driver.set_window_size(1000, 700)
     # 设置浏览器窗口位置（x, y）
@@ -40,6 +41,11 @@ def main():
 
     url = f"https://space.bilibili.com/"
     driver.get(url)
+
+    # 等待用户输入，然后关闭浏览器
+    input("按 Enter 键关闭浏览器...")  # 通过输入来控制浏览器关闭
+
+    driver.quit()  # 关闭浏览器
 
 
 if __name__ == "__main__":
