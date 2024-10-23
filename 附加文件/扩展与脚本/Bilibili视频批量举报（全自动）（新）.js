@@ -402,7 +402,7 @@ window.onload = function() {
 
     extractAndSubmitAIDs();
     sendReportRequest();
-    modifyRelation();//自动关注函数，不用可以直接注释掉
+    //modifyRelation();//自动关注函数，不用可以直接注释掉
 
 
 
