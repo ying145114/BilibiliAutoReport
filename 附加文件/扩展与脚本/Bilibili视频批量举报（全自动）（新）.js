@@ -4,11 +4,12 @@
 // @version      0.0.1
 // @description  Extract mid from URL, fetch AID from Bilibili API, and submit appeals with extracted CSRF token.
 // @author       Your Name
-// @match        https://space.bilibili.com/*
-// @grant        GM_xmlhttpRequest
-// @connect      api.bilibili.com
+// @match        https://space.bilibili.com/*/video
 // @exclude      https://space.bilibili.com/*/dynamic
 // @exclude      https://space.bilibili.com/*/article
+// @grant        GM_xmlhttpRequest
+// @connect      api.bilibili.com
+
 // @icon         https://i2.hdslb.com/bfs/app/8920e6741fc2808cce5b81bc27abdbda291655d3.png@240w_240h_1c_1s_!web-avatar-space-header.avif
 // ==/UserScript==
 
