@@ -112,7 +112,7 @@ if not uids:
 
 
 options = webdriver.ChromeOptions()
-options.add_argument('--enable-logging')  # 启用控制台日志
+#options.add_argument('--enable-logging')  # 启用控制台日志
 options.add_argument("--disable-blink-features=AutomationControlled")
 options.add_argument(f'--user-data-dir={user_data_dir}')  # 设置用户数据目录
 options.binary_location = chrome_binary_path  # 指定 Chrome 浏览器的可执行文件路径
