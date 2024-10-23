@@ -6,7 +6,7 @@ from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium import webdriver
 from datetime import datetime
-from src.method import jy_click
+from src import jy_click
 import requests
 import time
 import sys

@@ -8,7 +8,7 @@ pyinstaller --onefile ^
 --add-data "GetUid.py;." ^
 --add-data "Report.py;." ^
 --add-data "src;src" ^
---add-data "model;model" ^
+--add-data "附加文件;附加文件" ^
 Start.py
 
 
