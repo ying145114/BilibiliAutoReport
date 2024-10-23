@@ -16,7 +16,7 @@ from src.utils import utils
 
 
 class JYClick(object):
-    def __init__(self, per_path='pre_model_v6.bin', yolo_path='best_v2.bin', sign=True):
+    def __init__(self, per_path='pre_model_v3.bin', yolo_path='best_v2.bin', sign=True):
         """
         jiyan 最好 pre_model_v3.onnx
         nine 最好  pre_model_v5.onnx
