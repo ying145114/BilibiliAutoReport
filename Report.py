@@ -15,7 +15,7 @@ import os
 
 
 
-skip = 9
+skip = 8
 proxies = {'http': None,'https': None}
 base_dir = os.path.dirname(os.path.abspath(__file__))
 uid_path = os.path.join(base_dir, '附加文件', 'uid.txt')
@@ -148,7 +148,7 @@ try:
                 print(f"UID:{uid}, 第一个视频 AID: {aid}, 标题: {title}")
 
 
-                if skip == 9:
+                if skip == 8:
                     print("不跳过人机验证")
                     url = f"https://www.bilibili.com/appeal/?avid={aid}"
                     driver.get(url)
@@ -268,7 +268,7 @@ try:
 
                 while True:
                     elapsed_time = time.time() - start_time
-                    if elapsed_time >= 6:  # 如果已超过 7 秒
+                    if elapsed_time >= 6:  # 如果已超过 5 秒
                         break
                 remove_completed_uid(uid)
                 continue  # 使用 continue 继续下一个 UID

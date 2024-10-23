@@ -256,7 +256,7 @@ function submitAppeal(aid, csrfToken, desc) {
                 const result = JSON.parse(xhr.responseText);
                 updateDiagnosticInfo(`举报结果：<strong>${this.response}</strong><br>`);
 
-                if (result.code === -999) { // 检查返回值是否为-352
+                if (result.code === -352) { // 检查返回值是否为-352
                     showContinueButton(aid);
                     const spaceIdMatches = window.location.href.match(/space\.bilibili\.com\/(\d+)(\/|\?|$)/);
                     const spaceId = spaceIdMatches ? spaceIdMatches[1] : null;
@@ -285,7 +285,7 @@ function submitAppeal(aid, csrfToken, desc) {
 
 
         const shoucangdelayInMilliseconds = 3500
-        if (reportCount % 20 === 1) { // 每20次的第一条记录
+        if (reportCount % 10 === 1) { // 每20次的第一条记录
             setTimeout(() => {
                 const data = new URLSearchParams({
                     'rid': aid,
@@ -323,7 +323,7 @@ function submitAppeal(aid, csrfToken, desc) {
 
 
 
-        if (reportCount % 3 === 1) {
+        if (reportCount % 10 === 1) {
         const data = new URLSearchParams({
         'aid': aid,
         'like': '1',
