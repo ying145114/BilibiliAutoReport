@@ -1,7 +1,6 @@
 import re
 import sys
 from datetime import datetime
-
 from selenium import webdriver
 import time
 from selenium.common import TimeoutException
@@ -20,6 +19,16 @@ proxies = {
     'https': None
 }
 
+base_dir = os.path.dirname(os.path.abspath(__file__))
+log_folder = os.path.join(base_dir)  # 确保目录存在
+os.makedirs(log_folder, exist_ok=True)
+log_file_path = os.path.join(log_folder, 'log.txt')
+
+def log_error(message):
+    """记录错误信息到日志文件"""
+    with open(log_file_path, 'a', encoding='utf-8') as log_file:
+        timestamp = datetime.now().strftime('[%Y-%m-%d %H:%M:%S]')
+        log_file.write(f"\n\n{timestamp} {message}")
 
 def remove_completed_uid(uid):
     try:
@@ -86,14 +95,15 @@ def main():
     # 设置浏览器窗口大小（宽度, 高度）
     driver.set_window_size(1000, 700)
     # 设置浏览器窗口位置（x, y）
-    driver.set_window_position(-850, 775)
-    #driver.set_window_position(-850, 1355)
+    #driver.set_window_position(-850, 775)
+    driver.set_window_position(-850, 1355)
 
     driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
     try:
         if not uids:
             print("uid.txt 文件中没有可处理的UID，程序退出")
+            log_error("uid.txt 文件中没有可处理的UID，程序退出")
             exit(0)
 
         for uid in uids:
@@ -172,7 +182,8 @@ def main():
                                             )
                                         except TimeoutException:
                                             print("等待验证码超时，程序退出")
-                                            sys.exit('验证码未出现')  # 超时退出
+                                            log_error('等待验证码超时，程序退出')
+                                            sys.exit('等待验证码超时，程序退出')  # 超时退出
 
                                     #time.sleep(2)
                                     f = img.get_attribute('style')
@@ -274,8 +285,10 @@ def main():
                                                 alert.accept()
                                                 break
                                             else:
+                                                log_error('意外情况，弹窗出现-352')
                                                 sys.exit('意外情况，弹窗出现-352')
                                         except TimeoutException:
+                                            log_error('多次验证失败，程序退出')
                                             sys.exit('多次验证失败，程序退出')
 
 
@@ -295,8 +308,8 @@ def main():
                                         print(f"图片已保存至: {file_path}")
 
                                 except Exception as e:
-                                    print(f"发生异常，错误: {e}")
-                                    #time.sleep(1)  # 等待1秒后重新执行整个过程
+                                    print(f"人机验证循环出错，错误: {e}")
+                                    log_error(f"人机验证循环出错，错误: {e}")
                                     sys.exit('人机验证循环出错')  # 如果发生异常也退出程序
 
                             #time.sleep(2)
@@ -328,8 +341,9 @@ def main():
                     continue  # 找不到任何视频，继续下一个 UID
 
             except Exception as e:
-                print(f"错误UID为：{uid}，错误: {e}")
-                sys.exit('处理UID的循环内发生错误')
+                print(f"处理UID的循环内发生错误,错误UID：{uid}，错误: {e}")
+                log_error(f"处理UID的循环内发生错误,错误UID：{uid}，错误: {e}")
+                sys.exit(f"处理UID的循环内发生错误,错误UID：{uid}")
                 # continue  # 如果在处理过程中出现异常，继续下一个 UID
 
         # 完成所有操作后关闭浏览器
@@ -341,7 +355,8 @@ def main():
 
 
     except Exception as e:
-        print(f"发生异常: {e}")
+        print(f"从文件获取UID时发生错误,错误: {e}")
+        log_error(f"从文件获取UID时发生错误,错误: {e}")
         sys.exit('从文件获取UID时发生错误')
 
 
