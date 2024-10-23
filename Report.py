@@ -6,13 +6,13 @@ from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium import webdriver
 from datetime import datetime
-from src import captcha
+from src.method import jy_click
 import requests
 import time
 import sys
 import re
 import os
-from src.method import jy_click
+
 
 
 skip = 9
@@ -124,8 +124,8 @@ options.add_argument("--disable-sync")
 service = Service(executable_path=chrome_driver_path)
 driver = webdriver.Chrome(service=service, options=options)# 启动 Chrome 浏览器
 driver.set_window_size(1000, 700)  # 设置浏览器窗口大小（宽度, 高度）
-driver.set_window_position(-850, 775)  # 设置浏览器窗口位置（x, y）
-# driver.set_window_position(-850, 1355)
+#driver.set_window_position(-850, 775)  # 设置浏览器窗口位置（x, y）
+driver.set_window_position(-850, 1355)
 driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
 
@@ -262,7 +262,7 @@ try:
                     print("跳过人机验证")
                     skip = skip + 1
                 print(f"打开UID:{uid}")
-                userurl = f"https://space.bilibili.com/{uid}"
+                userurl = f"https://space.bilibili.com/{uid}/video"
                 driver.get(userurl)
                 start_time = time.time()
 
