@@ -220,29 +220,10 @@ def main():
             for uid in unique_uids:
                 f.write(uid + '\n')
 
-        print('所有关键词搜索和处理完成后，通过虚拟机在指定路径运行 report.py')
+        print('关键词搜索和UID全部处理完成')
+        exit(0)
 
-        while True:  # 无限循环以重启 report.py
-            # 启动 report.py
-            base_dir = os.path.dirname(os.path.abspath(__file__))
 
-            # 使用相对路径设置 Python 可执行文件和脚本路径
-            python_executable = os.path.join(base_dir, 'venv', 'Scripts', 'python.exe')
-            report_script = os.path.join(base_dir, 'Report.py')
-
-            # 启动子进程
-            report_process = subprocess.Popen([python_executable, report_script], shell=True)
-
-            while report_process.poll() is None:  # 等待 report.py 结束
-                time.sleep(1)  # 等待1秒钟
-
-            # 检查 report.py 的退出状态
-            if report_process.returncode == 0:
-                print("report.py 正常退出，正在重新启动 getuid.py...")
-                subprocess.run([sys.executable, __file__])  # 重新启动 getuid.py
-                break  # 跳出循环，防止再次进入无限循环
-            else:
-                print(f"report.py 出现错误，返回码: {report_process.returncode}，正在重新运行 report.py...")
 
 
 if __name__ == "__main__":
