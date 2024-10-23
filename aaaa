@@ -1,0 +1,17 @@
+=@echo off
+setlocal
+
+:: 激活虚拟环境
+call venv\Scripts\activate.bat
+
+pyinstaller --onefile ^
+--add-data "GetUid.py;." ^
+--add-data "Report.py;." ^
+--add-data "src;src" ^
+--add-data "model;model" ^
+Start.py
+
+
+pause
+
+endlocal
