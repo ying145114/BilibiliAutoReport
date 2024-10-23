@@ -1,13 +1,13 @@
 =@echo off
 setlocal
 
-:: æ¿€æ´»è™šæ‹Ÿç¯å¢ƒ
+:: ¼¤»îĞéÄâ»·¾³
 call venv\Scripts\activate.bat
 
-:: è¿è¡Œ Start.py
+:: ÔËĞĞ Start.py
 python Start.py
 
-:: å¯é€‰ï¼šåœç•™åœ¨å‘½ä»¤è¡Œçª—å£ï¼ŒæŸ¥çœ‹è¾“å‡º
+:: ¿ÉÑ¡£ºÍ£ÁôÔÚÃüÁîĞĞ´°¿Ú£¬²é¿´Êä³ö
 pause
 
 endlocal
