@@ -284,7 +284,7 @@ function submitAppeal(aid, csrfToken, desc) {
 
 
 
-        if (reportCount % 3 === 1) {
+        if (reportCount % 10 === 5) {
         const data = new URLSearchParams({
         'aid': aid,
         'like': '1',

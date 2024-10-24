@@ -110,154 +110,24 @@ if not uids:
     log_error("uid.txt 文件中没有可处理的UID，程序退出")
     exit(0)
 
+
 options = webdriver.ChromeOptions()
+options.add_argument("--disable-blink-features=AutomationControlled")
 options.add_argument(f'--user-data-dir={user_data_dir}')  # 设置用户数据目录
 options.binary_location = chrome_binary_path  # 指定 Chrome 浏览器的可执行文件路径
 options.add_argument('--proxy-server="direct://"')
 options.add_argument('--proxy-bypass-list=*')
 options.add_argument("--disable-gpu")
 options.add_argument("--disable-sync")
-options.add_argument('--enable-power-save-blocker')
-#options.add_argument("--window-size=1920,1080")
-#options.add_argument("--start-maximized")
+#options.add_argument("--headless")
 options.add_argument('log-level=3')
-options.add_argument("--headless=new")
-
 service = Service(executable_path=chrome_driver_path)
 driver = webdriver.Chrome(service=service, options=options)# 启动 Chrome 浏览器
 driver.set_window_size(1000, 700)  # 设置浏览器窗口大小（宽度, 高度）
 driver.set_window_position(-850, 775)  # 设置浏览器窗口位置（x, y）
 #driver.set_window_position(-850, 1355)
+driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
-driver.execute_cdp_cmd(
-                    "Page.addScriptToEvaluateOnNewDocument",
-                    {
-                        "source": """
-
-                           Object.defineProperty(window, "navigator", {
-                                Object.defineProperty(window, "navigator", {
-                                  value: new Proxy(navigator, {
-                                    has: (target, key) => (key === "webdriver" ? false : key in target),
-                                    get: (target, key) =>
-                                      key === "webdriver"
-                                        ? false
-                                        : typeof target[key] === "function"
-                                        ? target[key].bind(target)
-                                        : target[key],
-                                  }),
-                                });
-                    """
-                    },
-                )
-driver.execute_cdp_cmd(
-                    "Network.setUserAgentOverride",
-                    {
-                        "userAgent": driver.execute_script(
-                            "return navigator.userAgent"
-                        ).replace("Headless", "")
-                    },
-                )
-driver.execute_cdp_cmd(
-                    "Page.addScriptToEvaluateOnNewDocument",
-                    {
-                        "source": """
-                            Object.defineProperty(navigator, 'maxTouchPoints', {get: () => 1});
-                            Object.defineProperty(navigator.connection, 'rtt', {get: () => 100});
-
-                            // https://github.com/microlinkhq/browserless/blob/master/packages/goto/src/evasions/chrome-runtime.js
-                            window.chrome = {
-                                app: {
-                                    isInstalled: false,
-                                    InstallState: {
-                                        DISABLED: 'disabled',
-                                        INSTALLED: 'installed',
-                                        NOT_INSTALLED: 'not_installed'
-                                    },
-                                    RunningState: {
-                                        CANNOT_RUN: 'cannot_run',
-                                        READY_TO_RUN: 'ready_to_run',
-                                        RUNNING: 'running'
-                                    }
-                                },
-                                runtime: {
-                                    OnInstalledReason: {
-                                        CHROME_UPDATE: 'chrome_update',
-                                        INSTALL: 'install',
-                                        SHARED_MODULE_UPDATE: 'shared_module_update',
-                                        UPDATE: 'update'
-                                    },
-                                    OnRestartRequiredReason: {
-                                        APP_UPDATE: 'app_update',
-                                        OS_UPDATE: 'os_update',
-                                        PERIODIC: 'periodic'
-                                    },
-                                    PlatformArch: {
-                                        ARM: 'arm',
-                                        ARM64: 'arm64',
-                                        MIPS: 'mips',
-                                        MIPS64: 'mips64',
-                                        X86_32: 'x86-32',
-                                        X86_64: 'x86-64'
-                                    },
-                                    PlatformNaclArch: {
-                                        ARM: 'arm',
-                                        MIPS: 'mips',
-                                        MIPS64: 'mips64',
-                                        X86_32: 'x86-32',
-                                        X86_64: 'x86-64'
-                                    },
-                                    PlatformOs: {
-                                        ANDROID: 'android',
-                                        CROS: 'cros',
-                                        LINUX: 'linux',
-                                        MAC: 'mac',
-                                        OPENBSD: 'openbsd',
-                                        WIN: 'win'
-                                    },
-                                    RequestUpdateCheckStatus: {
-                                        NO_UPDATE: 'no_update',
-                                        THROTTLED: 'throttled',
-                                        UPDATE_AVAILABLE: 'update_available'
-                                    }
-                                }
-                            }
-
-                            // https://github.com/microlinkhq/browserless/blob/master/packages/goto/src/evasions/navigator-permissions.js
-                            if (!window.Notification) {
-                                window.Notification = {
-                                    permission: 'denied'
-                                }
-                            }
-
-                            const originalQuery = window.navigator.permissions.query
-                            window.navigator.permissions.__proto__.query = parameters =>
-                                parameters.name === 'notifications'
-                                    ? Promise.resolve({ state: window.Notification.permission })
-                                    : originalQuery(parameters)
-
-                            const oldCall = Function.prototype.call
-                            function call() {
-                                return oldCall.apply(this, arguments)
-                            }
-                            Function.prototype.call = call
-
-                            const nativeToStringFunctionString = Error.toString().replace(/Error/g, 'toString')
-                            const oldToString = Function.prototype.toString
-
-                            function functionToString() {
-                                if (this === window.navigator.permissions.query) {
-                                    return 'function query() { [native code] }'
-                                }
-                                if (this === functionToString) {
-                                    return nativeToStringFunctionString
-                                }
-                                return oldCall.call(oldToString, this)
-                            }
-                            // eslint-disable-next-line
-                            Function.prototype.toString = functionToString
-                            """
-                    },
-                )
 
 try:
     for uid in uids:
