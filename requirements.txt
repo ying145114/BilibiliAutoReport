@@ -15,6 +15,7 @@ fastapi-restful[all]
 fastapi==0.112.0
 python-multipart
 requests
+func_timeout
 #matplotlib
 
 
