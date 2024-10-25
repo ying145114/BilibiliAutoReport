@@ -1,6 +1,7 @@
 from urllib.parse import urlencode
 from bs4 import BeautifulSoup
 import requests
+import datetime
 import shutil
 import os
 
@@ -129,10 +130,13 @@ def main():# 主函数，循环运行搜索和处理
                 if uid.isdigit():  # 假设 UID 是数字格式
                     unique_uids.add(uid)
 
-
         try:
-            shutil.copy('附加文件/uid.txt', '附加文件/uid_backup.txt')
-            print(f"成功保存备份")
+            # 获取当前时间并格式化
+            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            backup_filename = f'附加文件/UID记录/{timestamp}.txt'
+
+            shutil.copy('附加文件/uid.txt', backup_filename)
+            print(f"成功保存备份：{backup_filename}")
         except IOError as e:
             print(f"复制保存备份时发生错误：{e}")
 

@@ -5,7 +5,6 @@ import os
 
 print('启动Getuid.py')
 base_dir = os.path.dirname(os.path.abspath(__file__))
-
 log_file_path = os.path.join(base_dir, '错误记录.txt')
 python_executable = os.path.join(base_dir, 'venv', 'Scripts', 'python.exe')
 getuid_script = os.path.join(base_dir, 'Getuid.py')

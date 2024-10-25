@@ -1,4 +1,4 @@
-
+console.log('开始运行')
 let reportCount = 0
 let csrfText = ''; // 用于存储CSRF token
 let currentAidIndex = 0; // 当前处理的AID索引
@@ -21,11 +21,6 @@ const floatingWindow = document.createElement('div');// 创建诊断信息窗口
 
 const diagnosticInfo = document.createElement('div');// 创建诊断信息容器
     floatingWindow.appendChild(diagnosticInfo);
-
-
-
-
-
 
 
 function sendReportRequest() {

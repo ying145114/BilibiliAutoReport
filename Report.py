@@ -15,18 +15,12 @@ import sys
 import re
 import os
 
-
-
-
 skip = 7
-proxies = {'http': None,'https': None}
+proxies = {'http': None, 'https': None}
 base_dir = os.path.dirname(os.path.abspath(__file__))
 uid_path = os.path.join(base_dir, '附加文件', 'uid.txt')
 log_file_path = os.path.join(base_dir, '错误记录.txt')
-script_video = os.path.join(base_dir, '附加文件','扩展与脚本','Bilibili视频批量举报（纯JS代码）.js')
-script_article = os.path.join(base_dir, '附加文件','扩展与脚本','Bilibili专栏批量举报（纯JS代码）.js')
-script_dynamic = os.path.join(base_dir, '附加文件','扩展与脚本','Bilibili动态批量举报（纯JS代码）.js')
-script_ALL = os.path.join(base_dir, '附加文件','扩展与脚本','总脚本（纯JS代码）.js')
+script_ALL = os.path.join(base_dir, '附加文件', '扩展与脚本', '总脚本（纯JS代码）.js')
 success_directory = os.path.join(base_dir, '附加文件', '成功验证码')
 fail_directory = os.path.join(base_dir, '附加文件', '失败验证码')
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
@@ -102,23 +96,24 @@ def trigger_captcha(browser):
 
     except Exception as e:
         print(f"发生错误: {e}")
+
+
 def wait_for_js_execution():
     # 等待一定条件，确保 JS 执行完成
     WebDriverWait(driver, 10).until(lambda d: d.execute_script('return document.readyState') == 'complete')
 
+
 uids = []
-with open(uid_path, 'r', encoding='utf-8') as f:# 以读取模式打开文件
+with open(uid_path, 'r', encoding='utf-8') as f:  # 以读取模式打开文件
     for line in f:
         line = line.strip()  # 去掉行首尾的空白字符
         if line:  # 如果不是空行，则认为是UID
             uids.append(line)
 
-
 if not uids:
     print("uid.txt 文件中没有可处理的UID，程序退出")
     log_error("uid.txt 文件中没有可处理的UID，程序退出")
     exit(0)
-
 
 options = webdriver.ChromeOptions()
 options.add_argument("--disable-blink-features=AutomationControlled")
@@ -128,27 +123,26 @@ options.add_argument('--proxy-server="direct://"')
 options.add_argument('--proxy-bypass-list=*')
 options.add_argument("--disable-gpu")
 options.add_argument("--disable-sync")
+options.add_argument("disable-cache")#禁用缓存
 options.add_argument("--headless")
-options.add_argument('log-level=3')
+options.add_argument('log-level=0')
 service = Service(executable_path=chrome_driver_path)
-driver = webdriver.Chrome(service=service, options=options)# 启动 Chrome 浏览器
+driver = webdriver.Chrome(service=service, options=options)  # 启动 Chrome 浏览器
 #driver.set_window_size(1000, 700)  # 设置浏览器窗口大小（宽度, 高度）
 #driver.set_window_position(-850, 775)  # 设置浏览器窗口位置（x, y）
 #driver.set_window_position(-850, 1355)
 driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
-
 try:
     for uid in uids:
 
-
         try:
             search_url = f'https://api.bilibili.com/x/series/recArchivesByKeywords?mid={uid}&keywords=&ps=1'
-            headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
             response = requests.get(search_url, headers=headers, proxies=proxies, timeout=(5, 10))
             response.raise_for_status()
             data = response.json()
-
 
             if 'data' in data and 'archives' in data['data'] and len(data['data']['archives']) > 0:
                 first_video = data['data']['archives'][0]
@@ -156,17 +150,11 @@ try:
                 title = first_video.get('title')
                 print(f"UID:{uid}, 第一个视频 AID: {aid}, 标题: {title}")
 
-
                 if skip == 7:
                     print("不跳过人机验证")
                     url = f"https://www.bilibili.com/appeal/?avid={aid}"
                     driver.get(url)
                     trigger_captcha(driver)
-
-
-
-
-
 
                     while True:
                         try:
@@ -184,7 +172,6 @@ try:
                             url = re.search(r'url\("([^"]+?)\?[^"]*"\);', f).group(1)
                             print(url)
                             content = requests.get(url, proxies=proxies, timeout=(5, 10)).content
-
 
                             plan = jy_click.JYClick().run(content)
                             print(plan)
@@ -217,16 +204,12 @@ try:
                                 refresh_element.click()  # 点击刷新验证按钮
                                 print('已点击刷新按钮')
 
-
-
-
                             try:  # 等待 'geetest_item_wrap' 元素消失，表示验证码提交成功
                                 WebDriverWait(driver, 3).until(
                                     EC.invisibility_of_element_located(
                                         (By.XPATH, '//*[@class="geetest_item_wrap"]'))
                                 )
                                 print("验证码已消失！")
-
 
                                 try:
                                     WebDriverWait(driver, 5).until(EC.alert_is_present())  # 等待最多5秒，直到弹窗出现
@@ -273,24 +256,20 @@ try:
                 print(f"打开UID:{uid}")
                 userurl = f"https://space.bilibili.com/{uid}"
 
-                with open(script_video, "r",encoding="utf-8") as file:
-                    video = file.read()
-                with open(script_article, "r",encoding="utf-8") as file:
-                    article = file.read()
-                with open(script_dynamic, "r",encoding="utf-8") as file:
-                    dynamic = file.read()
-                with open(script_ALL, "r",encoding="utf-8") as file:
+                with open(script_ALL, "r", encoding="utf-8") as file:
                     ALL = file.read()
+
 
                 @func_set_timeout(7)
                 def report_scrpit():
                     driver.get(userurl)
                     driver.execute_script(ALL)
-                    time.sleep(7)
+                    time.sleep(700)
+
 
                 try:
                     report_scrpit()
-                    print('未超时')#不可能
+                    print('未超时')  #不可能
                 except func_timeout.exceptions.FunctionTimedOut:
                     f"UID:{uid}已完成"
                 continue  # 使用 continue 继续下一个 UID
@@ -305,7 +284,7 @@ try:
             print(f"UID循环内发生错误,错误UID：{uid}，错误: {e}")
             log_error(f"UID循环内发生错误,错误UID：{uid}，错误: {e}")
             sys.exit(f"UID循环内发生错误,错误UID：{uid}")
-    driver.quit()# 完成所有操作后关闭浏览器
+    driver.quit()  # 完成所有操作后关闭浏览器
 
 
 except Exception as e:
@@ -316,4 +295,3 @@ except Exception as e:
 
 finally:
     driver.quit()
-
