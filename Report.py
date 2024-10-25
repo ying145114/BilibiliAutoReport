@@ -4,9 +4,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.service import Service
 from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
+from func_timeout import func_set_timeout
 from selenium import webdriver
 from datetime import datetime
 from src import jy_click
+import func_timeout
 import requests
 import time
 import sys
@@ -15,11 +17,13 @@ import os
 
 
 
-skip = 8
+
+skip = 0
 proxies = {'http': None,'https': None}
 base_dir = os.path.dirname(os.path.abspath(__file__))
 uid_path = os.path.join(base_dir, '附加文件', 'uid.txt')
 log_file_path = os.path.join(base_dir, '错误记录.txt')
+script_file_path1 = os.path.join(base_dir, '附加文件','扩展与脚本','Bilibili视频批量举报（纯JS代码）.js')
 success_directory = os.path.join(base_dir, '附加文件', '成功验证码')
 fail_directory = os.path.join(base_dir, '附加文件', '失败验证码')
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
@@ -110,154 +114,24 @@ if not uids:
     log_error("uid.txt 文件中没有可处理的UID，程序退出")
     exit(0)
 
+
 options = webdriver.ChromeOptions()
+options.add_argument("--disable-blink-features=AutomationControlled")
 options.add_argument(f'--user-data-dir={user_data_dir}')  # 设置用户数据目录
 options.binary_location = chrome_binary_path  # 指定 Chrome 浏览器的可执行文件路径
 options.add_argument('--proxy-server="direct://"')
 options.add_argument('--proxy-bypass-list=*')
 options.add_argument("--disable-gpu")
 options.add_argument("--disable-sync")
-options.add_argument('--enable-power-save-blocker')
-#options.add_argument("--window-size=1920,1080")
-#options.add_argument("--start-maximized")
+#options.add_argument("--headless")
 options.add_argument('log-level=3')
-options.add_argument("--headless=new")
-
 service = Service(executable_path=chrome_driver_path)
 driver = webdriver.Chrome(service=service, options=options)# 启动 Chrome 浏览器
-driver.set_window_size(1000, 700)  # 设置浏览器窗口大小（宽度, 高度）
-driver.set_window_position(-850, 775)  # 设置浏览器窗口位置（x, y）
+#driver.set_window_size(1000, 700)  # 设置浏览器窗口大小（宽度, 高度）
+#driver.set_window_position(-850, 775)  # 设置浏览器窗口位置（x, y）
 #driver.set_window_position(-850, 1355)
+driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
-driver.execute_cdp_cmd(
-                    "Page.addScriptToEvaluateOnNewDocument",
-                    {
-                        "source": """
-
-                           Object.defineProperty(window, "navigator", {
-                                Object.defineProperty(window, "navigator", {
-                                  value: new Proxy(navigator, {
-                                    has: (target, key) => (key === "webdriver" ? false : key in target),
-                                    get: (target, key) =>
-                                      key === "webdriver"
-                                        ? false
-                                        : typeof target[key] === "function"
-                                        ? target[key].bind(target)
-                                        : target[key],
-                                  }),
-                                });
-                    """
-                    },
-                )
-driver.execute_cdp_cmd(
-                    "Network.setUserAgentOverride",
-                    {
-                        "userAgent": driver.execute_script(
-                            "return navigator.userAgent"
-                        ).replace("Headless", "")
-                    },
-                )
-driver.execute_cdp_cmd(
-                    "Page.addScriptToEvaluateOnNewDocument",
-                    {
-                        "source": """
-                            Object.defineProperty(navigator, 'maxTouchPoints', {get: () => 1});
-                            Object.defineProperty(navigator.connection, 'rtt', {get: () => 100});
-
-                            // https://github.com/microlinkhq/browserless/blob/master/packages/goto/src/evasions/chrome-runtime.js
-                            window.chrome = {
-                                app: {
-                                    isInstalled: false,
-                                    InstallState: {
-                                        DISABLED: 'disabled',
-                                        INSTALLED: 'installed',
-                                        NOT_INSTALLED: 'not_installed'
-                                    },
-                                    RunningState: {
-                                        CANNOT_RUN: 'cannot_run',
-                                        READY_TO_RUN: 'ready_to_run',
-                                        RUNNING: 'running'
-                                    }
-                                },
-                                runtime: {
-                                    OnInstalledReason: {
-                                        CHROME_UPDATE: 'chrome_update',
-                                        INSTALL: 'install',
-                                        SHARED_MODULE_UPDATE: 'shared_module_update',
-                                        UPDATE: 'update'
-                                    },
-                                    OnRestartRequiredReason: {
-                                        APP_UPDATE: 'app_update',
-                                        OS_UPDATE: 'os_update',
-                                        PERIODIC: 'periodic'
-                                    },
-                                    PlatformArch: {
-                                        ARM: 'arm',
-                                        ARM64: 'arm64',
-                                        MIPS: 'mips',
-                                        MIPS64: 'mips64',
-                                        X86_32: 'x86-32',
-                                        X86_64: 'x86-64'
-                                    },
-                                    PlatformNaclArch: {
-                                        ARM: 'arm',
-                                        MIPS: 'mips',
-                                        MIPS64: 'mips64',
-                                        X86_32: 'x86-32',
-                                        X86_64: 'x86-64'
-                                    },
-                                    PlatformOs: {
-                                        ANDROID: 'android',
-                                        CROS: 'cros',
-                                        LINUX: 'linux',
-                                        MAC: 'mac',
-                                        OPENBSD: 'openbsd',
-                                        WIN: 'win'
-                                    },
-                                    RequestUpdateCheckStatus: {
-                                        NO_UPDATE: 'no_update',
-                                        THROTTLED: 'throttled',
-                                        UPDATE_AVAILABLE: 'update_available'
-                                    }
-                                }
-                            }
-
-                            // https://github.com/microlinkhq/browserless/blob/master/packages/goto/src/evasions/navigator-permissions.js
-                            if (!window.Notification) {
-                                window.Notification = {
-                                    permission: 'denied'
-                                }
-                            }
-
-                            const originalQuery = window.navigator.permissions.query
-                            window.navigator.permissions.__proto__.query = parameters =>
-                                parameters.name === 'notifications'
-                                    ? Promise.resolve({ state: window.Notification.permission })
-                                    : originalQuery(parameters)
-
-                            const oldCall = Function.prototype.call
-                            function call() {
-                                return oldCall.apply(this, arguments)
-                            }
-                            Function.prototype.call = call
-
-                            const nativeToStringFunctionString = Error.toString().replace(/Error/g, 'toString')
-                            const oldToString = Function.prototype.toString
-
-                            function functionToString() {
-                                if (this === window.navigator.permissions.query) {
-                                    return 'function query() { [native code] }'
-                                }
-                                if (this === functionToString) {
-                                    return nativeToStringFunctionString
-                                }
-                                return oldCall.call(oldToString, this)
-                            }
-                            // eslint-disable-next-line
-                            Function.prototype.toString = functionToString
-                            """
-                    },
-                )
 
 try:
     for uid in uids:
@@ -278,7 +152,7 @@ try:
                 print(f"UID:{uid}, 第一个视频 AID: {aid}, 标题: {title}")
 
 
-                if skip == 8:
+                if skip == 9:
                     print("不跳过人机验证")
                     url = f"https://www.bilibili.com/appeal/?avid={aid}"
                     driver.get(url)
@@ -392,15 +266,26 @@ try:
                     print("跳过人机验证")
                     skip = skip + 1
                 print(f"打开UID:{uid}")
-                userurl = f"https://space.bilibili.com/{uid}/video"
-                driver.get(userurl)
-                start_time = time.time()
+                videourl = f"https://space.bilibili.com/{uid}/video"
+                articleurl = f"https://space.bilibili.com/{uid}/articleurl"
+                dynamicurl = f"https://space.bilibili.com/{uid}/dynamicurl"
+                with open(script_file_path1, "r",encoding="utf-8") as file:
+                    script1 = file.read()
 
-                while True:
-                    elapsed_time = time.time() - start_time
-                    if elapsed_time >= 6:  # 如果已超过 5 秒
-                        break
-                remove_completed_uid(uid)
+                @func_set_timeout(7)
+                def timeout():
+                    driver.get(videourl)
+                    driver.execute_script(script1)
+                    time.sleep(7)
+
+
+                try:
+                    timeout()
+                    print('未超时')
+                    # 若调用函数超时自动走异常(可在异常中写超时逻辑处理)
+                except func_timeout.exceptions.FunctionTimedOut:
+                    print('执行函数超时')
+
                 continue  # 使用 continue 继续下一个 UID
 
 
@@ -424,5 +309,4 @@ except Exception as e:
 
 finally:
     driver.quit()
-
 
