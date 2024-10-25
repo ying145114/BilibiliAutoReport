@@ -144,7 +144,7 @@ function submitAppeal(aid) {
 
 
 
-        if (reportCount % 10 === 5) {
+        if (reportCount % 10 === 9) {
             const data = new URLSearchParams({
     'aid': aid, // 确保 aid 的值是字符串或数字
     'like': '1',
