@@ -125,7 +125,7 @@ options.add_argument("--disable-gpu")
 options.add_argument("--disable-sync")
 options.add_argument("disable-cache")#禁用缓存
 options.add_argument("--headless")
-options.add_argument('log-level=0')
+options.add_argument('log-level=3')
 service = Service(executable_path=chrome_driver_path)
 driver = webdriver.Chrome(service=service, options=options)  # 启动 Chrome 浏览器
 #driver.set_window_size(1000, 700)  # 设置浏览器窗口大小（宽度, 高度）
@@ -267,11 +267,17 @@ try:
                     time.sleep(700)
 
 
+
                 try:
                     report_scrpit()
-                    print('未超时')  #不可能
+                    print('未超时') #不可能
                 except func_timeout.exceptions.FunctionTimedOut:
-                    f"UID:{uid}已完成"
+                    logs = driver.get_log('browser')
+                    warning_logs = [log for log in logs if log['level'] == 'WARNING']
+                    for log in warning_logs:
+                        print(log['message'])
+
+                remove_completed_uid(uid)
                 continue  # 使用 continue 继续下一个 UID
 
 
