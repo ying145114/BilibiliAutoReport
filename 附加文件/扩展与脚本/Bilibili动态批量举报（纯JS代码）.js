@@ -34,18 +34,20 @@ function updateDiagnosticInfo(content) {
 
 
 function getUid() {
-    const url = window.location.href;
-    const match = url.match(/space\.bilibili\.com\/(\d+)\/dynamic/);
-    return match ? match[1] : null; // 返回UID或null
+    const currentUrl = window.location.href;
+    const midMatch = currentUrl.match(/space\.bilibili\.com\/(\d+)/);
+     if (midMatch && midMatch[1]) {
+         const mid = midMatch[1];
+    return mid; // 返回UID或null
 }
 
-
+}
 
 function getAllDynamic(offset = '') {
     const uid = getUid();
     updateDiagnosticInfo('提取的UID:', uid);
     updateDiagnosticInfo("getAllDynamic function called\n");
-    
+
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         const url = `https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space?offset=${offset}&host_mid=${uid}&timezone_offset=-480&platform=web&features=itemOpusStyle,listOnlyfans,opusBigCover,onlyfansVote,decorationCard,forwardListHidden,ugcDelete,onlyfansQaCard&web_location=333.999`;
@@ -141,7 +143,7 @@ function reportDynamic(uid, dyid) {
     });
     let xhr = new XMLHttpRequest();
     xhr.withCredentials = true; // 允许跨域请求携带凭证
-    xhr.open('POST', `https://api.bilibili.com/x/dynamic/feed/dynamic_report/add?csrf=${csrf}`, true);  
+    xhr.open('POST', `https://api.bilibili.com/x/dynamic/feed/dynamic_report/add?csrf=${csrf}`, true);
     xhr.setRequestHeader('accept', '*/*');
     xhr.setRequestHeader('accept-language', 'zh-CN,zh;q=0.9');
     xhr.setRequestHeader('content-type', 'application/json');
