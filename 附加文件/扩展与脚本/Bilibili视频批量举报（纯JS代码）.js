@@ -128,10 +128,7 @@ function submitAppeal(aid) {
                 const result = JSON.parse(xhr.responseText);
                 updateDiagnosticInfo(`举报结果：<strong>${this.response}</strong><br>`);
                 if (result.code === -352){
-                    const spaceIdMatches = window.location.href.match(/space\.bilibili\.com\/(\d+)(\/|\?|$)/);
-                    const spaceId = spaceIdMatches ? spaceIdMatches[1] : null;
-                    const jumpUrl = `https://space.bilibili.com/${spaceId}/article`;
-                    window.location.href = jumpUrl;
+                    return "352错误，结束";
                     reject(`AID ${aid} 的返回码为 -352。`);
                     } else {
                         resolve(result);
@@ -151,23 +148,26 @@ function submitAppeal(aid) {
         
         if (reportCount % 10 === 5) {
             const data = new URLSearchParams({
-                'aid': aid,
-                'like': '1',
-                'eab_x': '2',
-                'ramval': '0',
-                'source': 'web_normal',
-                'ga': '1',
-                'csrf': getCsrf() // 请确保这是从浏览器中获取到的有效值
-                });
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", "https://api.bilibili.com/x/web-interface/archive/like");
-            xhr.setRequestHeader('accept', 'application/json, text/plain, */*');
-            xhr.setRequestHeader('accept-language', 'zh-CN,zh-TW;q=0.9,zh;q=0.8,en;q=0.7,ja;q=0.6');
-            xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
-             xhr.onload = function() {
-                 updateDiagnosticInfo(xhr.responseText);
-                 };
-            xhr.send(data.toString());
+    'aid': aid, // 确保 aid 的值是字符串或数字
+    'like': '1',
+    'csrf': getCsrf() // 请确保这是从浏览器中获取到的有效值
+});
+
+let xhr = new XMLHttpRequest();
+xhr.withCredentials = true; // 允许跨域请求携带凭证
+xhr.open("POST", "https://api.bilibili.com/x/web-interface/archive/like");
+xhr.setRequestHeader('accept', 'application/json, text/plain, */*');
+xhr.setRequestHeader('accept-language', 'zh-CN,zh;q=0.9');
+xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
+
+
+xhr.onload = function() {
+    updateDiagnosticInfo(xhr.responseText); // 更新诊断信息
+};
+
+// 发送请求
+xhr.send(data.toString());
+
             }
         
         
@@ -197,10 +197,7 @@ function submitNextAppeal() {// 提交下一个AID的函数
              }, 30); // 延迟
         } else {
             updateDiagnosticInfo('<strong style="font-size: 2em">本页全部举报成功</strong><br>');
-            const spaceIdMatches = window.location.href.match(/space\.bilibili\.com\/(\d+)(\/|\?|$)/);
-            const spaceId = spaceIdMatches ? spaceIdMatches[1] : null;
-            const jumpUrl = `https://space.bilibili.com/${spaceId}/article`;
-            window.location.href = jumpUrl;
+            return "完成，结束";
             }
 }
 
