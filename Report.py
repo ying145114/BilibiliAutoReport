@@ -18,12 +18,15 @@ import os
 
 
 
-skip = 0
+skip = 7
 proxies = {'http': None,'https': None}
 base_dir = os.path.dirname(os.path.abspath(__file__))
 uid_path = os.path.join(base_dir, '附加文件', 'uid.txt')
 log_file_path = os.path.join(base_dir, '错误记录.txt')
-script_file_path1 = os.path.join(base_dir, '附加文件','扩展与脚本','Bilibili视频批量举报（纯JS代码）.js')
+script_video = os.path.join(base_dir, '附加文件','扩展与脚本','Bilibili视频批量举报（纯JS代码）.js')
+script_article = os.path.join(base_dir, '附加文件','扩展与脚本','Bilibili专栏批量举报（纯JS代码）.js')
+script_dynamic = os.path.join(base_dir, '附加文件','扩展与脚本','Bilibili动态批量举报（纯JS代码）.js')
+script_ALL = os.path.join(base_dir, '附加文件','扩展与脚本','总脚本（纯JS代码）.js')
 success_directory = os.path.join(base_dir, '附加文件', '成功验证码')
 fail_directory = os.path.join(base_dir, '附加文件', '失败验证码')
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
@@ -99,7 +102,9 @@ def trigger_captcha(browser):
 
     except Exception as e:
         print(f"发生错误: {e}")
-
+def wait_for_js_execution():
+    # 等待一定条件，确保 JS 执行完成
+    WebDriverWait(driver, 10).until(lambda d: d.execute_script('return document.readyState') == 'complete')
 
 uids = []
 with open(uid_path, 'r', encoding='utf-8') as f:# 以读取模式打开文件
@@ -152,7 +157,7 @@ try:
                 print(f"UID:{uid}, 第一个视频 AID: {aid}, 标题: {title}")
 
 
-                if skip == 9:
+                if skip == 7:
                     print("不跳过人机验证")
                     url = f"https://www.bilibili.com/appeal/?avid={aid}"
                     driver.get(url)
@@ -266,26 +271,28 @@ try:
                     print("跳过人机验证")
                     skip = skip + 1
                 print(f"打开UID:{uid}")
-                videourl = f"https://space.bilibili.com/{uid}/video"
-                articleurl = f"https://space.bilibili.com/{uid}/articleurl"
-                dynamicurl = f"https://space.bilibili.com/{uid}/dynamicurl"
-                with open(script_file_path1, "r",encoding="utf-8") as file:
-                    script1 = file.read()
+                userurl = f"https://space.bilibili.com/{uid}"
+
+                with open(script_video, "r",encoding="utf-8") as file:
+                    video = file.read()
+                with open(script_article, "r",encoding="utf-8") as file:
+                    article = file.read()
+                with open(script_dynamic, "r",encoding="utf-8") as file:
+                    dynamic = file.read()
+                with open(script_ALL, "r",encoding="utf-8") as file:
+                    ALL = file.read()
 
                 @func_set_timeout(7)
-                def timeout():
-                    driver.get(videourl)
-                    driver.execute_script(script1)
+                def report_scrpit():
+                    driver.get(userurl)
+                    driver.execute_script(ALL)
                     time.sleep(7)
 
-
                 try:
-                    timeout()
-                    print('未超时')
-                    # 若调用函数超时自动走异常(可在异常中写超时逻辑处理)
+                    report_scrpit()
+                    print('未超时')#不可能
                 except func_timeout.exceptions.FunctionTimedOut:
-                    print('执行函数超时')
-
+                    f"UID:{uid}已完成"
                 continue  # 使用 continue 继续下一个 UID
 
 
