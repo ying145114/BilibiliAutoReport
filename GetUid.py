@@ -1,3 +1,5 @@
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
 from urllib.parse import urlencode
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -6,8 +8,6 @@ import datetime
 import shutil
 import os
 
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
 
 proxies = {'http': None, 'https': None}
 output_file = os.path.join(os.getcwd(), '附加文件/uid.txt')
