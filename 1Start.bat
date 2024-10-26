@@ -1,14 +1,14 @@
 =@echo off
+chcp 65001
 setlocal
-chcp 65001s
 
-:: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â»·ï¿½ï¿½
+:: ¼¤»îÐéÄâ»·¾³
 call venv\Scripts\activate.bat
 
-:: ï¿½ï¿½ï¿½ï¿½ Start.py
+:: ÔËÐÐ Start.py
 python Start.py
 
-:: ï¿½ï¿½Ñ¡ï¿½ï¿½Í£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½Ú£ï¿½ï¿½é¿´ï¿½ï¿½ï¿½
+:: ¿ÉÑ¡£ºÍ£ÁôÔÚÃüÁîÐÐ´°¿Ú£¬²é¿´Êä³ö
 pause
 
 endlocal
