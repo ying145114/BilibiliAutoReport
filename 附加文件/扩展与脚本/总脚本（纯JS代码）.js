@@ -133,6 +133,7 @@ function submitAppeal(aid) {
             if (xhr.status === 200) {
                 const result = JSON.parse(xhr.responseText);
                 updateDiagnosticInfo(`举报结果：<strong>${this.response}</strong><br>`);
+                console.warn(this.response)
 
                 if (result.code === -352) {
                     console.log(`AID ${aid} 的返回码为 -352，直接结束所有举报。`);
