@@ -170,7 +170,6 @@ try:
                                 time.sleep(0.5)
                             print(attempt)
                             url = re.search(r'url\("([^"]+?)\?[^"]*"\);', f).group(1)
-                            print(url)
                             content = requests.get(url, proxies=proxies, timeout=(5, 10)).content
 
                             plan = jy_click.JYClick().run(content)
@@ -263,6 +262,7 @@ try:
                 @func_set_timeout(7)
                 def report_scrpit():
                     driver.get(userurl)
+                    print(userurl)
                     driver.execute_script(ALL)
                     time.sleep(700)
 
