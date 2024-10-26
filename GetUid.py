@@ -116,6 +116,24 @@ def search_and_extract_uid(keyword):  # 定义搜索函数
         {
             'keyword': keyword,
             'from_source': 'video_tag',
+            'page': '3',
+            'o': '60'
+        },
+        {
+            'keyword': keyword,
+            'from_source': 'video_tag',
+            'page': '4',
+            'o': '90'
+        },
+        {
+            'keyword': keyword,
+            'from_source': 'video_tag',
+            'page': '5',
+            'o': '120'
+        },
+        {
+            'keyword': keyword,
+            'from_source': 'video_tag',
             'order': 'pubdate'
         }
     ]
