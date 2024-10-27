@@ -32,8 +32,15 @@ def sort_file_contents(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
         lines = file.readlines()
 
-    # 去除每行末尾的换行符，并将内容转换为整数
-    numbers = [int(line.strip()) for line in lines]
+    # 去除每行末尾的换行符，并将内容转换为整数，仅处理非空行
+    numbers = []
+    for line in lines:
+        stripped_line = line.strip()
+        if stripped_line:  # 确保不是空行
+            try:
+                numbers.append(int(stripped_line))
+            except ValueError:
+                print(f"警告: '{stripped_line}' 不是有效的整数，已跳过。")
 
     # 排序
     sorted_numbers = sorted(numbers)
