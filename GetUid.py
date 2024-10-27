@@ -27,6 +27,27 @@ else:
     print(f"文件 {output_file} 不存在，无需删除。")
 
 
+def sort_file_contents(file_path):
+    # 读取文件内容
+    with open(file_path, 'r', encoding='utf-8') as file:
+        lines = file.readlines()
+
+    # 去除每行末尾的换行符，并将内容转换为整数
+    numbers = [int(line.strip()) for line in lines]
+
+    # 排序
+    sorted_numbers = sorted(numbers)
+
+    # 将排序后的结果写回文件
+    with open(file_path, 'w', encoding='utf-8') as file:
+        for number in sorted_numbers:
+            file.write(f"{number}\n")
+
+
+# 使用示例
+
+
+
 def fetch_keywords():  # 定义获取关键词的函数
     keywords_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/云端文件/keyword.txt'  # 替换为实际的GitHub URL
     keywords_filename = '附加文件/keyword.txt'
@@ -36,9 +57,9 @@ def fetch_keywords():  # 定义获取关键词的函数
         if response.status_code == 200:
             with open(keywords_filename, 'wb') as f_out:
                 f_out.write(response.content)
-            print(f"成功下载关键词文件 {keywords_url} 并保存为 {keywords_filename}")
+            print(f"成功下载关键词文件并保存为keyword")
         else:
-            print(f"无法访问 {keywords_url}，状态码：{response.status_code}")
+            print(f"无法访问URL，状态码：{response.status_code}")
             return load_local_keywords(keywords_filename)  # 返回本地关键词
     except requests.exceptions.RequestException as e:
         print(f"下载关键词文件时发生请求异常：{e}")
@@ -95,7 +116,7 @@ def load_local_keywords(filename):  # 定义从本地文件加载关键词的函
                 if stripped_line and not stripped_line.startswith('#'):  # 排除空行和以“#”开头的行
                     keywords.append(stripped_line)
     else:
-        print(f"本地关键词文件 {filename} 不存在。")
+        print(f"本地关键词文件不存在。")
 
     return keywords
 
@@ -166,7 +187,7 @@ def search_and_extract_uid(keyword):  # 定义搜索函数
 
 
 def process_uid_list(keyword, uid_list):  # 定义处理UID列表的函数（追加写入同一文件）
-    print(f" \"{keyword}\" UID：", uid_list)
+    print(f" \"{keyword}\" UID：\n", uid_list)
 
     # 将UID列表追加写入文件
     with open(output_file, 'a', encoding='utf-8') as f:
@@ -196,7 +217,7 @@ while True:
         backup_filename = f'附加文件/UID记录/{timestamp}.txt'
 
         shutil.copy('附加文件/uid.txt', backup_filename)
-        print(f"成功保存备份：{backup_filename}")
+        print(f"成功保存备份：{timestamp}")
     except IOError as e:
         print(f"复制保存备份时发生错误：{e}")
 
@@ -205,9 +226,9 @@ while True:
         if response.status_code == 200:
             with open(whitelist_filename, 'wb') as f_out:
                 f_out.write(response.content)
-            print(f"成功下载文件 {whitelist_url} 并保存为 {whitelist_filename}")
+            print(f"成功下载文件并保存为whitelist")
         else:
-            print(f"无法访问 {whitelist_url}，状态码：{response.status_code}")
+            print(f"无法访问URL，状态码：{response.status_code}")
     except requests.exceptions.RequestException as e:
         print(f"下载文件时发生请求异常：{e}")
     except IOError as e:
@@ -226,6 +247,8 @@ while True:
 
     get_watchlater()
 
+    sort_file_contents(cloud_whitelist_filename)
+
 
 
     try:
@@ -233,9 +256,9 @@ while True:
         if response.status_code == 200:
             with open(blacklist_filename, 'wb') as f_out:
                 f_out.write(response.content)
-            print(f"成功下载文件 {blacklist_url} 并保存为 {blacklist_filename}")
+            print(f"成功下载文件并保存为blacklist")
         else:
-            print(f"无法访问 {blacklist_url}，状态码：{response.status_code}")
+            print(f"无法访问URL，状态码：{response.status_code}")
     except requests.exceptions.RequestException as e:
         print(f"下载文件时发生请求异常：{e}")
     except IOError as e:
