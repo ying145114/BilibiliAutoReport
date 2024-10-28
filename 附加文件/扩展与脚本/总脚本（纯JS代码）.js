@@ -170,7 +170,7 @@ function submitAppeal(aid) {
 
 //###############################################点赞视频部分#############################################################
 
-        if (reportCount % 50 === 49) {
+        if (reportCount % 50 === 999) {
             const data = new URLSearchParams({
                 'aid': aid, // 确保 aid 的值是字符串或数字
                 'like': '1',
