@@ -154,3 +154,60 @@ n = 5
 result = label_account(uid, titles_str, n)
 print(result)
 
+
+
+
+
+import requests
+import json
+
+def label_account(uid, titles_str, n):
+    # 假设这是您的分类标记函数
+    pass
+
+# 函数来处理每个 uid
+def process_uid(uid, output_file, counts):
+    search_url = f'https://api.bilibili.com/x/series/recArchivesByKeywords?mid={uid}&keywords=&ps=100'
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+    }
+    
+    try:
+        response = requests.get(search_url, headers=headers, timeout=(5, 10))
+        response.raise_for_status()
+        data = response.json()
+
+        if data['code'] == 0 and 'data' in data and 'archives' in data['data']:
+            titles = [archive['title'] for archive in data['data']['archives']]
+            titles_str = ', '.join(titles)
+            n = len(titles)
+
+            # 调用标记函数
+            label_account(uid, titles_str, n)
+
+            # 更新计数器
+            counts[uid] = counts.get(uid, 0) + 1
+            
+            # 如果被标记超过1次，将 uid 写入输出文件
+            if counts[uid] > 1:
+                with open(output_file, 'a', encoding='utf-8') as f:
+                    f.write(f'{uid}\n')
+
+    except Exception as e:
+        print(f"Error processing UID {uid}: {e}")
+
+def main(filename, output_file):
+    counts = {}
+    
+    with open(filename, 'r', encoding='utf-8') as f:
+        uids = f.readlines()
+        
+    for uid in uids:
+        uid = uid.strip()  # 去掉换行符和空格
+        if uid:  # 确保 uid 非空
+            process_uid(uid, output_file, counts)
+
+if __name__ == "__main__":
+    input_filename = 'path/to/your/filename.txt'  # 替换为你的输入文件路径
+    output_filename = 'output.txt'  # 输出文件路径
+    main(input_filename, output_filename)
