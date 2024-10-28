@@ -264,8 +264,8 @@ function getAid(page) {
                 if (data.code === 0 && data.data) {
                     const { count, pn } = data.data;
                     if (!data.data.articles || data.data.articles.length === 0) {
-                        updateDiagnosticInfo('专栏举报完成！<br>');
-                        console.warn('专栏举报完成！<br>');
+                        updateDiagnosticInfo('无可举报专栏！<br>');
+                        console.warn('无可举报专栏！');
                         resolve(); // 退出，不再请求下一页
                         return;
                     }
