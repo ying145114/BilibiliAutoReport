@@ -1,0 +1,213 @@
+我想写个python程序，我会给出某账号的前100个视频的标题，用于给账号加内容标签，例如：财经博主，生活博主，游戏博主之类。
+针对每个类别给出一定量的关键词，并给每个关键词赋分，程序尝试从标题文本中提取关键词进行匹配，每个类别方向的评分计算为：关键词1分值*关键词1次数+关键词2分值*关键词2次数+。。。。。。。
+最后用每个类别方向评分除以总得分值，如果某方向分值超过一定的百分比则给这个账号打上对应类被方向的标签
+
+
+
+# 定义类别及其关键词和分值
+categories = {
+    "财经博主": {
+        "关键词": ["股票", "投资", "理财", "经济", "市场"],
+        "分值": [2, 3, 1, 1, 1]
+    },
+    "生活博主": {
+        "关键词": ["美食", "旅行", "家居", "健身", "购物"],
+        "分值": [2, 2, 1, 2, 1]
+    },
+    "游戏博主": {
+        "关键词": ["游戏", "攻略", "主播", "电竞", "在线"],
+        "分值": [3, 2, 3, 4, 2]
+    }
+}
+
+# 示例视频标题
+titles = [
+    "2023年最热门的股票投资技巧",
+    "旅行中的美食探索",
+    "最新电竞赛事直播回顾",
+    "家居装饰小技巧",
+    "如何选择你的投资组合"
+]
+
+def calculate_scores(titles):
+    scores = {category: 0 for category in categories}
+    
+    # 统计每个类别的得分
+    total_score = 0
+    
+    for title in titles:
+        for category, info in categories.items():
+            keywords = info["关键词"]
+            points = info["分值"]
+            
+            for keyword, point in zip(keywords, points):
+                count = title.count(keyword)
+                if count > 0:
+                    category_score = count * point
+                    scores[category] += category_score
+                    total_score += category_score
+
+    return scores, total_score
+
+def categorize_account(scores, total_score, threshold=0.1):
+    labels = []
+    for category, score in scores.items():
+        if total_score > 0 and (score / total_score) > threshold:
+            labels.append(category)
+    return labels
+
+# 计算得分
+scores, total_score = calculate_scores(titles)
+
+# 对账号进行分类
+threshold = 0.1  # 设置阈值，例如10%
+labels = categorize_account(scores, total_score, threshold)
+
+print("类别得分:", scores)
+print("总得分:", total_score)
+print("账号标签:", labels)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 定义类别及其关键词和分值
+categories = {
+    "财经博主": {
+        "关键词": ["股票", "投资", "理财", "经济", "市场"],
+        "分值": [2, 3, 1, 1, 1]
+    },
+    "生活博主": {
+        "关键词": ["美食", "旅行", "家居", "健身", "购物"],
+        "分值": [2, 2, 1, 2, 1]
+    },
+    "游戏博主": {
+        "关键词": ["游戏", "攻略", "主播", "电竞", "在线"],
+        "分值": [3, 2, 3, 4, 2]
+    }
+}
+
+def calculate_scores(titles):
+    scores = {category: 0 for category in categories}
+    
+    # 统计每个类别的得分
+    for title in titles:
+        for category, info in categories.items():
+            keywords = info["关键词"]
+            points = info["分值"]
+
+            for keyword, point in zip(keywords, points):
+                count = title.count(keyword)
+                if count > 0:
+                    category_score = count * point
+                    scores[category] += category_score
+
+    return scores
+
+def categorize_account(scores, title_count, threshold=0.1):
+    labels = []
+    for category, score in scores.items():
+        if (title_count > 0) and (score / title_count) > threshold:
+            labels.append(category)
+    return labels
+
+def label_account(uid, titles_str, n):
+    # 将标题字符串按特定符号分割
+    titles = titles_str.split('|||')  # 这里使用 '|||' 作为分隔符
+    if len(titles) > n:
+        titles = titles[:n]  # 只取前n个标题
+    
+    # 计算得分
+    scores = calculate_scores(titles)
+    
+    # 对账号进行分类
+    labels = categorize_account(scores, len(titles))
+    
+    return {
+        "uid": uid,
+        "类别得分": scores,
+        "账号标签": labels
+    }
+
+# 示例调用
+uid = "3546649257314847"
+titles_str = "2023年最热门的股票投资技巧|||旅行中的美食探索|||最新电竞赛事直播回顾|||家居装饰小技巧|||如何选择你的投资组合"
+n = 5
+
+result = label_account(uid, titles_str, n)
+print(result)
+
+
+
+
+
+import requests
+import json
+
+def label_account(uid, titles_str, n):
+    # 假设这是您的分类标记函数
+    pass
+
+# 函数来处理每个 uid
+def process_uid(uid, output_file, counts):
+    search_url = f'https://api.bilibili.com/x/series/recArchivesByKeywords?mid={uid}&keywords=&ps=100'
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+    }
+    
+    try:
+        response = requests.get(search_url, headers=headers, timeout=(5, 10))
+        response.raise_for_status()
+        data = response.json()
+
+        if data['code'] == 0 and 'data' in data and 'archives' in data['data']:
+            titles = [archive['title'] for archive in data['data']['archives']]
+            titles_str = ', '.join(titles)
+            n = len(titles)
+
+            # 调用标记函数
+            label_account(uid, titles_str, n)
+
+            # 更新计数器
+            counts[uid] = counts.get(uid, 0) + 1
+            
+            # 如果被标记超过1次，将 uid 写入输出文件
+            if counts[uid] > 1:
+                with open(output_file, 'a', encoding='utf-8') as f:
+                    f.write(f'{uid}\n')
+
+    except Exception as e:
+        print(f"Error processing UID {uid}: {e}")
+
+def main(filename, output_file):
+    counts = {}
+    
+    with open(filename, 'r', encoding='utf-8') as f:
+        uids = f.readlines()
+        
+    for uid in uids:
+        uid = uid.strip()  # 去掉换行符和空格
+        if uid:  # 确保 uid 非空
+            process_uid(uid, output_file, counts)
+
+if __name__ == "__main__":
+    input_filename = 'path/to/your/filename.txt'  # 替换为你的输入文件路径
+    output_filename = 'output.txt'  # 输出文件路径
+    main(input_filename, output_filename)
