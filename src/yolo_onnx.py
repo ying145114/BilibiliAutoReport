@@ -16,7 +16,7 @@ import random
 from io import BytesIO
 from PIL import Image
 
-from .orientation import non_max_suppression, tag_images
+from src.orientation import non_max_suppression, tag_images
 
 np.set_printoptions(precision=4)
 

@@ -11,7 +11,6 @@
 from PIL import Image
 import onnxruntime
 import numpy as np
-import time
 import numbers
 from io import BytesIO
 
