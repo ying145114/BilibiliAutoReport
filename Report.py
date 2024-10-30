@@ -38,9 +38,9 @@ def log_error(message):
 
 def remove_completed_uid(uid):
     try:
-        with open('附加文件/uid.txt', 'r', encoding='utf-8') as f:
+        with open(uid_path, 'r', encoding='utf-8') as f:
             lines = f.readlines()
-        with open('附加文件/uid.txt', 'w', encoding='utf-8') as f:
+        with open(uid_path, 'w', encoding='utf-8') as f:
             for line in lines:
                 if line.strip() != uid:
                     f.write(line)
