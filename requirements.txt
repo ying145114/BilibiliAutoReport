@@ -7,7 +7,6 @@ uvicorn==0.30.5
 fastapi==0.112.0
 opencv-python-headless==4.10.0.82
 pydantic==2.8.2
-starlette==0.40.0
 beautifulsoup4==4.12.3
 cryptography
 Cython
@@ -16,26 +15,5 @@ fastapi==0.112.0
 python-multipart
 requests
 func_timeout
+#starlette==0.40.0
 #matplotlib
-
-
-
-
-
-
-
-
-
-
-
-
-options = uc.ChromeOptions()
-options.add_argument(f'--user-data-dir={user_data_dir}')  # 设置用户数据目录
-options.binary_location = chrome_binary_path  # 指定 Chrome 浏览器的可执行文件路径
-options.add_argument('--proxy-bypass-list=*')  # 代理绕过列表
-options.add_argument("--disable-gpu")  # 禁用GPU加速
-
-# 启动undetected_chromedriver，并指定ChromeDriver路径（如果需要）
-driver = uc.Chrome(headless=True,options=options, version_main=126,executable_path=chrome_driver_path)
-driver.set_window_size(1000, 700)  # 设置浏览器窗口大小（宽度, 高度）
-driver.set_window_position(-850, 1355)  # 设置浏览器窗口位置
