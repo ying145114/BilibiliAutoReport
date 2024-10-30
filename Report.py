@@ -18,14 +18,14 @@ import os
 skip = 7
 proxies = {'http': None, 'https': None}
 base_dir = os.path.dirname(os.path.abspath(__file__))
-uid_file = os.path.join(base_dir, '附加文件', '数据文件','uid.txt')
+uid_file = os.path.join(base_dir, '附加文件', '运行数据','uid.txt')
 log_file = os.path.join(base_dir, '附加文件', '运行记录','错误记录.txt')
 script_ALL = os.path.join(base_dir, '附加文件', '页面脚本', '总脚本（纯JS代码）.js')
 success_directory = os.path.join(base_dir, '附加文件', '成功验证码')
 fail_directory = os.path.join(base_dir, '附加文件', '失败验证码')
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
 chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
-chrome_driver_path = os.path.join(base_dir, '附加文件', '数据文件','chromedriver.exe')
+chrome_driver_path = os.path.join(base_dir, '附加文件', '运行数据','chromedriver.exe')
 os.makedirs(success_directory, exist_ok=True)
 os.makedirs(fail_directory, exist_ok=True)
 

@@ -12,20 +12,20 @@ import os
 
 
 proxies = {'http': None, 'https': None}
-output_file = os.path.join(os.getcwd(), '附加文件/数据文件/uid.txt')
+output_file = os.path.join(os.getcwd(), '附加文件/运行数据/uid.txt')
 keywords_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/附加文件/云端文件/keyword.txt'
-keywords_filename = '附加文件/数据文件/keyword.txt'
+keywords_filename = '附加文件/运行数据/keyword.txt'
 whitelist_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/附加文件/云端文件/whitelist.txt'
-whitelist_filename = '附加文件/数据文件/whitelist.txt'
+whitelist_filename = '附加文件/运行数据/whitelist.txt'
 blacklist_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/附加文件/云端文件/blacklist.txt'
-blacklist_filename = '附加文件/数据文件/blacklist.txt'
+blacklist_filename = '附加文件/运行数据/blacklist.txt'
 cloud_whitelist_filename = '附加文件/云端文件/whitelist.txt'
 base_dir = os.path.dirname(os.path.abspath(__file__))
 python_executable = os.path.join(base_dir, 'venv', 'Scripts', 'python.exe')
 filteruid_script = os.path.join(base_dir, 'UidFilter.py')
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
 chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
-chrome_driver_path = os.path.join(base_dir, '附加文件', '数据文件','chromedriver.exe')
+chrome_driver_path = os.path.join(base_dir, '附加文件', '运行数据','chromedriver.exe')
 script_clear = os.path.join(base_dir, '附加文件', '页面脚本', '清空列表（纯JS代码）.js')
 log_directory = os.path.join(base_dir, '附加文件', '运行记录')
 os.makedirs(log_directory, exist_ok=True)
