@@ -18,7 +18,8 @@ import os
 skip = 7
 proxies = {'http': None, 'https': None}
 base_dir = os.path.dirname(os.path.abspath(__file__))
-uid_path = os.path.join(base_dir, '附加文件', '数据文件','uid.txt')
+uid_file = os.path.join(base_dir, '附加文件', '数据文件','uid.txt')
+filtered_uid_file = os.path.join(base_dir, '附加文件', '数据文件','filter_uid.txt')
 log_file = os.path.join(base_dir, '附加文件', '运行记录','错误记录.txt')
 script_ALL = os.path.join(base_dir, '附加文件', '页面脚本', '总脚本（纯JS代码）.js')
 success_directory = os.path.join(base_dir, '附加文件', '成功验证码')
@@ -38,9 +39,9 @@ def log_error(message):
 
 def remove_completed_uid(uid):
     try:
-        with open(uid_path, 'r', encoding='utf-8') as f:
+        with open(uid_file, 'r', encoding='utf-8') as f:
             lines = f.readlines()
-        with open(uid_path, 'w', encoding='utf-8') as f:
+        with open(uid_file, 'w', encoding='utf-8') as f:
             for line in lines:
                 if line.strip() != uid:
                     f.write(line)
@@ -104,7 +105,7 @@ def wait_for_js_execution():
 
 
 uids = []
-with open(uid_path, 'r', encoding='utf-8') as f:  # 以读取模式打开文件
+with open(filtered_uid_file, 'r', encoding='utf-8') as f:  # 以读取模式打开文件
     for line in f:
         line = line.strip()  # 去掉行首尾的空白字符
         if line:  # 如果不是空行，则认为是UID

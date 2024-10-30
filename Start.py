@@ -9,6 +9,7 @@ log_file = os.path.join(base_dir, '附加文件','运行记录','错误记录.tx
 python_executable = os.path.join(base_dir, 'venv', 'Scripts', 'python.exe')
 getuid_script = os.path.join(base_dir, 'Getuid.py')
 report_script = os.path.join(base_dir, 'Report.py')
+filter_script = os.path.join(base_dir, 'UidFilter.py')
 
 
 def log_error(message):
@@ -30,6 +31,10 @@ while True:
             error_message = f"Getuid.py 出现错误，返回码: {getuid_process.returncode}，正在重新运行 Getuid.py..."
             print(error_message)
             log_error(error_message)  # 记录错误信息
+
+
+    getuid_process = subprocess.Popen([python_executable, getuid_script], shell=True)
+    getuid_process.wait()
 
 
     while True:  # 死循环以重启 Report.py
