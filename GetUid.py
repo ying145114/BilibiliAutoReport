@@ -39,12 +39,13 @@ def sort_file_contents(file_path):
         lines = file.readlines()
 
     # 去除每行末尾的换行符，并将内容转换为整数，仅处理非空行
-    numbers = []
+    numbers = set()
     for line in lines:
         stripped_line = line.strip()
         if stripped_line:  # 确保不是空行
             try:
-                numbers.append(int(stripped_line))
+                number = int(stripped_line)
+                numbers.add(number)
             except ValueError:
                 print(f"警告: '{stripped_line}' 不是有效的整数，已跳过。")
 
@@ -52,7 +53,7 @@ def sort_file_contents(file_path):
     sorted_numbers = sorted(numbers)
 
     # 将排序后的结果写回文件
-    with open(file_path, 'w', encoding='utf-8') as file:
+    with open(cloud_whitelist_filename, 'w', encoding='utf-8') as file:
         for number in sorted_numbers:
             file.write(f"{number}\n")
 
@@ -99,12 +100,14 @@ def get_watchlater(): #将“稍后再看”里面的UID加入举报列表
     driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
     url = f"https://www.bilibili.com/watchlater/?spm_id_from=333.1007.0.0#/list"
     driver.get(url)
-    elements = driver.find_elements(By.XPATH, "//a[@class='user']")
+    elements = driver.find_elements(By.XPATH, "//*[@id='app']/main/section/div/div[1]/div[1]/div/div[2]/div[2]/a")
     watchlaters = []
     for element in elements:
         href = element.get_attribute("href")  # 获取 href 属性
-        watchlater = href.split("/")[-1]  # 从链接中提取 UID
+        uid_start = href.rfind("/") + 1  # 找到最后一个斜杠后面的位置
+        watchlater = href[uid_start:]  # 截取UID部分
         watchlaters.append(watchlater)
+
     with open(script_clear, "r", encoding="utf-8") as file:
         clear = file.read()
     driver.execute_script(clear)
