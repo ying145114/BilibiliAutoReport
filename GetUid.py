@@ -21,8 +21,6 @@ blacklist_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/
 blacklist_filename = '附加文件/运行数据/blacklist.txt'
 cloud_whitelist_filename = '附加文件/云端文件/whitelist.txt'
 base_dir = os.path.dirname(os.path.abspath(__file__))
-python_executable = os.path.join(base_dir, 'venv', 'Scripts', 'python.exe')
-filteruid_script = os.path.join(base_dir, 'UidFilter.py')
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
 chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
 chrome_driver_path = os.path.join(base_dir, '附加文件', '运行数据','chromedriver.exe')
@@ -202,9 +200,7 @@ print('读取当前文件中所有的 UID，并添加到集合中去重')
 
 
 
-print('对UID进行过滤处理')
-filteruid_process = subprocess.Popen([python_executable, filteruid_script], shell=True)
-filteruid_process.wait()
+
 
 
 
