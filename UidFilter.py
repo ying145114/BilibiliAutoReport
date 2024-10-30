@@ -34,7 +34,6 @@ for uid in uids:
         }
 
         try:
-            print(uid)
             response = requests.get(search_url, headers=headers, proxies=proxies, timeout=(5, 10))
             response.raise_for_status()
             data = response.json()
@@ -74,9 +73,9 @@ for uid in uids:
 
                 labels = []
                 for category, score in scores.items():
+                    print(f'{uid}:{labels}')
                     if total_score > 0 and (score / n) > 1:
                         labels.append(category)
-                        print(f'{uid}:{labels}')
                         with open(cloud_whitelist_filename, 'a', encoding='utf-8') as f:
                             f.write(f"\n{uid}")
 
