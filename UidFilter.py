@@ -1,26 +1,21 @@
 import requests
 import os
 
-
-
 base_dir = os.path.dirname(os.path.abspath(__file__))
 cloud_whitelist_filename = '云端文件/whitelist.txt'
-uid_path = os.path.join(base_dir, '附加文件','运行数据','uid.txt')
+uid_path = os.path.join(base_dir, '附加文件', '运行数据', 'uid.txt')
 proxies = {'http': None, 'https': None}
 categories = {
     "色情游戏": {
-        "关键词": ["SLG", "ACT", "RPG", "黄油","ADV", "GAL","动态","汉化","步兵","无码","ONS","KRKR"],
-        "权重": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        "关键词": ["SLG", "ACT", "RPG", "黄油", "ADV", "GAL", "动态", "汉化", "步兵", "无码", "ONS", "KRKR", "解锁","存档","CG"],
+        "权重": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     },
     "色情同人": {
-        "关键词": ["AKT", "同人", "大佬", "vicineko", "新作"],
-        "权重": [1, 1, 1, 1, 1]
+        "关键词": ["AKT", "同人", "大佬", "vicineko", "新作","wood","Rinjo","shaggy","Milkychu","sodeno19","SURU"],
+        "权重": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     },
 
 }
-
-
-
 
 with open(uid_path, 'r', encoding='utf-8') as f:
     uids = f.readlines()
@@ -43,7 +38,6 @@ for uid in uids:
                 titles_str = ', '.join(titles)
                 n = len(titles)
 
-
                 # 调用标记函数
 
                 titles = titles_str.split('|||')  # 这里使用 '|||' 作为分隔符
@@ -56,14 +50,12 @@ for uid in uids:
                 total_score = 0
 
                 for title in titles:
-                    title_lower = title.lower()  # 将标题转换为小写
                     for category, info in categories.items():
                         keywords = info["关键词"]
                         points = info["权重"]
 
                         for keyword, point in zip(keywords, points):
-                            keyword_lower = keyword.lower()  # 将关键词转换为小写
-                            count = title_lower.count(keyword_lower)
+                            count = title.count(keyword)
                             if count > 0:
                                 category_score = count * point
                                 scores[category] += category_score
@@ -73,9 +65,9 @@ for uid in uids:
 
                 labels = []
                 for category, score in scores.items():
-                    print(f'{uid}:{labels}')
-                    if total_score > 0 and (score / n) > 1:
+                    if total_score > 0 and (score / n) > 0.75:
                         labels.append(category)
+                        print(f'{uid}:{labels}')
                         with open(cloud_whitelist_filename, 'a', encoding='utf-8') as f:
                             f.write(f"\n{uid}")
 
@@ -93,12 +85,13 @@ with open(cloud_whitelist_filename, 'r', encoding='utf-8') as file:
     lines = file.readlines()
 
 # 去除每行末尾的换行符，并将内容转换为整数，仅处理非空行
-numbers = []
+numbers = set()
 for line in lines:
     stripped_line = line.strip()
     if stripped_line:  # 确保不是空行
         try:
-            numbers.append(int(stripped_line))
+            number = int(stripped_line)
+            numbers.add(number)
         except ValueError:
             print(f"警告: '{stripped_line}' 不是有效的整数，已跳过。")
 
@@ -111,10 +104,10 @@ with open(cloud_whitelist_filename, 'w', encoding='utf-8') as file:
         file.write(f"{number}\n")
 
 # 将文件 A 的内容覆盖到文件 B
-with open(cloud_whitelist_filename, 'r', encoding='utf-8') as file_a:
-    content_a = file_a.read()
+#with open(cloud_whitelist_filename, 'r', encoding='utf-8') as file_a:
+#    content_a = file_a.read()
 
 # 将文件 A 的内容覆盖到文件 B
-with open(uid_path, 'w', encoding='utf-8') as file_b:
-    file_b.write(content_a)
+#with open(uid_path, 'w', encoding='utf-8') as file_b:
+#    file_b.write(content_a)
 exit(0)
