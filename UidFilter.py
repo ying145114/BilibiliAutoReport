@@ -5,7 +5,7 @@ import os
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 cloud_whitelist_filename = '附加文件/云端文件/whitelist.txt'
-uid_path = os.path.join(base_dir, '数据文件','uid.txt')
+uid_path = os.path.join(base_dir, '附加文件','数据文件','uid.txt')
 proxies = {'http': None, 'https': None}
 categories = {
     "色情游戏": {
