@@ -1,14 +1,9 @@
 =@echo off
 chcp 65001
 setlocal
-
-:: 激活虚拟环境
+pushd ..
 call venv\Scripts\activate.bat
-
-:: 运行 Start.py
 python GetUid.py
-
-:: 可选：停留在命令行窗口，查看输出
+popd
 pause
-
 endlocal
