@@ -170,7 +170,7 @@ def search_and_extract_uid(keyword):  # 定义搜索函数
             uid_list = []
             count = 0  # 计数器，用于限制获取的UID数量
             for link in soup.select('.bili-video-card .bili-video-card__info--owner'):
-                if count >= 30:
+                if count >= 5:
                     break
                 href = link['href']
                 uid = href.split('/')[-1]  # 获取链接中最后的数字部分作为UID
@@ -203,8 +203,8 @@ print('读取当前文件中所有的 UID，并添加到集合中去重')
 
 
 print('对UID进行过滤处理')
-getuid_process = subprocess.Popen([python_executable, filteruid_script], shell=True)
-getuid_process.wait()
+filteruid_process = subprocess.Popen([python_executable, filteruid_script], shell=True)
+filteruid_process.wait()
 
 
 
@@ -273,7 +273,7 @@ except IOError as e:
     print(f"文件操作发生错误：{e}")
 except Exception as e:
     print(f"发生未知错误：{e}")
-print('继续执行其他操作，不受文件下载错误的影响')
+
 exclude_uids = set()
 
 with open(blacklist_filename, 'r', encoding='utf-8') as exclude_file:

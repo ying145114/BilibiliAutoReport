@@ -130,7 +130,7 @@ service = Service(executable_path=chrome_driver_path)
 driver = webdriver.Chrome(service=service, options=options)  # 启动 Chrome 浏览器
 driver.set_window_size(1000, 700)  # 设置浏览器窗口大小（宽度, 高度）
 #driver.set_window_position(-850, 775)  # 设置浏览器窗口位置（x, y）
-driver.set_window_position(-850, 1355)
+#driver.set_window_position(-850, 1355)
 driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
 try:
@@ -170,9 +170,11 @@ try:
                                 time.sleep(0.5)
                             print(attempt)
                             url = re.search(r'url\("([^"]+?)\?[^"]*"\);', f).group(1)
+
                             content = requests.get(url, proxies=proxies, timeout=(5, 10)).content
 
                             plan = jy_click.JYClick().run(content)
+
                             print(plan)
 
                             a, b = get_location(img)
