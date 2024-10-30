@@ -168,7 +168,7 @@ def search_and_extract_uid(keyword):  # 定义搜索函数
             uid_list = []
             count = 0  # 计数器，用于限制获取的UID数量
             for link in soup.select('.bili-video-card .bili-video-card__info--owner'):
-                if count >= 5:
+                if count >= 10:
                     break
                 href = link['href']
                 uid = href.split('/')[-1]  # 获取链接中最后的数字部分作为UID
