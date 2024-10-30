@@ -10,6 +10,8 @@
 /附加文件/运行数据/chromedriver.exe
 /附加文件/运行数据/keyword.txt
 /附加文件/运行数据/uid.txt
+/附加文件/运行数据/whitelist.txt
+/附加文件/运行数据/blacklist.txt
 
 
 
