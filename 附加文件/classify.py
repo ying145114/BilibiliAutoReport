@@ -3,10 +3,11 @@ import requests
 
 
 cloud_whitelist_filename = '云端文件/whitelist.txt'
+proxies = {'http': None, 'https': None}
 categories = {
     "色情游戏": {
         "关键词": ["SLG", "ACT", "RPG", "黄油","ADV", "GAL","动态","汉化","步兵","无码"],
-        "分值": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        "权重": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     },
     "色情同人": {
         "关键词": ["AKT", "同人", "大佬", "vicineko", "新作"],
@@ -30,7 +31,7 @@ for uid in uids:
         }
 
         try:
-            response = requests.get(search_url, headers=headers, timeout=(5, 10))
+            response = requests.get(search_url, headers=headers, proxies=proxies, timeout=(5, 10))
             response.raise_for_status()
             data = response.json()
 
