@@ -4,8 +4,8 @@ import os
 
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
-filtered_uid_file = os.path.join(base_dir, '附加文件', '数据文件','filter_uid.txt')
 cloud_whitelist_filename = '附加文件/云端文件/whitelist.txt'
+uid_path = os.path.join(base_dir, '数据文件','uid.txt')
 proxies = {'http': None, 'https': None}
 categories = {
     "色情游戏": {
@@ -19,8 +19,8 @@ categories = {
 
 }
 
-base_dir = os.path.dirname(os.path.abspath(__file__))
-uid_path = os.path.join(base_dir, '数据文件','uid.txt')
+
+
 
 with open(uid_path, 'r', encoding='utf-8') as f:
     uids = f.readlines()
@@ -76,8 +76,7 @@ for uid in uids:
                         print(f'{uid}:{labels}')
                         with open(cloud_whitelist_filename, 'a', encoding='utf-8') as f:
                             f.write(f"\n{uid}")
-                        with open(filtered_uid_file, 'a', encoding='utf-8') as f:
-                            f.write(f"\n{uid}")
+
 
 
 
@@ -109,4 +108,11 @@ with open(cloud_whitelist_filename, 'w', encoding='utf-8') as file:
     for number in sorted_numbers:
         file.write(f"{number}\n")
 
+# 将文件 A 的内容覆盖到文件 B
+with open(cloud_whitelist_filename, 'r', encoding='utf-8') as file_a:
+    content_a = file_a.read()
+
+# 将文件 A 的内容覆盖到文件 B
+with open(uid_path, 'w', encoding='utf-8') as file_b:
+    file_b.write(content_a)
 exit(0)

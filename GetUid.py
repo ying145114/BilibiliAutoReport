@@ -1,8 +1,10 @@
+
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from urllib.parse import urlencode
-from bs4 import BeautifulSoup
 from selenium import webdriver
+from bs4 import BeautifulSoup
+import subprocess
 import requests
 import datetime
 import shutil
@@ -19,6 +21,8 @@ blacklist_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/
 blacklist_filename = '附加文件/数据文件/blacklist.txt'
 cloud_whitelist_filename = '附加文件/云端文件/whitelist.txt'
 base_dir = os.path.dirname(os.path.abspath(__file__))
+python_executable = os.path.join(base_dir, 'venv', 'Scripts', 'python.exe')
+filteruid_script = os.path.join(base_dir, 'UidFilter.py')
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
 chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
 chrome_driver_path = os.path.join(base_dir, '附加文件', '数据文件','chromedriver.exe')
@@ -188,89 +192,102 @@ def process_uid_list(keyword, uid_list):  # 定义处理UID列表的函数（追
         f.write('\n')  # 添加空行分隔每个关键词的UID列表
 
 
-while True:
-    unique_uids = set()  # 使用集合存储唯一的 UID
-    keywords = fetch_keywords()  # 使用fetch_keywords函数替代原有的keywords定义
 
-    for keyword in keywords:  # 遍历关键词列表，进行搜索和处理
-        search_and_extract_uid(keyword)
-    print('读取当前文件中所有的 UID，并添加到集合中去重')
-    with open(output_file, 'r', encoding='utf-8') as f:
-        lines = f.readlines()
-        for line in lines:
-            uid = line.strip()
-            if uid.isdigit():  # 假设 UID 是数字格式
-                unique_uids.add(uid)
+unique_uids = set()  # 使用集合存储唯一的 UID
+keywords = fetch_keywords()  # 使用fetch_keywords函数替代原有的keywords定义
 
-    try:
-        # 获取当前时间并格式化
-        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        backup_filename = os.path.join(log_directory, f'{timestamp}.txt')
-
-        shutil.copy(output_file, backup_filename)
-        print(f"成功保存备份：{backup_filename}")
-    except IOError as e:
-        print(f"复制保存备份时发生错误：{e}")
-
-    try:
-        response = requests.get(whitelist_url, proxies=proxies, timeout=(5, 10))
-        if response.status_code == 200:
-            with open(whitelist_filename, 'wb') as f_out:
-                f_out.write(response.content)
-            print(f"成功下载文件并保存为whitelist")
-        else:
-            print(f"无法访问URL，状态码：{response.status_code}")
-    except requests.exceptions.RequestException as e:
-        print(f"下载文件时发生请求异常：{e}")
-    except IOError as e:
-        print(f"文件操作发生错误：{e}")
-    except Exception as e:
-        print(f"发生未知错误：{e}")
-
-    with open(whitelist_filename, 'r', encoding='utf-8') as f:  # 处理 whitelist_file
-        lines = f.readlines()
-        for line in lines:
-            uid = line.strip()
-            if uid.isdigit():  # 假设 UID 是数字格式
-                unique_uids.add(uid)
+for keyword in keywords:  # 遍历关键词列表，进行搜索和处理
+    search_and_extract_uid(keyword)
+print('读取当前文件中所有的 UID，并添加到集合中去重')
 
 
 
-    get_watchlater()
+print('对UID进行过滤处理')
+getuid_process = subprocess.Popen([python_executable, filteruid_script], shell=True)
+getuid_process.wait()
 
-    sort_file_contents(cloud_whitelist_filename)
 
 
 
-    try:
-        response = requests.get(blacklist_url, proxies=proxies, timeout=(5, 10))
-        if response.status_code == 200:
-            with open(blacklist_filename, 'wb') as f_out:
-                f_out.write(response.content)
-            print(f"成功下载文件并保存为blacklist")
-        else:
-            print(f"无法访问URL，状态码：{response.status_code}")
-    except requests.exceptions.RequestException as e:
-        print(f"下载文件时发生请求异常：{e}")
-    except IOError as e:
-        print(f"文件操作发生错误：{e}")
-    except Exception as e:
-        print(f"发生未知错误：{e}")
-    print('继续执行其他操作，不受文件下载错误的影响')
-    exclude_uids = set()
+with open(output_file, 'r', encoding='utf-8') as f:
+    lines = f.readlines()
+    for line in lines:
+        uid = line.strip()
+        if uid.isdigit():  # 假设 UID 是数字格式
+            unique_uids.add(uid)
 
-    with open(blacklist_filename, 'r', encoding='utf-8') as exclude_file:
-        exclude_lines = exclude_file.readlines()
-        for line in exclude_lines:
-            exclude_uid = line.strip()
-            if exclude_uid.isdigit():  # 假设 UID 是数字格式
-                exclude_uids.add(exclude_uid)
-    print('从 unique_uids 中移除在 exclude_uids 中存在的 UID')
-    unique_uids -= exclude_uids
-    print('将唯一的 UID 列表按格式写入文件')
+try:
+    # 获取当前时间并格式化
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    backup_filename = os.path.join(log_directory, f'{timestamp}.txt')
 
-    with open(output_file, 'w', encoding='utf-8') as f:
-        for uid in unique_uids:
-            f.write(uid + '\n')
-    print('关键词搜索和UID全部处理完成')
-    exit(0)
+    shutil.copy(output_file, backup_filename)
+    print(f"成功保存备份：{backup_filename}")
+except IOError as e:
+    print(f"复制保存备份时发生错误：{e}")
+
+
+
+
+try:
+    response = requests.get(whitelist_url, proxies=proxies, timeout=(5, 10))
+    if response.status_code == 200:
+        with open(whitelist_filename, 'wb') as f_out:
+            f_out.write(response.content)
+        print(f"成功下载文件并保存为whitelist")
+    else:
+        print(f"无法访问URL，状态码：{response.status_code}")
+except requests.exceptions.RequestException as e:
+    print(f"下载文件时发生请求异常：{e}")
+except IOError as e:
+    print(f"文件操作发生错误：{e}")
+except Exception as e:
+    print(f"发生未知错误：{e}")
+
+with open(whitelist_filename, 'r', encoding='utf-8') as f:  # 处理 whitelist_file
+    lines = f.readlines()
+    for line in lines:
+        uid = line.strip()
+        if uid.isdigit():  # 假设 UID 是数字格式
+            unique_uids.add(uid)
+
+
+
+get_watchlater()
+
+sort_file_contents(cloud_whitelist_filename)
+
+
+
+try:
+    response = requests.get(blacklist_url, proxies=proxies, timeout=(5, 10))
+    if response.status_code == 200:
+        with open(blacklist_filename, 'wb') as f_out:
+            f_out.write(response.content)
+        print(f"成功下载文件并保存为blacklist")
+    else:
+        print(f"无法访问URL，状态码：{response.status_code}")
+except requests.exceptions.RequestException as e:
+    print(f"下载文件时发生请求异常：{e}")
+except IOError as e:
+    print(f"文件操作发生错误：{e}")
+except Exception as e:
+    print(f"发生未知错误：{e}")
+print('继续执行其他操作，不受文件下载错误的影响')
+exclude_uids = set()
+
+with open(blacklist_filename, 'r', encoding='utf-8') as exclude_file:
+    exclude_lines = exclude_file.readlines()
+    for line in exclude_lines:
+        exclude_uid = line.strip()
+        if exclude_uid.isdigit():  # 假设 UID 是数字格式
+            exclude_uids.add(exclude_uid)
+print('从 unique_uids 中移除在 exclude_uids 中存在的 UID')
+unique_uids -= exclude_uids
+print('将唯一的 UID 列表按格式写入文件')
+
+with open(output_file, 'w', encoding='utf-8') as f:
+    for uid in unique_uids:
+        f.write(uid + '\n')
+print('关键词搜索和UID全部处理完成')
+exit(0)
