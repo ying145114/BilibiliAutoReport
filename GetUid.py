@@ -10,17 +10,21 @@ import os
 
 
 proxies = {'http': None, 'https': None}
-output_file = os.path.join(os.getcwd(), '附加文件/uid.txt')
-whitelist_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/云端文件/whitelist.txt'
-whitelist_filename = '附加文件/whitelist.txt'
-blacklist_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/云端文件/blacklist.txt'
-blacklist_filename = '附加文件/blacklist.txt'
+output_file = os.path.join(os.getcwd(), '附加文件/数据文件/uid.txt')
+keywords_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/附加文件/云端文件/keyword.txt'
+keywords_filename = '附加文件/数据文件/keyword.txt'
+whitelist_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/附加文件/云端文件/whitelist.txt'
+whitelist_filename = '附加文件/数据文件/whitelist.txt'
+blacklist_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/附加文件/云端文件/blacklist.txt'
+blacklist_filename = '附加文件/数据文件/blacklist.txt'
 cloud_whitelist_filename = '云端文件/whitelist.txt'
 base_dir = os.path.dirname(os.path.abspath(__file__))
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
 chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
-chrome_driver_path = os.path.join(base_dir, '附加文件', 'chromedriver.exe')
-script_clear = os.path.join(base_dir, '附加文件', '扩展与脚本', '清空列表（纯JS代码）.js')
+chrome_driver_path = os.path.join(base_dir, '附加文件', '数据文件','chromedriver.exe')
+script_clear = os.path.join(base_dir, '附加文件', '页面脚本', '清空列表（纯JS代码）.js')
+log_directory = os.path.join(base_dir, '附加文件', '运行记录')
+os.makedirs(log_directory, exist_ok=True)
 if os.path.exists(output_file):
     os.remove(output_file)
 else:
@@ -56,8 +60,6 @@ def sort_file_contents(file_path):
 
 
 def fetch_keywords():  # 定义获取关键词的函数
-    keywords_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/云端文件/keyword.txt'  # 替换为实际的GitHub URL
-    keywords_filename = '附加文件/keyword.txt'
 
     try:
         response = requests.get(keywords_url, proxies=proxies, timeout=(5, 10))
@@ -203,10 +205,10 @@ while True:
     try:
         # 获取当前时间并格式化
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        backup_filename = f'附加文件/UID记录/{timestamp}.txt'
+        backup_filename = os.path.join(log_directory, f'{timestamp}.txt')
 
-        shutil.copy('附加文件/uid.txt', backup_filename)
-        print(f"成功保存备份：{timestamp}")
+        shutil.copy(output_file, backup_filename)
+        print(f"成功保存备份：{backup_filename}")
     except IOError as e:
         print(f"复制保存备份时发生错误：{e}")
 

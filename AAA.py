@@ -3,50 +3,35 @@ from selenium import webdriver
 import os
 
 
-def set_chrome_options(user_data_dir=None, chrome_binary_path=None):
-    options = webdriver.ChromeOptions()
-    options.add_experimental_option("detach", False)  # 去掉 detach
-    options.add_argument('--enable-logging')  # 启用控制台日志
-    if user_data_dir:
-        options.add_argument(f'--user-data-dir={user_data_dir}')  # 设置用户数据目录
-    if chrome_binary_path:
-        options.binary_location = chrome_binary_path  # 指定 Chrome 浏览器的可执行文件路径
-    return options
+base_dir = os.path.dirname(os.path.abspath(__file__))
+user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
+chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
+chrome_driver_path = os.path.join(base_dir, '附加文件', '数据文件','chromedriver.exe')
+options = webdriver.ChromeOptions()
+options.add_argument("--disable-blink-features=AutomationControlled")
+options.add_argument(f'--user-data-dir={user_data_dir}')  # 设置用户数据目录
+options.binary_location = chrome_binary_path  # 指定 Chrome 浏览器的可执行文件路径
+options.add_argument('--proxy-server="direct://"')
+options.add_argument('--proxy-bypass-list=*')
+options.add_argument("--disable-gpu")
+options.add_argument("--disable-sync")
+options.add_argument("disable-cache")#禁用缓存
+options.add_argument('log-level=3')
+service = Service(executable_path=chrome_driver_path)
+driver = webdriver.Chrome(service=service, options=options)  # 启动 Chrome 浏览器
+driver.set_window_size(1000, 700)  # 设置浏览器窗口大小（宽度, 高度）
+driver.set_window_position(0, 5)  # 设置浏览器窗口位置（x, y）
 
+# 设置浏览器窗口大小（宽度, 高度）
+driver.set_window_size(1000, 700)
+# 设置浏览器窗口位置（x, y）
+driver.set_window_position(0, 0)
 
-def main():
-    base_dir = os.path.dirname(os.path.abspath(__file__))
+url = f"https://space.bilibili.com/"
+driver.get(url)
 
-    print('设置用户数据目录')
-    user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')  # 使用相对路径
-    print('设置 Chrome 可执行文件路径')
-    chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')  # 使用相对路径
+# 等待用户输入，然后关闭浏览器
+input("按 Enter 键关闭浏览器...")  # 通过输入来控制浏览器关闭
 
-    # 确保自定义的 ChromeDriver 路径也是正确的
-    chrome_driver_path = os.path.join(base_dir, '附加文件', 'chromedriver.exe')  # 使用相对路径
+driver.quit()  # 关闭浏览器
 
-    options = set_chrome_options(user_data_dir, chrome_binary_path)
-    options.add_argument('--proxy-server="direct://"')
-    options.add_argument('--proxy-bypass-list=*')
-    print('启动浏览器')
-
-    # 使用 Service 来指定 ChromeDriver 的路径
-    service = Service(executable_path=chrome_driver_path)
-    driver = webdriver.Chrome(service=service, options=options)
-
-    # 设置浏览器窗口大小（宽度, 高度）
-    driver.set_window_size(1000, 700)
-    # 设置浏览器窗口位置（x, y）
-    driver.set_window_position(0, 0)
-
-    url = f"https://space.bilibili.com/"
-    driver.get(url)
-
-    # 等待用户输入，然后关闭浏览器
-    input("按 Enter 键关闭浏览器...")  # 通过输入来控制浏览器关闭
-
-    driver.quit()  # 关闭浏览器
-
-
-if __name__ == "__main__":
-    main()

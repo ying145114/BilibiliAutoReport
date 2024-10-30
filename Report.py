@@ -18,22 +18,22 @@ import os
 skip = 7
 proxies = {'http': None, 'https': None}
 base_dir = os.path.dirname(os.path.abspath(__file__))
-uid_path = os.path.join(base_dir, '附加文件', 'uid.txt')
-log_file_path = os.path.join(base_dir, '错误记录.txt')
-script_ALL = os.path.join(base_dir, '附加文件', '扩展与脚本', '总脚本（纯JS代码）.js')
+uid_path = os.path.join(base_dir, '附加文件', '数据文件','uid.txt')
+log_file = os.path.join(base_dir, '附加文件', '运行记录','错误记录.txt')
+script_ALL = os.path.join(base_dir, '附加文件', '页面脚本', '总脚本（纯JS代码）.js')
 success_directory = os.path.join(base_dir, '附加文件', '成功验证码')
 fail_directory = os.path.join(base_dir, '附加文件', '失败验证码')
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
 chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
-chrome_driver_path = os.path.join(base_dir, '附加文件', 'chromedriver.exe')
+chrome_driver_path = os.path.join(base_dir, '附加文件', '数据文件','chromedriver.exe')
 os.makedirs(success_directory, exist_ok=True)
 os.makedirs(fail_directory, exist_ok=True)
 
 
 def log_error(message):
-    with open(log_file_path, 'a', encoding='utf-8') as log_file:
+    with open(log_file, 'a', encoding='utf-8') as log:
         timestamp = datetime.now().strftime('[%Y-%m-%d %H:%M:%S]')
-        log_file.write(f"\n\n{timestamp} {message}")
+        log.write(f"\n\n{timestamp} {message}")
 
 
 def remove_completed_uid(uid):
@@ -124,13 +124,13 @@ options.add_argument('--proxy-bypass-list=*')
 options.add_argument("--disable-gpu")
 options.add_argument("--disable-sync")
 options.add_argument("disable-cache")#禁用缓存
-options.add_argument("--headless")
+#options.add_argument("--headless")
 options.add_argument('log-level=3')
 service = Service(executable_path=chrome_driver_path)
 driver = webdriver.Chrome(service=service, options=options)  # 启动 Chrome 浏览器
-#driver.set_window_size(1000, 700)  # 设置浏览器窗口大小（宽度, 高度）
+driver.set_window_size(1000, 700)  # 设置浏览器窗口大小（宽度, 高度）
 #driver.set_window_position(-850, 775)  # 设置浏览器窗口位置（x, y）
-#driver.set_window_position(-850, 1355)
+driver.set_window_position(-850, 1355)
 driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
 try:

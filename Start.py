@@ -5,16 +5,16 @@ import os
 
 print('启动Getuid.py')
 base_dir = os.path.dirname(os.path.abspath(__file__))
-log_file_path = os.path.join(base_dir, '错误记录.txt')
+log_file = os.path.join(base_dir, '附加文件','运行记录','错误记录.txt')
 python_executable = os.path.join(base_dir, 'venv', 'Scripts', 'python.exe')
 getuid_script = os.path.join(base_dir, 'Getuid.py')
 report_script = os.path.join(base_dir, 'Report.py')
 
 
 def log_error(message):
-    with open(log_file_path, 'a', encoding='utf-8') as log_file:
+    with open(log_file, 'a', encoding='utf-8') as log:
         timestamp = datetime.now().strftime('[%Y-%m-%d %H:%M:%S]')
-        log_file.write(f"\n\n{timestamp} {message}")
+        log.write(f"\n\n{timestamp} {message}")
 
 
 while True:
