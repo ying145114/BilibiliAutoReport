@@ -22,11 +22,11 @@ categories = {
 
 
 
-#with open(uid_path, 'r', encoding='utf-8') as f:
-   # uids = f.readlines()
+with open(uid_path, 'r', encoding='utf-8') as f:
+    uids = f.readlines()
 
-for uid in range(694, 9999999999999999 + 1):
-    #uid = uid.strip()  # 去掉换行符和空格
+for uid in uids:
+    uid = uid.strip()  # 去掉换行符和空格
     if uid:  # 确保 uid 非空
         search_url = f'https://api.bilibili.com/x/series/recArchivesByKeywords?mid={uid}&keywords=&ps=100'
         headers = {
@@ -72,7 +72,7 @@ for uid in range(694, 9999999999999999 + 1):
 
                 labels = []
                 for category, score in scores.items():
-                    if total_score > 0 and (score / n) > 0.75:
+                    if total_score > 0 and (score / n) > 1:
                         labels.append(category)
                         print(f'{uid}:{labels}')
                         with open(cloud_whitelist_filename, 'a', encoding='utf-8') as f:
