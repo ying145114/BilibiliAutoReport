@@ -107,7 +107,6 @@ def get_watchlater(): #将“稍后再看”里面的UID加入举报列表
         uid_start = href.rfind("/") + 1  # 找到最后一个斜杠后面的位置
         watchlater = href[uid_start:]  # 截取UID部分
         watchlaters.append(watchlater)
-
     with open(script_clear, "r", encoding="utf-8") as file:
         clear = file.read()
     driver.execute_script(clear)
