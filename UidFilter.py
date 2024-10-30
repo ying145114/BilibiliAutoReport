@@ -57,12 +57,14 @@ for uid in uids:
                 total_score = 0
 
                 for title in titles:
+                    title_lower = title.lower()  # 将标题转换为小写
                     for category, info in categories.items():
                         keywords = info["关键词"]
                         points = info["权重"]
 
                         for keyword, point in zip(keywords, points):
-                            count = title.count(keyword)
+                            keyword_lower = keyword.lower()  # 将关键词转换为小写
+                            count = title_lower.count(keyword_lower)
                             if count > 0:
                                 category_score = count * point
                                 scores[category] += category_score
