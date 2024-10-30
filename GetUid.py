@@ -13,13 +13,13 @@ import os
 
 proxies = {'http': None, 'https': None}
 output_file = os.path.join(os.getcwd(), '附加文件/运行数据/uid.txt')
-keywords_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/附加文件/云端文件/keyword.txt'
+keywords_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/云端文件/keyword.txt'
 keywords_filename = '附加文件/运行数据/keyword.txt'
-whitelist_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/附加文件/云端文件/whitelist.txt'
+whitelist_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/云端文件/whitelist.txt'
 whitelist_filename = '附加文件/运行数据/whitelist.txt'
-blacklist_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/附加文件/云端文件/blacklist.txt'
+blacklist_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/云端文件/blacklist.txt'
 blacklist_filename = '附加文件/运行数据/blacklist.txt'
-cloud_whitelist_filename = '附加文件/云端文件/whitelist.txt'
+cloud_whitelist_filename = '云端文件/whitelist.txt'
 base_dir = os.path.dirname(os.path.abspath(__file__))
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
 chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
