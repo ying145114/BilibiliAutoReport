@@ -1,3 +1,2 @@
-target
-title
 char
+target
