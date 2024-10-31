@@ -16,3 +16,4 @@ src/best.onnx
 src/pre_model_v6.onnx
 src/jy_click.jpg
 src/Label.py
+src/Check.py
