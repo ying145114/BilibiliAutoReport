@@ -71,7 +71,7 @@ class JYClick(object):
 
 
 if __name__ == '__main__':
-    image_path = "../../docs/res.jpg"
+    image_path = "docs/res.jpg"
     cap = JYClick()
     result = cap.run(image_path)
     print(result)
