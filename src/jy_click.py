@@ -1,19 +1,7 @@
-# !/usr/bin/env python
-# -*-coding:utf-8 -*-
-
-"""
-# File       : jy_click.py
-# Time       ：2023/11/13 16:49
-# Author     ：yujia
-# version    ：python 3.6
-# Description：
-"""
-import os
-
-from src import ver_onnx
 from src import yolo_onnx
+from src import ver_onnx
 from src import utils
-
+import os
 
 class JYClick(object):
     def __init__(self, per_path='pre_model_v6.onnx', yolo_path='best.onnx'):
