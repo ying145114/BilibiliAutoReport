@@ -6,8 +6,8 @@ from src import utils
 
 
 class JYClick(object):
-    def __init__(self, per_path='pre_model_v3.bin', yolo_path='best_v2.bin'):
-        save_path = os.path.join(os.path.dirname(__file__), '../../model')
+    def __init__(self, per_path='pre_model_v6.onnx', yolo_path='best.onnx'):
+        save_path = os.path.join(os.path.dirname(__file__))
         path = lambda a, b: os.path.join(a, b)
         per_path = path(save_path, per_path)
         yolo_path = path(save_path, yolo_path)
@@ -78,5 +78,5 @@ def process_all_images_in_directory(directory):
 
 
 if __name__ == '__main__':
-    images_directory = "../../docs/"  # 替换为您的图像目录路径
+    images_directory = "docs/"  # 替换为您的图像目录路径
     process_all_images_in_directory(images_directory)
