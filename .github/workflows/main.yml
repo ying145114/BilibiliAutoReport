@@ -36,7 +36,7 @@ jobs:
           USERNAME: ${{ secrets.USERNAME }}
           PASSWORD: ${{ secrets.PASSWORD }}
         run: |
-          run: python AAA.py -u ${{ secrets.USERNAME }} -p ${{ secrets.PASSWORD }}
+          python AAA.py -u ${{ secrets.USERNAME }} -p ${{ secrets.PASSWORD }}
 
       - name: Run your script
         run: |
