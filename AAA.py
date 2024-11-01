@@ -85,8 +85,8 @@ chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrom
 chrome_driver_path = os.path.join(base_dir, '附加文件', '运行数据', 'chromedriver.exe')
 options = webdriver.ChromeOptions()
 options.add_argument("--disable-blink-features=AutomationControlled")
-options.add_argument(f'--user-data-dir={user_data_dir}')  # 设置用户数据目录
-#options.binary_location = chrome_binary_path  # 指定 Chrome 浏览器的可执行文件路径
+options.add_argument(f'--user-data-dir={user_data_dir}')
+options.binary_location = chrome_binary_path
 options.add_argument('--proxy-server="direct://"')
 options.add_argument('--proxy-bypass-list=*')
 options.add_argument("--disable-gpu")
@@ -96,7 +96,7 @@ options.add_argument("--disable-sync")
 options.add_argument("disable-cache")  #禁用缓存
 options.add_argument('log-level=3')
 service = Service(executable_path=chrome_driver_path)
-driver = webdriver.Chrome( options=options)  # 启动 Chrome 浏览器
+driver = webdriver.Chrome( service = service, options=options)  # 启动 Chrome 浏览器
 driver.set_window_size(1000, 700)  # 设置浏览器窗口大小（宽度, 高度）
 #driver.set_window_position(0, 0)  # 设置浏览器窗口位置（x, y）
 
