@@ -18,9 +18,6 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.10'
-      - name: Set encoding to cp936
-        shell: cmd
-        run: chcp 936
 
       - name: Create virtual environment
         run: |
