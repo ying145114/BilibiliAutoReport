@@ -170,6 +170,7 @@ try:
                                 time.sleep(0.5)
                             print(attempt)
                             url = re.search(r'url\("([^"]+?)\?[^"]*"\);', f).group(1)
+                            print(url)
 
                             content = requests.get(url, proxies=proxies, timeout=(5, 10)).content
 
