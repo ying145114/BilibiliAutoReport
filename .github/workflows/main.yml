@@ -36,6 +36,7 @@ jobs:
           USERNAME: ${{ secrets.USERNAME }}
           PASSWORD: ${{ secrets.PASSWORD }}
         run: |
+          set PYTHONIOENCODING=utf-8
           python AAA.py -u ${{ secrets.USERNAME }} -p ${{ secrets.PASSWORD }}
 
       - name: Run your script
