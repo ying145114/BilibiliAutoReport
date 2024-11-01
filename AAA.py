@@ -1,4 +1,3 @@
-#-*- coding:cp936 -*-
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.service import Service
@@ -16,16 +15,10 @@ import os
 import re
 from urllib import request
 
-
-
-
-
-
 parser = argparse.ArgumentParser()
 parser.add_argument("-u", "--username", help="用户名")
 parser.add_argument("-p", "--password", help="密码")
 args = parser.parse_args()
-
 
 if args.username and args.password:
     username = args.username
@@ -34,7 +27,6 @@ if args.username and args.password:
     url = 'https://github.com/ayyayyayy2002/BilibiliAutoReport/releases/download/V4.0.0/default.zip'
 
     request.urlretrieve(url, 'default.zip')
-
 
     # 将文件内容写入内存中的 BytesIO 对象
     zip_file = zipfile.ZipFile('default.zip', 'r')
@@ -84,11 +76,12 @@ def get_location(target):
     top_y = int(rect['top'])
     return left_x, top_y
 
+
 proxies = {'http': None, 'https': None}
 base_dir = os.path.dirname(os.path.abspath(__file__))
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
 chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
-chrome_driver_path = os.path.join(base_dir, '附加文件', '运行数据','chromedriver.exe')
+chrome_driver_path = os.path.join(base_dir, '附加文件', '运行数据', 'chromedriver.exe')
 options = webdriver.ChromeOptions()
 options.add_argument("--disable-blink-features=AutomationControlled")
 options.add_argument(f'--user-data-dir={user_data_dir}')  # 设置用户数据目录
@@ -99,7 +92,7 @@ options.add_argument("--disable-gpu")
 if args.password and args.username:
     options.add_argument("--headless")
 options.add_argument("--disable-sync")
-options.add_argument("disable-cache")#禁用缓存
+options.add_argument("disable-cache")  #禁用缓存
 options.add_argument('log-level=3')
 service = Service(executable_path=chrome_driver_path)
 driver = webdriver.Chrome(service=service, options=options)  # 启动 Chrome 浏览器
@@ -211,4 +204,3 @@ else:
     input("按 Enter 键关闭浏览器...")  # 通过输入来控制浏览器关闭
 
 driver.quit()  # 关闭浏览器
-
