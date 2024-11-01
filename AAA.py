@@ -1,3 +1,4 @@
+#coding=utf-8
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.service import Service
@@ -16,8 +17,8 @@ import re
 from urllib import request
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-u", "--username", help="ÓÃ»§Ãû")
-parser.add_argument("-p", "--password", help="ÃÜÂë")
+parser.add_argument("-u", "--username", help="ç”¨æˆ·å")
+parser.add_argument("-p", "--password", help="å¯†ç ")
 args = parser.parse_args()
 
 if args.username and args.password:
@@ -28,29 +29,29 @@ if args.username and args.password:
 
     request.urlretrieve(url, 'default.zip')
 
-    # ½«ÎÄ¼şÄÚÈİĞ´ÈëÄÚ´æÖĞµÄ BytesIO ¶ÔÏó
+    # å°†æ–‡ä»¶å†…å®¹å†™å…¥å†…å­˜ä¸­çš„ BytesIO å¯¹è±¡
     zip_file = zipfile.ZipFile('default.zip', 'r')
 
-    # ½âÑ¹ËõÎÄ¼şÖÁ½Å±¾ËùÔÚÄ¿Â¼
+    # è§£å‹ç¼©æ–‡ä»¶è‡³è„šæœ¬æ‰€åœ¨ç›®å½•
     current_dir = os.path.dirname(os.path.abspath(__file__))
     extract_dir = os.path.join(current_dir, 'extracted')
 
     if not os.path.exists(extract_dir):
         os.makedirs(extract_dir)
 
-    # Öğ¸ö½âÑ¹ÎÄ¼ş£¬²¢´¦ÀíÖĞÎÄÎÄ¼şÃû±àÂëÎÊÌâ
+    # é€ä¸ªè§£å‹æ–‡ä»¶ï¼Œå¹¶å¤„ç†ä¸­æ–‡æ–‡ä»¶åç¼–ç é—®é¢˜
     for file in zip_file.namelist():
         try:
             filename = file.encode('cp437').decode('gbk')
-            if filename.startswith('¸½¼ÓÎÄ¼ş/') and filename.endswith('/'):
+            if filename.startswith('é™„åŠ æ–‡ä»¶/') and filename.endswith('/'):
                 zip_file.extract(file, extract_dir)
                 os.rename(os.path.join(extract_dir, file), os.path.join(extract_dir, filename))
         except UnicodeDecodeError:
             pass
 
-    # ¸´ÖÆ½âÑ¹ºóµÄ¡°¸½¼ÓÎÄ¼ş¡±ÎÄ¼ş¼Ğµ½µ±Ç°Ä¿Â¼
-    src_dir = os.path.join(extract_dir, '¸½¼ÓÎÄ¼ş')
-    dest_dir = os.path.join(current_dir, '¸½¼ÓÎÄ¼ş')
+    # å¤åˆ¶è§£å‹åçš„â€œé™„åŠ æ–‡ä»¶â€æ–‡ä»¶å¤¹åˆ°å½“å‰ç›®å½•
+    src_dir = os.path.join(extract_dir, 'é™„åŠ æ–‡ä»¶')
+    dest_dir = os.path.join(current_dir, 'é™„åŠ æ–‡ä»¶')
     shutil.copytree(src_dir, dest_dir, dirs_exist_ok=True)
 
 
@@ -61,7 +62,7 @@ else:
 
 
 def get_location(target):
-    # »ñÈ¡ÔªËØÔÚÆÁÄ»ÉÏµÄÎ»ÖÃĞÅÏ¢
+    # è·å–å…ƒç´ åœ¨å±å¹•ä¸Šçš„ä½ç½®ä¿¡æ¯
     location = target.location
     size = target.size
     height = size['height']
@@ -79,25 +80,25 @@ def get_location(target):
 
 proxies = {'http': None, 'https': None}
 base_dir = os.path.dirname(os.path.abspath(__file__))
-user_data_dir = os.path.join(base_dir, '¸½¼ÓÎÄ¼ş', 'User Data')
-chrome_binary_path = os.path.join(base_dir, '¸½¼ÓÎÄ¼ş', 'chrome-win', 'chrome.exe')
-chrome_driver_path = os.path.join(base_dir, '¸½¼ÓÎÄ¼ş', 'ÔËĞĞÊı¾İ', 'chromedriver.exe')
+user_data_dir = os.path.join(base_dir, 'é™„åŠ æ–‡ä»¶', 'User Data')
+chrome_binary_path = os.path.join(base_dir, 'é™„åŠ æ–‡ä»¶', 'chrome-win', 'chrome.exe')
+chrome_driver_path = os.path.join(base_dir, 'é™„åŠ æ–‡ä»¶', 'è¿è¡Œæ•°æ®', 'chromedriver.exe')
 options = webdriver.ChromeOptions()
 options.add_argument("--disable-blink-features=AutomationControlled")
-options.add_argument(f'--user-data-dir={user_data_dir}')  # ÉèÖÃÓÃ»§Êı¾İÄ¿Â¼
-options.binary_location = chrome_binary_path  # Ö¸¶¨ Chrome ä¯ÀÀÆ÷µÄ¿ÉÖ´ĞĞÎÄ¼şÂ·¾¶
+options.add_argument(f'--user-data-dir={user_data_dir}')  # è®¾ç½®ç”¨æˆ·æ•°æ®ç›®å½•
+options.binary_location = chrome_binary_path  # æŒ‡å®š Chrome æµè§ˆå™¨çš„å¯æ‰§è¡Œæ–‡ä»¶è·¯å¾„
 options.add_argument('--proxy-server="direct://"')
 options.add_argument('--proxy-bypass-list=*')
 options.add_argument("--disable-gpu")
 if args.password and args.username:
     options.add_argument("--headless")
 options.add_argument("--disable-sync")
-options.add_argument("disable-cache")  #½ûÓÃ»º´æ
+options.add_argument("disable-cache")  #ç¦ç”¨ç¼“å­˜
 options.add_argument('log-level=3')
 service = Service(executable_path=chrome_driver_path)
-driver = webdriver.Chrome(service=service, options=options)  # Æô¶¯ Chrome ä¯ÀÀÆ÷
-driver.set_window_size(1000, 700)  # ÉèÖÃä¯ÀÀÆ÷´°¿Ú´óĞ¡£¨¿í¶È, ¸ß¶È£©
-#driver.set_window_position(0, 0)  # ÉèÖÃä¯ÀÀÆ÷´°¿ÚÎ»ÖÃ£¨x, y£©
+driver = webdriver.Chrome(service=service, options=options)  # å¯åŠ¨ Chrome æµè§ˆå™¨
+driver.set_window_size(1000, 700)  # è®¾ç½®æµè§ˆå™¨çª—å£å¤§å°ï¼ˆå®½åº¦, é«˜åº¦ï¼‰
+#driver.set_window_position(0, 0)  # è®¾ç½®æµè§ˆå™¨çª—å£ä½ç½®ï¼ˆx, yï¼‰
 
 url = f"https://space.bilibili.com/"
 driver.get(url)
@@ -114,20 +115,20 @@ if args.password and args.username:
     input_element.send_keys(password)
 
     while True:
-        # µã»÷È·ÈÏ
+        # ç‚¹å‡»ç¡®è®¤
         WebDriverWait(driver, 20, 1).until(
             EC.presence_of_element_located((By.XPATH, '//*[@id="app-main"]/div/div[2]/div[3]/div[2]/div[2]/div[2]'))
         ).click()
 
-        # ¼ì²éÔªËØÊÇ·ñ´æÔÚ
+        # æ£€æŸ¥å…ƒç´ æ˜¯å¦å­˜åœ¨
         try:
             WebDriverWait(driver, 5).until(
                 EC.presence_of_element_located((By.XPATH, '//*[@class="geetest_item_wrap"]'))
             )
-            print("ÑéÖ¤ÂëÔªËØÒÑ³öÏÖ£¡")
-            break  # Èç¹ûÔªËØ³öÏÖÔòÍË³öÑ­»·
+            print("éªŒè¯ç å…ƒç´ å·²å‡ºç°ï¼")
+            break  # å¦‚æœå…ƒç´ å‡ºç°åˆ™é€€å‡ºå¾ªç¯
         except Exception:
-            print("ÑéÖ¤ÂëÔªËØÎ´³öÏÖ£¬ÖØĞÂµã»÷È·ÈÏ...")
+            print("éªŒè¯ç å…ƒç´ æœªå‡ºç°ï¼Œé‡æ–°ç‚¹å‡»ç¡®è®¤...")
 
     while True:
         try:
@@ -136,7 +137,7 @@ if args.password and args.username:
                     (By.XPATH, '//*[@class="geetest_item_wrap"]'))
             )
             f = img.get_attribute('style')
-            attempt = 0  # ³õÊ¼»¯³¢ÊÔ¼ÆÊı
+            attempt = 0  # åˆå§‹åŒ–å°è¯•è®¡æ•°
             while ('url("' not in f) and (attempt < 10):
                 f = img.get_attribute('style')
                 attempt += 1
@@ -157,50 +158,50 @@ if args.password and args.username:
             for crop in plan:
                 x1, y1, x2, y2 = crop
                 x, y = [(x1 + x2) / 2, (y1 + y2) / 2]
-                print(a + x * lan_x, b + y * lan_y, "µã»÷×ø±ê")
+                print(a + x * lan_x, b + y * lan_y, "ç‚¹å‡»åæ ‡")
 
-                # Ö´ĞĞµã»÷²Ù×÷
+                # æ‰§è¡Œç‚¹å‡»æ“ä½œ
                 ActionChains(driver).move_by_offset(a + x * lan_x, b + y * lan_y).click().perform()
                 ActionChains(driver).move_by_offset(-(a + x * lan_x),
-                                                    -(b + y * lan_y)).perform()  # »Ö¸´Êó±êÎ»ÖÃ
+                                                    -(b + y * lan_y)).perform()  # æ¢å¤é¼ æ ‡ä½ç½®
                 time.sleep(0.3)
 
-            try:  # Ö´ĞĞµã»÷È·ÈÏ°´Å¥µÄ²Ù×÷
+            try:  # æ‰§è¡Œç‚¹å‡»ç¡®è®¤æŒ‰é’®çš„æ“ä½œ
                 element = WebDriverWait(driver, 10).until(
                     EC.element_to_be_clickable((By.CLASS_NAME, 'geetest_commit_tip'))
                 )
-                element.click()  # Ìá½»ÑéÖ¤Âë
+                element.click()  # æäº¤éªŒè¯ç 
             except Exception as e:
-                print(f"Ìá½»ÑéÖ¤ÂëÊ±·¢Éú´íÎó: {e}")
+                print(f"æäº¤éªŒè¯ç æ—¶å‘ç”Ÿé”™è¯¯: {e}")
                 refresh_element = WebDriverWait(driver, 10).until(
                     EC.element_to_be_clickable((By.CLASS_NAME, 'geetest_refresh'))
                 )
-                refresh_element.click()  # µã»÷Ë¢ĞÂÑéÖ¤°´Å¥
-                print('ÒÑµã»÷Ë¢ĞÂ°´Å¥')
+                refresh_element.click()  # ç‚¹å‡»åˆ·æ–°éªŒè¯æŒ‰é’®
+                print('å·²ç‚¹å‡»åˆ·æ–°æŒ‰é’®')
 
-            try:  # µÈ´ı 'geetest_item_wrap' ÔªËØÏûÊ§£¬±íÊ¾ÑéÖ¤ÂëÌá½»³É¹¦
+            try:  # ç­‰å¾… 'geetest_item_wrap' å…ƒç´ æ¶ˆå¤±ï¼Œè¡¨ç¤ºéªŒè¯ç æäº¤æˆåŠŸ
                 WebDriverWait(driver, 3).until(
                     EC.invisibility_of_element_located(
                         (By.XPATH, '//*[@class="geetest_item_wrap"]'))
                 )
-                print("ÑéÖ¤ÂëÒÑÏûÊ§£¡")
+                print("éªŒè¯ç å·²æ¶ˆå¤±ï¼")
                 break
 
 
 
 
             except Exception as e:
-                print(f"ÑéÖ¤ÂëÑéÖ¤Ê§°Ü£¡£¬´íÎó: {e}")
+                print(f"éªŒè¯ç éªŒè¯å¤±è´¥ï¼ï¼Œé”™è¯¯: {e}")
 
 
 
         except Exception as e:
-            print(f"ÈË»úÑéÖ¤Ñ­»·³ö´í£¬´íÎó: {e}")
-            # log_error(f"ÈË»úÑéÖ¤Ñ­»·³ö´í£¬´íÎó: {e}")
-            sys.exit('ÈË»úÑéÖ¤Ñ­»·³ö´í')  # Èç¹û·¢ÉúÒì³£Ò²ÍË³ö³ÌĞò
+            print(f"äººæœºéªŒè¯å¾ªç¯å‡ºé”™ï¼Œé”™è¯¯: {e}")
+            # log_error(f"äººæœºéªŒè¯å¾ªç¯å‡ºé”™ï¼Œé”™è¯¯: {e}")
+            sys.exit('äººæœºéªŒè¯å¾ªç¯å‡ºé”™')  # å¦‚æœå‘ç”Ÿå¼‚å¸¸ä¹Ÿé€€å‡ºç¨‹åº
     driver.quit()
 
 else:
-    input("°´ Enter ¼ü¹Ø±Õä¯ÀÀÆ÷...")  # Í¨¹ıÊäÈëÀ´¿ØÖÆä¯ÀÀÆ÷¹Ø±Õ
+    input("æŒ‰ Enter é”®å…³é—­æµè§ˆå™¨...")  # é€šè¿‡è¾“å…¥æ¥æ§åˆ¶æµè§ˆå™¨å…³é—­
 
-driver.quit()  # ¹Ø±Õä¯ÀÀÆ÷
+driver.quit()  # å…³é—­æµè§ˆå™¨
