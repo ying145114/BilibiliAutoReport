@@ -12,10 +12,9 @@ import zipfile
 import shutil
 import time
 import sys
-import io
 import os
 import re
-
+from urllib import request
 
 
 
@@ -32,22 +31,17 @@ if args.username and args.password:
     username = args.username
     password = args.password
 
+    url = 'https://github.com/ayyayyayy2002/BilibiliAutoReport/releases/download/V4.0.0/default.zip'
 
-    # GitHub Release 下载链接
-    download_url = 'https://github.com/ayyayyayy2002/BilibiliAutoReport/releases/download/V4.0.0/default.zip'
-    proxies = {'http': None, 'https': None}
-    # 发起 GET 请求并下载文件内容
-    response = requests.get(url=download_url, proxies=proxies)
+    request.urlretrieve(url, 'default.zip')
+
 
     # 将文件内容写入内存中的 BytesIO 对象
-    zip_file = zipfile.ZipFile(io.BytesIO(response.content))
+    zip_file = zipfile.ZipFile('default.zip', 'r')
 
     # 解压缩文件至脚本所在目录
     current_dir = os.path.dirname(os.path.abspath(__file__))
     extract_dir = os.path.join(current_dir, 'extracted')
-
-    if not os.path.exists(extract_dir):
-        os.makedirs(extract_dir)
 
     if not os.path.exists(extract_dir):
         os.makedirs(extract_dir)
@@ -66,6 +60,9 @@ if args.username and args.password:
     src_dir = os.path.join(extract_dir, '附加文件')
     dest_dir = os.path.join(current_dir, '附加文件')
     shutil.copytree(src_dir, dest_dir, dirs_exist_ok=True)
+
+    print("文件已解压至脚本所在目录:", current_dir)
+
 
 else:
     username = 'username'
