@@ -18,14 +18,14 @@ import os
 skip = 7
 proxies = {'http': None, 'https': None}
 base_dir = os.path.dirname(os.path.abspath(__file__))
-uid_file = os.path.join(base_dir, '附加文件', '运行数据', 'uid.txt')
-log_file = os.path.join(base_dir, '附加文件', '运行记录', '错误记录.txt')
+uid_file = os.path.join(base_dir, '附加文件', '运行数据','uid.txt')
+log_file = os.path.join(base_dir, '附加文件', '运行记录','错误记录.txt')
 script_ALL = os.path.join(base_dir, '附加文件', '页面脚本', '总脚本（纯JS代码）.js')
 success_directory = os.path.join(base_dir, '附加文件', '成功验证码')
 fail_directory = os.path.join(base_dir, '附加文件', '失败验证码')
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
 chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
-chrome_driver_path = os.path.join(base_dir, '附加文件', '运行数据', 'chromedriver.exe')
+chrome_driver_path = os.path.join(base_dir, '附加文件', '运行数据','chromedriver.exe')
 os.makedirs(success_directory, exist_ok=True)
 os.makedirs(fail_directory, exist_ok=True)
 
@@ -123,14 +123,14 @@ options.add_argument('--proxy-server="direct://"')
 options.add_argument('--proxy-bypass-list=*')
 options.add_argument("--disable-gpu")
 options.add_argument("--disable-sync")
-options.add_argument("disable-cache")  #禁用缓存
-options.add_argument("--headless")
+options.add_argument("disable-cache")#禁用缓存
+#options.add_argument("--headless")
 options.add_argument('log-level=3')
 service = Service(executable_path=chrome_driver_path)
 driver = webdriver.Chrome(service=service, options=options)  # 启动 Chrome 浏览器
 driver.set_window_size(1000, 700)  # 设置浏览器窗口大小（宽度, 高度）
 #driver.set_window_position(-850, 775)  # 设置浏览器窗口位置（x, y）
-#driver.set_window_position(-850, 1355)
+driver.set_window_position(-850, 1355)
 driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
 try:
@@ -170,7 +170,6 @@ try:
                                 time.sleep(0.5)
                             print(attempt)
                             url = re.search(r'url\("([^"]+?)\?[^"]*"\);', f).group(1)
-                            print(url)
 
                             content = requests.get(url, proxies=proxies, timeout=(5, 10)).content
 
@@ -192,7 +191,6 @@ try:
                                 ActionChains(driver).move_by_offset(-(a + x * lan_x),
                                                                     -(b + y * lan_y)).perform()  # 恢复鼠标位置
                                 time.sleep(0.3)
-                            screenshot = driver.get_screenshot_as_png()
 
                             try:  # 执行点击确认按钮的操作
                                 element = WebDriverWait(driver, 10).until(
@@ -208,7 +206,7 @@ try:
                                 print('已点击刷新按钮')
 
                             try:  # 等待 'geetest_item_wrap' 元素消失，表示验证码提交成功
-                                WebDriverWait(driver, 10).until(
+                                WebDriverWait(driver, 3).until(
                                     EC.invisibility_of_element_located(
                                         (By.XPATH, '//*[@class="geetest_item_wrap"]'))
                                 )
@@ -236,26 +234,13 @@ try:
                                     sys.exit('多次验证失败，程序退出')
 
 
-                            except TimeoutException as e:
-                                print(f"验证码未消失！，错误: {e}")
+                            except Exception as e:
+                                print(f"验证码验证失败！，错误: {e}")
                                 fail_name = url.split('/')[-1]
                                 fail_path = os.path.join(fail_directory, fail_name)
                                 with open(fail_path, 'wb') as file:
                                     file.write(content)
                                 print(f"图片已保存至: {fail_path}")
-
-
-                                shot_name = url.split('/')[-1]+".png"  # 修改后的文件名
-                                shot_path = os.path.join(fail_directory, shot_name)
-                                with open(shot_path, "wb") as file:
-                                    file.write(screenshot)
-
-
-                                refresh_element = WebDriverWait(driver, 10).until(
-                                    EC.element_to_be_clickable((By.CLASS_NAME, 'geetest_refresh'))
-                                )
-                                refresh_element.click()  # 点击刷新验证按钮
-                                print('已点击刷新按钮')
 
 
                         except Exception as e:
@@ -284,9 +269,10 @@ try:
                     time.sleep(700)
 
 
+
                 try:
                     report_scrpit()
-                    print('未超时')  #不可能
+                    print('未超时') #不可能
                 except func_timeout.exceptions.FunctionTimedOut:
                     logs = driver.get_log('browser')
                     warning_logs = [log for log in logs if log['level'] == 'WARNING']
