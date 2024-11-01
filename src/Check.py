@@ -1,3 +1,4 @@
+#coding=utf-8
 import os
 from src import ver_onnx
 from src import yolo_onnx
