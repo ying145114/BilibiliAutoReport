@@ -66,7 +66,6 @@ if args.username and args.password:
     dest_dir = os.path.join(current_dir, '附加文件')
     shutil.copytree(src_dir, dest_dir, dirs_exist_ok=True)
 
-    print('文件已解压至脚本所在目录:', current_dir)
 else:
     username = 'username'
     password = 'password'
