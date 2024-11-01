@@ -1,4 +1,5 @@
-﻿from selenium.webdriver.support import expected_conditions as EC
+﻿# -*- coding: utf-8 -*-
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
