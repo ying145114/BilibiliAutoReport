@@ -33,9 +33,9 @@ while True:
             print(error_message)
             log_error(error_message)  # 记录错误信息
 
-    print('对UID进行过滤处理')
-    filteruid_process = subprocess.Popen([python_executable, filteruid_script], shell=True)
-    #filteruid_process.wait()
+#    print('对UID进行过滤处理')
+#    filteruid_process = subprocess.Popen([python_executable, filteruid_script], shell=True)
+#    filteruid_process.wait()
 
 
 
