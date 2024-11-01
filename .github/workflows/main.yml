@@ -11,6 +11,13 @@ jobs:
     runs-on: windows-latest
 
     steps:
+      - name: Print secrets
+        env:
+            USERNAME_SECRET: ${{ secrets.USERNAME }}
+            PASSWORD_SECRET: ${{ secrets.PASSWORD }}
+        run: |
+            echo "Username secret: $USERNAME_SECRET"
+            echo "Password secret: $PASSWORD_SECRET"
       - name: Checkout code
         uses: actions/checkout@v2
 
