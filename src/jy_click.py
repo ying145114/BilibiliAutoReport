@@ -9,7 +9,7 @@ class JYClick(object):
         path = lambda a, b: os.path.join(a, b)
         per_path = path(save_path, per_path)
         yolo_path = path(save_path, yolo_path)
-        self.yolo = yolo_onnx.YOLOV5_ONNX(yolo_path, classes=['target', 'title', 'char'], providers=['CPUExecutionProvider'])
+        self.yolo = yolo_onnx.YOLOV5_ONNX(yolo_path, classes=['char', 'target'], providers=['CPUExecutionProvider'])
         self.pre = ver_onnx.PreONNX(per_path, providers=['CPUExecutionProvider'])
 
     def run(self, image_path):
