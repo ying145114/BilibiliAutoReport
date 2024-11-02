@@ -12,7 +12,5 @@
 /附加文件/运行数据/uid.txt
 /附加文件/运行数据/whitelist.txt
 /附加文件/运行数据/blacklist.txt
-src/best.onnx
-src/pre_model_v6.onnx
 src/jy_click.jpg
 *.onnx
