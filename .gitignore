@@ -15,3 +15,4 @@
 src/best.onnx
 src/pre_model_v6.onnx
 src/jy_click.jpg
+*.onnx
