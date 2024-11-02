@@ -117,3 +117,19 @@ def open_image(file):
         img = Image.open(file)
     img = img.convert('RGB')
     return img
+
+###############################################################################新增内容
+def yolo_to_coords(yolo_info, image_path):
+    img = Image.open(image_path)
+    img_width, img_height = img.size
+
+    # 解析YOLO信息
+    class_id, x_center, y_center, width, height = map(float, yolo_info.split())
+
+    # 计算目标框的左上角和右下角坐标
+    left = int((x_center - width/2) * img_width)
+    top = int((y_center - height/2) * img_height)
+    right = int((x_center + width/2) * img_width)
+    bottom = int((y_center + height/2) * img_height)
+
+    return (left, top, right, bottom)
