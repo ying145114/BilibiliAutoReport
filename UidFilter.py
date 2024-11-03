@@ -7,14 +7,39 @@ uid_path = os.path.join(base_dir, '附加文件', '运行数据', 'uid.txt')
 proxies = {'http': None, 'https': None}
 categories = {
     "色情游戏": {
-        "关键词": ["SLG", "ACT", "RPG", "黄油", "ADV", "GAL", "动态", "汉化", "步兵", "无码", "ONS", "KRKR", "解锁","存档","CG"],
-        "权重": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        "关键词权重": {
+            "SLG": 10,
+            "ACT": 10,
+            "RPG": 10,
+            "黄油": 1,
+            "ADV": 10,
+            "GAL": 10,
+            "动态": 1,
+            "汉化": 1000,
+            "步兵": 1000,
+            "无码": 1000,
+            "ONS": 1,
+            "KRKR": 10,
+            "解锁": 1,
+            "存档": 1,
+            "CG": 1
+        }
     },
     "色情同人": {
-        "关键词": ["AKT", "同人", "大佬", "vicineko", "新作","wood","Rinjo","shaggy","Milkychu","sodeno19","SURU"],
-        "权重": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-    },
-
+        "关键词权重": {
+            "AKT": 10,
+            "同人": 1,
+            "同人大佬": 1000,
+            "vicineko": 1000,
+            "新作": 1,
+            "wood": 1,
+            "Rinjo": 100,
+            "shaggy": 100,
+            "Milkychu": 100,
+            "sodeno19": 100,
+            "SURU": 100
+        }
+    }
 }
 
 with open(uid_path, 'r', encoding='utf-8') as f:
@@ -51,10 +76,9 @@ for uid in uids:
 
                 for title in titles:
                     for category, info in categories.items():
-                        keywords = info["关键词"]
-                        points = info["权重"]
 
-                        for keyword, point in zip(keywords, points):
+
+                        for keyword, point in info["关键词权重"].items():
                             count = title.count(keyword)
                             if count > 0:
                                 category_score = count * point
