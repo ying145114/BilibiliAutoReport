@@ -15,7 +15,7 @@ import sys
 import re
 import os
 
-skip = 7
+skip = 11
 proxies = {'http': None, 'https': None}
 base_dir = os.path.dirname(os.path.abspath(__file__))
 uid_file = os.path.join(base_dir, '附加文件', '运行数据','uid.txt')
@@ -150,7 +150,7 @@ try:
                 title = first_video.get('title')
                 print(f"UID:{uid}, 第一个视频 AID: {aid}, 标题: {title}")
 
-                if skip == 7:
+                if skip == 11:
                     print("不跳过人机验证")
                     url = f"https://www.bilibili.com/appeal/?avid={aid}"
                     driver.get(url)
@@ -261,12 +261,12 @@ try:
                     ALL = file.read()
 
 
-                @func_set_timeout(7)
+                @func_set_timeout(4.7)
                 def report_scrpit():
                     driver.get(userurl)
                     print(userurl)
                     driver.execute_script(ALL)
-                    time.sleep(700)
+                    time.sleep(470)
 
 
 
