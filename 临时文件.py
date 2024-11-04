@@ -25,3 +25,29 @@ torch.onnx.export(model,
 onnx_model = onnx.load(onnx_outpath)
 onnx.checker.check_model(onnx_model, full_check=True)
 inferred = onnx.shape_inference.infer_shapes(onnx_model, check_type=True)
+
+
+
+
+
+
+
+import onnx
+import onnxsim
+
+# 加载已导出的ONNX模型
+onnx_model_path = "C:/Users/Administrator/Downloads/BilibiliAutoReport/src/pre_model_v6.onnx"
+onnx_model = onnx.load(onnx_model_path)
+
+try:
+    # 尝试对ONNX模型进行简化处理
+    print('\nStarting to simplify ONNX...')
+    simplified_model, check = onnxsim.simplify(onnx_model)
+    assert check, 'Simplification check failed'
+except Exception as e:
+    print(f'Simplifier failure: {e}')
+
+# 保存简化后的ONNX模型
+simplified_model_path = "C:/Users/Administrator/Downloads/BilibiliAutoReport/src/pre_model_v6_simplified.onnx"
+onnx.save(simplified_model, simplified_model_path)
+print('ONNX model has been simplified and saved as %s' % simplified_model_path)
