@@ -50,12 +50,12 @@ class JYClick(object):
             # 创建子文件夹
             parent_folder = os.path.dirname(image_path)
             img_name = os.path.splitext(os.path.basename(image_path))[0]
-            sub_folder = os.path.join(parent_folder, f"{img_name}_res{i + 1}")
+            sub_folder = os.path.join(parent_folder, f"{img_name}_{i + 1}")
             os.makedirs(sub_folder, exist_ok=True)
 
             # 保存char和target图片到对应的子文件夹
-            char_img.save(os.path.join(sub_folder, f"char{i + 1}.jpg"))
-            target_img.save(os.path.join(sub_folder, f"target{i + 1}.jpg"))
+            char_img.save(os.path.join(sub_folder, f"char{i + 1}.png"))
+            target_img.save(os.path.join(sub_folder, f"target{i + 1}.png"))
 
 
 if __name__ == '__main__':
