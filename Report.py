@@ -28,7 +28,7 @@ user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
 chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
 chrome_driver_path = os.path.join(base_dir, '附加文件', '运行数据','chromedriver.exe')
 os.makedirs(success_directory, exist_ok=True)
-os.makedirs(fail_directory, exist_ok=True)
+
 
 
 def log_error(message):
@@ -150,7 +150,7 @@ try:
                 aid = first_video.get('aid')
                 title = first_video.get('title')
                 print(f"UID:{uid},  AID: {aid}, 标题: {title}")
-                with open(title_file, 'a') as file:
+                with open(title_file, 'a', encoding='utf-8') as file:
                     file.write(f"\nUID:{uid},  AID: {aid}, 标题: {title}")
 
 
@@ -229,7 +229,7 @@ try:
                                         success_path = os.path.join(success_directory, success_name)
                                         with open(success_path, 'wb') as file:
                                             file.write(content)
-                                        print(f"图片已保存至: {success_path}")
+                                        #print(f"图片已保存至: {success_path}")
                                         break
                                     else:
                                         log_error('意外情况，弹窗出现-352')
@@ -241,11 +241,13 @@ try:
 
                             except Exception as e:
                                 print(f"验证码验证失败！，错误: {e}")
+                                os.makedirs(fail_directory, exist_ok=True)
                                 fail_name = url.split('/')[-1]
                                 fail_path = os.path.join(fail_directory, fail_name)
                                 with open(fail_path, 'wb') as file:
                                     file.write(content)
-                                print(f"图片已保存至: {fail_path}")
+                                #print(f"图片已保存至: {fail_path}")
+
 
 
                         except Exception as e:
