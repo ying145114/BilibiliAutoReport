@@ -20,6 +20,7 @@ proxies = {'http': None, 'https': None}
 base_dir = os.path.dirname(os.path.abspath(__file__))
 uid_file = os.path.join(base_dir, '附加文件', '运行数据','uid.txt')
 log_file = os.path.join(base_dir, '附加文件', '运行记录','错误记录.txt')
+title_file = os.path.join(base_dir, '附加文件', '运行记录','标题记录.txt')
 script_ALL = os.path.join(base_dir, '附加文件', '页面脚本', '总脚本（纯JS代码）.js')
 success_directory = os.path.join(base_dir, '附加文件', '成功验证码')
 fail_directory = os.path.join(base_dir, '附加文件', '失败验证码')
@@ -124,7 +125,7 @@ options.add_argument('--proxy-bypass-list=*')
 options.add_argument("--disable-gpu")
 options.add_argument("--disable-sync")
 options.add_argument("disable-cache")#禁用缓存
-options.add_argument("--headless")
+#options.add_argument("--headless")
 options.add_argument('log-level=3')
 service = Service(executable_path=chrome_driver_path)
 driver = webdriver.Chrome(service=service, options=options)  # 启动 Chrome 浏览器
@@ -137,7 +138,7 @@ try:
     for uid in uids:
 
         try:
-            search_url = f'https://api.bilibili.com/x/series/recArchivesByKeywords?mid={uid}&keywords=&ps=1'
+            search_url = f'https://api.bilibili.com/x/series/recArchivesByKeywords?mid={uid}&keywords=&ps=1&orderby=views'
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
             response = requests.get(search_url, headers=headers, proxies=proxies, timeout=(5, 10))
@@ -148,7 +149,11 @@ try:
                 first_video = data['data']['archives'][0]
                 aid = first_video.get('aid')
                 title = first_video.get('title')
-                print(f"UID:{uid}, 第一个视频 AID: {aid}, 标题: {title}")
+                print(f"UID:{uid},  AID: {aid}, 标题: {title}")
+                with open(title_file, 'a') as file:
+                    file.write(f"\nUID:{uid},  AID: {aid}, 标题: {title}")
+
+
 
                 if skip == 11:
                     print("不跳过人机验证")
