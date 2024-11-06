@@ -4,7 +4,7 @@ from src import utils
 import os
 
 class JYClick(object):
-    def __init__(self, per_path='Siamese.onnx', yolo_path='YOLO.onnx'):
+    def __init__(self, per_path='pre_model_v6.onnx', yolo_path='YOLO.onnx'):
         save_path = os.path.join(os.path.dirname(__file__))
         path = lambda a, b: os.path.join(a, b)
         per_path = path(save_path, per_path)
