@@ -1,19 +1,21 @@
 import os
-
-# 导入必要的库
 from src import yolo_onnx
 from src import ver_onnx
 from src import utils
+from PIL import Image
 
 
 class JYClick(object):
-    def __init__(self, per_path='pre_model_v6.onnx', yolo_path='best.onnx'):
+    def __init__(self, per_path='pre_model_v6.onnx', yolo_path='YOLO.onnx'):
         save_path = os.path.join(os.path.dirname(__file__), "../")
         path = lambda a, b: os.path.join(a, b)
         per_path = path(save_path, per_path)
         yolo_path = path(save_path, yolo_path)
         self.yolo = yolo_onnx.YOLOV5_ONNX(yolo_path, classes=['char', 'target'], providers=['CPUExecutionProvider'])
         self.pre = ver_onnx.PreONNX(per_path, providers=['CPUExecutionProvider'])
+
+    def rotate_image(self, img, angle):
+        return img.rotate(angle, expand=True)
 
     def run(self, image_path):
         img = utils.open_image(image_path)
@@ -25,6 +27,7 @@ class JYClick(object):
         chars.sort(key=lambda x: x[0])
         chars = [img.crop(char) for char in chars]
         result = []
+
         for m, img_char in enumerate(chars):
             if len(targets) == 0:
                 break
@@ -44,18 +47,19 @@ class JYClick(object):
 
         # 裁剪并保存char和target图片到对应的文件夹
         for i, (char_crop, target_crop) in enumerate(zip(chars, result)):
-            char_img = char_crop.resize((105, 105))
-            target_img = img.crop(target_crop).resize((105, 105))
-
             # 创建子文件夹
             parent_folder = os.path.dirname(image_path)
             img_name = os.path.splitext(os.path.basename(image_path))[0]
             sub_folder = os.path.join(parent_folder, f"{img_name}_{i + 1}")
             os.makedirs(sub_folder, exist_ok=True)
 
-            # 保存char和target图片到对应的子文件夹
-            char_img.save(os.path.join(sub_folder, f"char{i + 1}.png"))
-            target_img.save(os.path.join(sub_folder, f"target{i + 1}.png"))
+            # 保存原始及旋转的char和target图片
+            for j, angle in enumerate([0, 90, 180, 270]):
+                char_img = self.rotate_image(char_crop.resize((105, 105)), angle)
+                target_img = self.rotate_image(img.crop(target_crop).resize((105, 105)), angle)
+
+                char_img.save(os.path.join(sub_folder, f"char_{i + 1}_{j}.png"))
+                target_img.save(os.path.join(sub_folder, f"target_{i + 1}_{j}.png"))
 
 
 if __name__ == '__main__':

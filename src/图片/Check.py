@@ -6,7 +6,7 @@ from src import utils
 
 
 class JYClick(object):
-    def __init__(self, per_path='pre_model_v6.onnx', yolo_path='best.onnx'):
+    def __init__(self, per_path='pre_model_v6.onnx', yolo_path='yolo.onnx'):
         save_path = os.path.join(os.path.dirname(__file__),"../")
         path = lambda a, b: os.path.join(a, b)
         per_path = path(save_path, per_path)
