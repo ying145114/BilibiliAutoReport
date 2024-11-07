@@ -5,7 +5,7 @@ from src import utils
 
 class JYClick(object):
     def __init__(self, per_path='pre_model_v6.onnx', yolo_path='YOLO.onnx'):
-        save_path = os.path.join(os.path.dirname(__file__), "../")
+        save_path = os.path.join(os.path.dirname(__file__))
         path = lambda a, b: os.path.join(a, b)
         per_path = path(save_path, per_path)
         yolo_path = path(save_path, yolo_path)
@@ -61,7 +61,7 @@ class JYClick(object):
 
 
 if __name__ == '__main__':
-    folder_path = "../附加文件、错误验证码"
+    folder_path = "../附加文件/失败验证码"
     jpg_files = [f for f in os.listdir(folder_path) if f.endswith('.jpg')]
 
     cap = JYClick()
