@@ -78,5 +78,5 @@ def process_all_images_in_directory(directory):
 
 
 if __name__ == '__main__':
-    images_directory = os.listdir("../../附加文件、错误验证码")# 替换为您的图像目录路径
+    images_directory = os.listdir("../附加文件、错误验证码")# 替换为您的图像目录路径
     process_all_images_in_directory(images_directory)

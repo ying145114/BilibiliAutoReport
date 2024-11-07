@@ -61,7 +61,7 @@ class JYClick(object):
 
 
 if __name__ == '__main__':
-    folder_path = "../../附加文件、错误验证码"
+    folder_path = "../附加文件、错误验证码"
     jpg_files = [f for f in os.listdir(folder_path) if f.endswith('.jpg')]
 
     cap = JYClick()

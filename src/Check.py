@@ -44,7 +44,7 @@ class JYClick(object):
 if __name__ == '__main__':
     cap = JYClick()
 
-    for file_name in os.listdir("../../附加文件、错误验证码"):
+    for file_name in os.listdir("../附加文件、错误验证码"):
         if file_name.endswith(".jpg"):
             image_path = file_name
             result = cap.run(image_path)
