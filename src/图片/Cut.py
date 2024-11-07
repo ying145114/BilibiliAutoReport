@@ -2,8 +2,6 @@ import os
 from src import yolo_onnx
 from src import ver_onnx
 from src import utils
-from PIL import Image
-
 
 class JYClick(object):
     def __init__(self, per_path='pre_model_v6.onnx', yolo_path='YOLO.onnx'):
@@ -63,7 +61,7 @@ class JYClick(object):
 
 
 if __name__ == '__main__':
-    folder_path = "."  # 当前文件夹路径
+    folder_path = "../../附加文件、错误验证码"
     jpg_files = [f for f in os.listdir(folder_path) if f.endswith('.jpg')]
 
     cap = JYClick()
