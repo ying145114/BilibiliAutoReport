@@ -125,13 +125,13 @@ options.add_argument('--proxy-bypass-list=*')
 options.add_argument("--disable-gpu")
 options.add_argument("--disable-sync")
 options.add_argument("disable-cache")#禁用缓存
-options.add_argument("--headless=old")
+options.add_argument("--headless")
 options.add_argument('log-level=3')
 service = Service(executable_path=chrome_driver_path)
 driver = webdriver.Chrome(service=service, options=options)  # 启动 Chrome 浏览器
 driver.set_window_size(1000, 700)  # 设置浏览器窗口大小（宽度, 高度）
 #driver.set_window_position(-850, 775)  # 设置浏览器窗口位置（x, y）
-driver.set_window_position(-850, 1355)
+#driver.set_window_position(-850, 1355)
 driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
 try:
@@ -261,17 +261,16 @@ try:
                 else:
                     print("跳过人机验证")
                     skip = skip + 1
-                print(f"打开UID:{uid}")
-                userurl = f"https://space.bilibili.com/{uid}"
 
+
+                userurl = f"https://space.bilibili.com/{uid}"
                 with open(script_ALL, "r", encoding="utf-8") as file:
                     ALL = file.read()
-
 
                 @func_set_timeout(4.7)
                 def report_scrpit():
                     driver.get(userurl)
-                    print(userurl)
+                    print('\n',userurl,'\n')
                     driver.execute_script(ALL)
                     time.sleep(470)
 
