@@ -1,5 +1,6 @@
 #coding=utf-8
 from selenium.common import TimeoutException
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
@@ -32,22 +33,27 @@ def get_location(target):
     top_y = int(rect['top'])
     return left_x, top_y
 
+
+base_dir = os.path.dirname(os.path.abspath(__file__))
+chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
+chrome_driver_path = os.path.join(base_dir, '附加文件', '运行数据','chromedriver.exe')
 username = "13485629454"
 password ="***********"
-base_dir = os.path.dirname(os.path.abspath(__file__))
 success_directory = os.path.join(base_dir, '附加文件', '成功验证码')
 fail_directory = os.path.join(base_dir, '附加文件', '失败验证码')
 proxies = {'http': None, 'https': None}
 options = webdriver.ChromeOptions()
+options.binary_location = chrome_binary_path  # 指定 Chrome 浏览器的可执行文件路径
 options.add_argument("--disable-blink-features=AutomationControlled")
 options.add_argument('--proxy-server="direct://"')
 options.add_argument('--proxy-bypass-list=*')
 options.add_argument("--disable-gpu")
-options.add_argument("--headless")
+#options.add_argument("--headless")
 options.add_argument("--disable-sync")
 options.add_argument("disable-cache")  #禁用缓存
 options.add_argument('log-level=3')
-driver = webdriver.Chrome(options=options)  # 启动 Chrome 浏览器
+service = Service(executable_path=chrome_driver_path)
+driver = webdriver.Chrome(service=service, options=options)  # 启动 Chrome 浏览器
 driver.set_window_size(1000, 700)  # 设置浏览器窗口大小（宽度, 高度）
 driver.set_window_position(0, 0)  # 设置浏览器窗口位置（x, y）
 
