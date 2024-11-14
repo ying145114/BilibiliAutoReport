@@ -1,4 +1,5 @@
-# Bilibili全自动举报-BilibiliAutoReport
+# BilibiliAutoReport  
+## 使用[关键词](https://github.com/ayyayyayy2002/BilibiliAutoReport/blob/main/%E4%BA%91%E7%AB%AF%E6%96%87%E4%BB%B6/keyword.txt)搜索视频，并举视频作者的头像、签名、昵称、视频、专栏、动态
 # 开源免责声明
 
 ## 使用条款
