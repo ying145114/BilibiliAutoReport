@@ -1,6 +1,6 @@
 # BilibiliAutoReport  
 ## 使用[关键词](https://github.com/ayyayyayy2002/BilibiliAutoReport/blob/main/%E4%BA%91%E7%AB%AF%E6%96%87%E4%BB%B6/keyword.txt)搜索视频，并举视频作者的头像、签名、昵称、视频、专栏、动态
-## 注意：请下载Public分支运行，main分支是开发者自用，文件不全❗❗❗ 
+## 注意：请下载[public](https://github.com/ayyayyayy2002/BilibiliAutoReport/tree/public)分支运行，main分支是开发者自用，文件不全❗❗❗ 
 # 开源免责声明
 
 ## 使用条款
