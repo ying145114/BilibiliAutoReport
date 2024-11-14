@@ -39,9 +39,9 @@ B站也是离谱，发现举报变多了，不去治理被举报目标，反而�
 
 
 ## 低能耗使用方法（仅限Windows）👍   
-1，使用常规方法配置完成    
+1，配置环境    
 2，关闭PyCharm  
-3，进入“BilibiliVideoAutoReport-main”文件夹，双击11111111.bat运行      
+3，进入“BilibiliVideoAutoReport-main”文件夹，双击Start.bat运行      
 
 ## 程序逻辑🧠   
 1，Start.是守护进程，负责启动其他两个脚本，运行后会启动Getuid  
