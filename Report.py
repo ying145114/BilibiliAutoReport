@@ -15,7 +15,7 @@ import sys
 import re
 import os
 
-skip = 10
+skip = 11
 proxies = {'http': None, 'https': None}
 base_dir = os.path.dirname(os.path.abspath(__file__))
 uid_file = os.path.join(base_dir, '附加文件', '运行数据','uid.txt')
@@ -155,7 +155,7 @@ try:
 
 
 
-                if skip == 10:
+                if skip == 11:
                     print("不跳过人机验证")
                     url = f"https://www.bilibili.com/appeal/?avid={aid}"
                     driver.get(url)
