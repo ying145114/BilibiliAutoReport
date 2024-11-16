@@ -15,7 +15,7 @@ import sys
 import re
 import os
 
-skip = 11
+skip = 10
 proxies = {'http': None, 'https': None}
 base_dir = os.path.dirname(os.path.abspath(__file__))
 uid_file = os.path.join(base_dir, '附加文件', '运行数据','uid.txt')
@@ -125,7 +125,7 @@ options.add_argument('--proxy-bypass-list=*')
 options.add_argument("--disable-gpu")
 options.add_argument("--disable-sync")
 options.add_argument("disable-cache")#禁用缓存
-#options.add_argument("--headless")
+options.add_argument("--headless")
 options.add_argument('log-level=3')
 service = Service(executable_path=chrome_driver_path)
 driver = webdriver.Chrome(service=service, options=options)  # 启动 Chrome 浏览器
@@ -155,7 +155,7 @@ try:
 
 
 
-                if skip == 11:
+                if skip == 10:
                     print("不跳过人机验证")
                     url = f"https://www.bilibili.com/appeal/?avid={aid}"
                     driver.get(url)
