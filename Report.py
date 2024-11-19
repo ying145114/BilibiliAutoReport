@@ -4,24 +4,22 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.service import Service
 from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
-from func_timeout import func_set_timeout
 from selenium import webdriver
 from datetime import datetime
 from src import jy_click
-import func_timeout
 import requests
 import time
 import sys
 import re
 import os
 
-skip = 11
+
 proxies = {'http': None, 'https': None}
 base_dir = os.path.dirname(os.path.abspath(__file__))
 uid_file = os.path.join(base_dir, '附加文件', '运行数据','uid.txt')
 log_file = os.path.join(base_dir, '附加文件', '运行记录','错误记录.txt')
 title_file = os.path.join(base_dir, '附加文件', '运行记录','标题记录.txt')
-report_video = os.path.join(base_dir, '附加文件', '页面脚本', '总脚本（纯JS代码）.js')
+report_video = os.path.join(base_dir, '附加文件', '页面脚本', 'Bilibili视频批量举报.js')
 success_directory = os.path.join(base_dir, '附加文件', '成功验证码')
 fail_directory = os.path.join(base_dir, '附加文件', '失败验证码')
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
