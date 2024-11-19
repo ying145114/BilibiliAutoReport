@@ -13,20 +13,21 @@ import sys
 import re
 import os
 
-
-proxies = {'http': None, 'https': None}
 base_dir = os.path.dirname(os.path.abspath(__file__))
-uid_file = os.path.join(base_dir, '附加文件', '运行数据','uid.txt')
-log_file = os.path.join(base_dir, '附加文件', '运行记录','错误记录.txt')
-title_file = os.path.join(base_dir, '附加文件', '运行记录','标题记录.txt')
-report_video = os.path.join(base_dir, '附加文件', '页面脚本', 'Bilibili视频批量举报.js')
-success_directory = os.path.join(base_dir, '附加文件', '成功验证码')
-fail_directory = os.path.join(base_dir, '附加文件', '失败验证码')
-user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
-chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
+########################################################################################################################
 chrome_driver_path = os.path.join(base_dir, '附加文件', '运行数据','chromedriver.exe')
-os.makedirs(success_directory, exist_ok=True)
-
+report_video = os.path.join(base_dir, '附加文件', '页面脚本', 'Bilibili视频批量举报.js')
+chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
+user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
+########################################################################################################################
+title_file = os.path.join(base_dir, '附加文件', '运行记录','标题记录.txt')
+log_file = os.path.join(base_dir, '附加文件', '运行记录','错误记录.txt')
+success_directory = os.path.join(base_dir, '附加文件', '成功验证码')
+uid_file = os.path.join(base_dir, '附加文件', '运行数据','uid.txt')
+fail_directory = os.path.join(base_dir, '附加文件', '失败验证码')
+########################################################################################################################
+proxies = {'http': None, 'https': None}
+uids = []
 
 
 def log_error(message):
@@ -65,41 +66,7 @@ def get_location(target):
     return left_x, top_y
 
 
-def trigger_captcha(browser):
-    try:
-        # 选择分类
-        WebDriverWait(browser, 20, 1).until(
-            EC.presence_of_element_located((By.XPATH, '/html/body/div/div/div[2]/div[1]/div[2]/div[1]/div'))
-        ).click()
 
-        # 输入举报理由
-        WebDriverWait(browser, 20, 1).until(
-            EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[3]/div[2]/textarea'))
-        ).send_keys('视频封面标题以及内容违规，推广以原神、碧蓝档案等二次元游戏人物为主角的色情视频')
-
-        while True:
-            # 点击确认
-            WebDriverWait(browser, 20, 1).until(
-                EC.presence_of_element_located((By.XPATH, '/html/body/div/div/div[5]/div[2]'))
-            ).click()
-
-            # 检查元素是否存在
-            try:
-                WebDriverWait(browser, 5).until(
-                    EC.presence_of_element_located((By.XPATH, '//*[@class="geetest_item_wrap"]'))
-                )
-                print("验证码元素已出现！")
-                break  # 如果元素出现则退出循环
-            except Exception:
-                print("验证码元素未出现，重新点击确认...")
-
-    except Exception as e:
-        print(f"发生错误: {e}")
-
-
-
-
-uids = []
 with open(uid_file, 'r', encoding='utf-8') as f:  # 以读取模式打开文件
     for line in f:
         line = line.strip()  # 去掉行首尾的空白字符
@@ -163,7 +130,33 @@ try:
 ###############################################人机验证部分###############################################################
                     url = f"https://www.bilibili.com/appeal/?avid={aid}"
                     driver.get(url)
-                    trigger_captcha(driver)
+                    try:
+                        WebDriverWait(driver, 20, 1).until(
+                            EC.presence_of_element_located(
+                                (By.XPATH, '/html/body/div/div/div[2]/div[1]/div[2]/div[1]/div'))
+                        ).click()
+                        WebDriverWait(driver, 20, 1).until(
+                            EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[3]/div[2]/textarea'))
+                        ).send_keys('视频封面标题以及内容违规，推广以原神、碧蓝档案等二次元游戏人物为主角的色情视频')
+
+                        while True:
+                            # 点击确认
+                            WebDriverWait(driver, 20, 1).until(
+                                EC.presence_of_element_located((By.XPATH, '/html/body/div/div/div[5]/div[2]'))
+                            ).click()
+
+                            # 检查元素是否存在
+                            try:
+                                WebDriverWait(driver, 5).until(
+                                    EC.presence_of_element_located((By.XPATH, '//*[@class="geetest_item_wrap"]'))
+                                )
+                                print("验证码元素已出现！")
+                                break  # 如果元素出现则退出循环
+                            except Exception:
+                                print("验证码元素未出现，重新点击确认...")
+                    except Exception as e:
+                        print(f"发生错误: {e}")
+
 
                     while True:
                         try:
@@ -229,6 +222,7 @@ try:
                                     if not "-352" in alert_text:
                                         alert.accept()
                                         print("验证码验证成功！")
+                                        os.makedirs(success_directory, exist_ok=True)
                                         success_name = url.split('/')[-1]
                                         success_path = os.path.join(success_directory, success_name)
                                         with open(success_path, 'wb') as file:
