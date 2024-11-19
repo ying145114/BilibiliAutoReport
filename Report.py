@@ -21,7 +21,7 @@ base_dir = os.path.dirname(os.path.abspath(__file__))
 uid_file = os.path.join(base_dir, '附加文件', '运行数据','uid.txt')
 log_file = os.path.join(base_dir, '附加文件', '运行记录','错误记录.txt')
 title_file = os.path.join(base_dir, '附加文件', '运行记录','标题记录.txt')
-script_ALL = os.path.join(base_dir, '附加文件', '页面脚本', '总脚本（纯JS代码）.js')
+report_video = os.path.join(base_dir, '附加文件', '页面脚本', '总脚本（纯JS代码）.js')
 success_directory = os.path.join(base_dir, '附加文件', '成功验证码')
 fail_directory = os.path.join(base_dir, '附加文件', '失败验证码')
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
@@ -99,9 +99,6 @@ def trigger_captcha(browser):
         print(f"发生错误: {e}")
 
 
-def wait_for_js_execution():
-    # 等待一定条件，确保 JS 执行完成
-    WebDriverWait(driver, 10).until(lambda d: d.execute_script('return document.readyState') == 'complete')
 
 
 uids = []
@@ -117,6 +114,7 @@ if not uids:
     exit(0)
 
 options = webdriver.ChromeOptions()
+options.timeouts = { 'script': 119000 }
 options.add_argument("--disable-blink-features=AutomationControlled")
 options.add_argument(f'--user-data-dir={user_data_dir}')  # 设置用户数据目录
 options.binary_location = chrome_binary_path  # 指定 Chrome 浏览器的可执行文件路径
@@ -125,7 +123,7 @@ options.add_argument('--proxy-bypass-list=*')
 options.add_argument("--disable-gpu")
 options.add_argument("--disable-sync")
 options.add_argument("disable-cache")#禁用缓存
-options.add_argument("--headless")
+#options.add_argument("--headless")
 options.add_argument('log-level=3')
 service = Service(executable_path=chrome_driver_path)
 driver = webdriver.Chrome(service=service, options=options)  # 启动 Chrome 浏览器
@@ -154,9 +152,17 @@ try:
                     file.write(f"\nUID:{uid},  AID: {aid}, 标题: {title}")
 
 
-
-                if skip == 11:
-                    print("不跳过人机验证")
+                userurl = f"https://space.bilibili.com/{uid}"
+                driver.get(userurl)
+                with open(report_video, "r", encoding="utf-8") as file:
+                    report = file.read()
+                result = driver.execute_async_script(report)
+                if result == "352":
+                    logs = driver.get_log('browser')
+                    warning_logs = [log for log in logs if log['level'] == 'WARNING']
+                    for log in warning_logs:
+                        print(log['message'])
+###############################################人机验证部分###############################################################
                     url = f"https://www.bilibili.com/appeal/?avid={aid}"
                     driver.get(url)
                     trigger_captcha(driver)
@@ -229,7 +235,7 @@ try:
                                         success_path = os.path.join(success_directory, success_name)
                                         with open(success_path, 'wb') as file:
                                             file.write(content)
-                                        #print(f"图片已保存至: {success_path}")
+                                        # print(f"图片已保存至: {success_path}")
                                         break
                                     else:
                                         log_error('意外情况，弹窗出现-352')
@@ -246,7 +252,7 @@ try:
                                 fail_path = os.path.join(fail_directory, fail_name)
                                 with open(fail_path, 'wb') as file:
                                     file.write(content)
-                                #print(f"图片已保存至: {fail_path}")
+                                # print(f"图片已保存至: {fail_path}")
 
 
 
@@ -255,38 +261,24 @@ try:
                             log_error(f"人机验证循环出错，错误: {e}")
                             sys.exit('人机验证循环出错')  # 如果发生异常也退出程序
 
-                    skip = 0
 
+
+###############################################人机验证部分###############################################################
 
                 else:
-                    print("跳过人机验证")
-                    skip = skip + 1
-
-
-                userurl = f"https://space.bilibili.com/{uid}"
-                with open(script_ALL, "r", encoding="utf-8") as file:
-                    ALL = file.read()
-
-                @func_set_timeout(4.7)
-                def report_scrpit():
-                    driver.get(userurl)
-                    print('\n',userurl,'\n')
-                    driver.execute_script(ALL)
-                    time.sleep(470)
-
-
-
-                try:
-                    report_scrpit()
-                    print('未超时') #不可能
-                except func_timeout.exceptions.FunctionTimedOut:
                     logs = driver.get_log('browser')
                     warning_logs = [log for log in logs if log['level'] == 'WARNING']
                     for log in warning_logs:
                         print(log['message'])
 
+
+
+
+
+
+
                 remove_completed_uid(uid)
-                continue  # 使用 continue 继续下一个 UID
+                continue
 
 
 
@@ -295,16 +287,16 @@ try:
                 remove_completed_uid(uid)
                 continue  # 找不到任何视频，继续下一个 UID
         except (requests.exceptions.HTTPError, requests.exceptions.RequestException) as e:
-            print(f"UID循环内发生错误,错误UID：{uid}，错误: {e}")
-            log_error(f"UID循环内发生错误,错误UID：{uid}，错误: {e}")
-            sys.exit(f"UID循环内发生错误,错误UID：{uid}")
+            print(f"UID循环出错,错误UID：{uid}，错误: {e}")
+            log_error(f"UID循环出错,错误UID：{uid}，错误: {e}")
+            sys.exit(f"UID循环出错,错误UID：{uid}")
     driver.quit()  # 完成所有操作后关闭浏览器
 
 
 except Exception as e:
-    print(f"从文件获取UID时发生错误,错误: {e}")
-    log_error(f"从文件获取UID时发生错误,错误: {e}")
-    sys.exit('从文件获取UID时发生错误')
+    print(f"外层循环出错: {e}")
+    log_error(f"外层循环出错: {e}")
+    sys.exit('外层循环出错')
 
 
 finally:
