@@ -25,7 +25,7 @@ chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrom
 script_clear = os.path.join(base_dir, '附加文件', '页面脚本', '清空列表.js')
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
 ########################################################################################################################
-output_file = os.path.join(os.getcwd(), '附加文件/运行数据/uid.txt')
+output_file = os.path.join(base_dir, '附加文件', '运行数据','uid.txt')
 log_directory = os.path.join(base_dir, '附加文件', '运行记录')
 os.makedirs(log_directory, exist_ok=True)
 proxies = {'http': None, 'https': None}
