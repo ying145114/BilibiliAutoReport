@@ -3,9 +3,10 @@ import subprocess
 import os
 
 
-print('启动Getuid.py')
+
 base_dir = os.path.dirname(os.path.abspath(__file__))
-log_file = os.path.join(base_dir, '附加文件','运行记录','错误记录.txt')
+########################################################################################################################
+log_file = os.path.join(base_dir,'运行记录','错误记录.txt')
 
 
 
@@ -17,7 +18,8 @@ def log_error(message):
 
 
 while True:
-    while True:  # 死循环以重启 Getuid.py
+    while True:
+        print('启动Getuid.py')
         getuid_process = subprocess.Popen(['python', 'GetUid.py'], shell=True)
         getuid_process.wait()  # 等待 Getuid.py 结束
 
@@ -33,7 +35,8 @@ while True:
 
 
 
-    while True:  # 死循环以重启 Report.py
+    while True:
+        print('启动Report.py')
         report_process = subprocess.Popen(['python', 'Report.py'], shell=True)
         report_process.wait()  # 等待 Report.py 结束
 

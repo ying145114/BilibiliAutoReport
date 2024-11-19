@@ -15,16 +15,16 @@ import os
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 ########################################################################################################################
-chrome_driver_path = os.path.join(base_dir, '附加文件', '运行数据','chromedriver.exe')
-report_video = os.path.join(base_dir, '附加文件', '页面脚本', 'Bilibili视频批量举报.js')
+chrome_driver_path = os.path.join(base_dir, '附加文件','chromedriver.exe')
+report_video = os.path.join(base_dir,  '页面脚本', 'Bilibili视频批量举报.js')
 chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
 ########################################################################################################################
-title_file = os.path.join(base_dir, '附加文件', '运行记录','标题记录.txt')
-log_file = os.path.join(base_dir, '附加文件', '运行记录','错误记录.txt')
-success_directory = os.path.join(base_dir, '附加文件', '成功验证码')
-uid_file = os.path.join(base_dir, '附加文件', '运行数据','uid.txt')
-fail_directory = os.path.join(base_dir, '附加文件', '失败验证码')
+title_file = os.path.join(base_dir, '运行记录','标题记录.txt')
+log_file = os.path.join(base_dir,  '运行记录','错误记录.txt')
+success_directory = os.path.join(base_dir,  '成功验证码')
+uid_file = os.path.join(base_dir, '附加文件', 'uid.txt')
+fail_directory = os.path.join(base_dir,  '失败验证码')
 ########################################################################################################################
 proxies = {'http': None, 'https': None}
 uids = []

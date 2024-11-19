@@ -15,18 +15,18 @@ base_dir = os.path.dirname(os.path.abspath(__file__))
 blacklist_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/云端文件/blacklist.txt'
 whitelist_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/云端文件/whitelist.txt'
 keywords_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/云端文件/keyword.txt'
-whitelist_filename = os.path.join(base_dir, '附加文件', '运行数据','whitelist.txt')
-blacklist_filename = os.path.join(base_dir, '附加文件', '运行数据','blacklist.txt')
-keywords_filename = os.path.join(base_dir, '附加文件', '运行数据','keyword.txt')
+whitelist_filename = os.path.join(base_dir, '附加文件','whitelist.txt')
+blacklist_filename = os.path.join(base_dir, '附加文件','blacklist.txt')
+keywords_filename = os.path.join(base_dir, '附加文件', 'keyword.txt')
 cloud_whitelist_filename = os.path.join(base_dir, '云端文件', 'whitelist.txt')
 ########################################################################################################################
-chrome_driver_path = os.path.join(base_dir, '附加文件', '运行数据','chromedriver.exe')
+chrome_driver_path = os.path.join(base_dir, '附加文件', 'chromedriver.exe')
 chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
-script_clear = os.path.join(base_dir, '附加文件', '页面脚本', '清空列表.js')
+script_clear = os.path.join(base_dir, '页面脚本', '清空列表.js')
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
 ########################################################################################################################
-output_file = os.path.join(base_dir, '附加文件', '运行数据','uid.txt')
-log_directory = os.path.join(base_dir, '附加文件', '运行记录')
+output_file = os.path.join(base_dir, '附加文件', 'uid.txt')
+log_directory = os.path.join(base_dir, '运行记录')
 os.makedirs(log_directory, exist_ok=True)
 proxies = {'http': None, 'https': None}
 exclude_uids = set()
