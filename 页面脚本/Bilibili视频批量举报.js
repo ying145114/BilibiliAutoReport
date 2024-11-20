@@ -2,7 +2,7 @@ var callback = arguments[arguments.length - 1];
 
 let reportCount = 0
 let currentAidIndex = 0; // 当前处理的AID索引
-let time_video = 2500
+let time_video = 2200
 let aids = []; // 所有提取的AID
 const floatingWindow = document.createElement('div');// 创建诊断信息窗口
 floatingWindow.style.position = 'fixed';
@@ -140,11 +140,11 @@ function submitAppeal(aid) {
             if (xhr.status === 200) {
                 const result = JSON.parse(xhr.responseText);
                 updateDiagnosticInfo(`视频：${this.response}<br>`);
-                console.warn(`视频：${this.response}`)
+                console.warn(`视频${reportCount}：${this.response}`)
 
                 if (result.code === -352) {
                     updateDiagnosticInfo(`视频：${this.response}<br>`);
-                    console.warn(`视频：${this.response}`)
+                    console.warn(`视频${reportCount}：${this.response}`)
                     callback('352');
                     resolve(false); // 返回 false 表示结束
                     return;          // 退出当前函数
@@ -155,7 +155,7 @@ function submitAppeal(aid) {
             } else {
                 // 对于其他状态码，不作处理，直接解除 Promise
                 updateDiagnosticInfo(`视频：${this.response}<br>`);
-                console.warn(`视频：${this.response}`);
+                console.warn(`视频${reportCount}：${this.response}`);
 
                 resolve(true); // 继续执行后续逻辑
             }
