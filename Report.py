@@ -25,6 +25,8 @@ log_file = os.path.join(base_dir,  '运行记录','错误记录.txt')
 success_directory = os.path.join(base_dir,  '成功验证码')
 uid_file = os.path.join(base_dir, '附加文件', 'uid.txt')
 fail_directory = os.path.join(base_dir,  '失败验证码')
+log_directory = os.path.join(base_dir, '运行记录')
+os.makedirs(log_directory, exist_ok=True)
 ########################################################################################################################
 proxies = {'http': None, 'https': None}
 uids = []
