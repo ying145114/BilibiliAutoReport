@@ -1,3 +1,4 @@
+import sys
 from datetime import datetime
 import subprocess
 import os
@@ -21,7 +22,7 @@ def log_error(message):
 while True:
     while True:
         print('启动Getuid.py')
-        getuid_process = subprocess.Popen([os.path.join(base_dir, 'venv', 'Scripts', 'python.exe'), 'GetUid.py'], shell=True)
+        getuid_process = subprocess.Popen([sys.executable, 'GetUid.py'], shell=True)
         getuid_process.wait()  # 等待 Getuid.py 结束
 
 
@@ -38,7 +39,7 @@ while True:
 
     while True:
         print('启动Report.py')
-        report_process = subprocess.Popen([os.path.join(base_dir, 'venv', 'Scripts', 'python.exe'), 'Report.py'], shell=True)
+        report_process = subprocess.Popen([sys.executable, 'Report.py'], shell=True)
         report_process.wait()  # 等待 Report.py 结束
 
 
