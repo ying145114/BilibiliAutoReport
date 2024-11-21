@@ -234,5 +234,5 @@ else:
 
 with open(output_file, 'w', encoding='utf-8') as f:
     for uid in uids:
-        f.write(uid + '\n')
+        f.write(f'{uid}\n')
 print('关键词搜索和UID全部处理完成')
