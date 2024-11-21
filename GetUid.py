@@ -217,6 +217,21 @@ with open(cloud_whitelist_filename, 'w', encoding='utf-8') as file:
         file.write(f"{number}\n")
 
 
+
+
+
+if os.path.exists(output_file):
+    os.remove(output_file)
+else:
+    print(f"文件 {output_file} 不存在，无需删除。")
+
+
+
+
+
+
+
+
 with open(output_file, 'w', encoding='utf-8') as f:
     for uid in uids:
         f.write(uid + '\n')
