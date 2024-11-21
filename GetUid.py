@@ -4,8 +4,8 @@ from selenium.webdriver.common.by import By
 from urllib.parse import urlencode
 from selenium import webdriver
 from bs4 import BeautifulSoup
+from datetime import datetime
 import requests
-import datetime
 import shutil
 import os
 
@@ -138,7 +138,7 @@ for keyword in keywords:  # 遍历关键词列表，进行搜索和处理
 
 try:
     # 获取当前时间并格式化
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     backup_filename = os.path.join(log_directory, f'{timestamp}.txt')
 
     shutil.copy(output_file, backup_filename)

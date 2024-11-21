@@ -34,9 +34,10 @@ uids = []
 
 def log_error(message):
     with open(log_file, 'a', encoding='utf-8') as log:
-        timestamp = datetime.now().strftime('[%Y-%m-%d %H:%M:%S]')
+        timestamp = datetime.now().strftime('[%Y-%m-%d %H-%M-%S]')
         log.write(f"\n\n{timestamp} {message}")
     driver.save_screenshot(os.path.join(log_directory, f'screenshot_{timestamp}.png'))
+    print(os.path.join(log_directory, f'screenshot_{timestamp}.png'))
 
 def remove_completed_uid(uid):
     try:
@@ -121,6 +122,7 @@ try:
 
                 userurl = f"https://space.bilibili.com/{uid}"
                 driver.get(userurl)
+                print(f'\n{userurl}\n')
                 with open(report_video, "r", encoding="utf-8") as file:
                     report = file.read()
                 result = driver.execute_async_script(report)
@@ -211,6 +213,8 @@ try:
                                     print('已点击刷新按钮')
                                 except Exception as e:
                                     print('点击刷新按钮出错！')
+                                    log_error('点击刷新按钮出错！')
+
 
                             try:  # 等待 'geetest_item_wrap' 元素消失，表示验证码提交成功
                                 WebDriverWait(driver, 3).until(
