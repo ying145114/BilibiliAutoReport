@@ -149,11 +149,14 @@ try:
             with open(report_video, "r", encoding="utf-8") as file:
                 report = file.read()
             result = driver.execute_async_script(report)
-            if result == "352":
-                logs = driver.get_log('browser')
-                warning_logs = [log for log in logs if log['level'] == 'WARNING']
-                for log in warning_logs:
-                    print(log['message'])
+            if "352" in result:
+                print(result)
+
+
+#                logs = driver.get_log('browser')
+#                warning_logs = [log for log in logs if log['level'] == 'WARNING']
+#                for log in warning_logs:
+#                    print(log['message'])
 ###############################################人机验证部分###############################################################
                 url = f"https://www.bilibili.com/appeal/?avid={aid}"
                 driver.get(url)
@@ -290,11 +293,11 @@ try:
 ###############################################人机验证部分###############################################################
 
             else:
-                logs = driver.get_log('browser')
-                warning_logs = [log for log in logs if log['level'] == 'WARNING']
-                for log in warning_logs:
-                    print(log['message'])
-
+#                logs = driver.get_log('browser')
+#                warning_logs = [log for log in logs if log['level'] == 'WARNING']
+#                for log in warning_logs:
+#                    print(log['message'])
+                print(result)
 
             remove_completed_uid(uid)
             continue

@@ -8,6 +8,7 @@ let time_dynamic = 30
 let time_article = 30
 let aids = []; // 所有提取的AID
 let seasonIds= [];
+let output= ''
 const floatingWindow = document.createElement('div');// 创建诊断信息窗口
 floatingWindow.style.position = 'fixed';
 floatingWindow.style.top = '100px';
@@ -60,7 +61,8 @@ function sendReportRequest() {
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.onload = function () {
         updateDiagnosticInfo(`主页：${this.response}`)
-        console.warn(`主页：${this.response}`)
+        console.log(`主页：${this.response}`)
+        output += `主页：${this.response}\n`
     };
     xhr.send(`mid=${mid}&reason=1%2C3%2C2&reason_v2=3&csrf=${csrf}`);
 }
@@ -183,8 +185,9 @@ function extractSeasonAIDs() {
 
         } else {
             updateDiagnosticInfo('合集举报完成!<br>');
-            console.warn('合集举报完成!');
-            resolve(); // 完成后解除 Promise
+            console.log('合集举报完成!');
+            output += '合集举报完成!\n'
+                resolve(); // 完成后解除 Promise
 
         }
 
@@ -277,12 +280,14 @@ function submitAppeal(aid) {
             if (xhr.status === 200) {
                 const result = JSON.parse(xhr.responseText);
                 updateDiagnosticInfo(`视频：${this.response}<br>`);
-                console.warn(`视频${reportCount}：${this.response}`)
+                console.log(`视频${reportCount}：${this.response}`)
+                output += `视频${reportCount}：${this.response}\n`
 
                 if (result.code === -352) {
                     updateDiagnosticInfo(`视频：${this.response}<br>`);
-                    console.warn(`视频${reportCount}：${this.response}`)
-                    callback('352');
+                    console.log(`视频${reportCount}：${this.response}`)
+                    output += `视频${reportCount}：${this.response}\n`
+                    callback(output);
                     resolve(false); // 返回 false 表示结束
                     return;          // 退出当前函数
                 }
@@ -292,8 +297,8 @@ function submitAppeal(aid) {
             } else {
                 // 对于其他状态码，不作处理，直接解除 Promise
                 updateDiagnosticInfo(`视频：${this.response}<br>`);
-                console.warn(`视频${reportCount}：${this.response}`);
-
+                console.log(`视频${reportCount}：${this.response}`);
+                output += `视频${reportCount}：${this.response}\n`
                 resolve(true); // 继续执行后续逻辑
             }
         };
@@ -323,7 +328,8 @@ function submitAppeal(aid) {
 
             xhr.onload = function() {
                 updateDiagnosticInfo(`点赞：${xhr.responseText}<br>`); // 更新诊断信息
-                console.warn(`点赞：${xhr.responseText}`); // 更新诊断信息
+                console.log(`点赞：${xhr.responseText}`); // 更新诊断信息
+                output += `点赞：${xhr.responseText}\n`
             };
 
 // 发送请求
@@ -356,7 +362,8 @@ function submitNextAppeal() {
         } else {
             updateDiagnosticInfo('视频举报完成!<br>');
             console.warn('视频举报完成!');
-            callback('视频举报完成!');
+            output += '视频举报完成!\n'
+            callback(output);
             resolve(); // 完成后解除 Promise
         }
     });
