@@ -29,7 +29,7 @@ log_directory = os.path.join(base_dir, '运行记录')
 os.makedirs(log_directory, exist_ok=True)
 ########################################################################################################################
 proxies = {'http': None, 'https': None}
-uids = []
+uids = set()
 
 
 def log_error(message):
@@ -37,6 +37,7 @@ def log_error(message):
         timestamp = datetime.now().strftime('[%Y-%m-%d %H-%M-%S]')
         log.write(f"\n\n{timestamp} {message}")
     driver.save_screenshot(os.path.join(log_directory, f'screenshot_{timestamp}.png'))
+    print(message)
     print(os.path.join(log_directory, f'screenshot_{timestamp}.png'))
 
 def remove_completed_uid(uid):
@@ -74,7 +75,7 @@ with open(uid_file, 'r', encoding='utf-8') as f:  # 以读取模式打开文件
     for line in f:
         line = line.strip()  # 去掉行首尾的空白字符
         if line:  # 如果不是空行，则认为是UID
-            uids.append(line)
+            uids.add(line)
 
 if not uids:
     print("uid.txt 文件中没有可处理的UID，程序退出")
