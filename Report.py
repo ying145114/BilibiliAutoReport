@@ -80,7 +80,7 @@ with open(uid_file, 'r', encoding='utf-8') as f:  # 以读取模式打开文件
 if not uids:
     print("uid.txt 文件中没有可处理的UID，程序退出")
     log_error("uid.txt 文件中没有可处理的UID，程序退出")
-    exit(0)
+
 
 options = webdriver.ChromeOptions()
 options.timeouts = { 'script': 119000 }
@@ -120,185 +120,179 @@ try:
                 with open(title_file, 'a', encoding='utf-8') as file:
                     file.write(f"\nUID:{uid},  AID: {aid}, 标题: {title}")
 
+            else:
+                print(f"UID:{uid}未找到投稿视频")
 
-                userurl = f"https://space.bilibili.com/{uid}"
-                driver.get(userurl)
-                print(f'\n{userurl}\n')
-                with open(report_video, "r", encoding="utf-8") as file:
-                    report = file.read()
-                result = driver.execute_async_script(report)
-                if result == "352":
-                    logs = driver.get_log('browser')
-                    warning_logs = [log for log in logs if log['level'] == 'WARNING']
-                    for log in warning_logs:
-                        print(log['message'])
+            userurl = f"https://space.bilibili.com/{uid}"
+            driver.get(userurl)
+            print(f'\n{userurl}\n')
+            with open(report_video, "r", encoding="utf-8") as file:
+                report = file.read()
+            result = driver.execute_async_script(report)
+            if result == "352":
+                logs = driver.get_log('browser')
+                warning_logs = [log for log in logs if log['level'] == 'WARNING']
+                for log in warning_logs:
+                    print(log['message'])
 ###############################################人机验证部分###############################################################
-                    url = f"https://www.bilibili.com/appeal/?avid={aid}"
-                    driver.get(url)
-                    try:
-                        WebDriverWait(driver, 20, 1).until(
-                            EC.presence_of_element_located(
-                                (By.XPATH, '/html/body/div/div/div[2]/div[1]/div[2]/div[1]/div'))
-                        ).click()
-                        WebDriverWait(driver, 20, 1).until(
-                            EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[3]/div[2]/textarea'))
-                        ).send_keys('视频封面标题以及内容违规，推广以原神、碧蓝档案等二次元游戏人物为主角的色情视频')
-
-                        while True:
-                            # 点击确认
-                            WebDriverWait(driver, 20, 1).until(
-                                EC.presence_of_element_located((By.XPATH, '/html/body/div/div/div[5]/div[2]'))
-                            ).click()
-
-                            # 检查元素是否存在
-                            try:
-                                WebDriverWait(driver, 5).until(
-                                    EC.presence_of_element_located((By.XPATH, '//*[@class="geetest_item_wrap"]'))
-                                )
-                                print("验证码元素已出现！")
-                                break  # 如果元素出现则退出循环
-                            except Exception:
-                                print("验证码元素未出现，重新点击确认...")
-                    except Exception as e:
-                        print(f"发生错误: {e}")
-
+                url = f"https://www.bilibili.com/appeal/?avid={aid}"
+                driver.get(url)
+                try:
+                    WebDriverWait(driver, 20, 1).until(
+                        EC.presence_of_element_located(
+                            (By.XPATH, '/html/body/div/div/div[2]/div[1]/div[2]/div[1]/div'))
+                    ).click()
+                    WebDriverWait(driver, 20, 1).until(
+                        EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[3]/div[2]/textarea'))
+                    ).send_keys('视频封面标题以及内容违规，推广以原神、碧蓝档案等二次元游戏人物为主角的色情视频')
 
                     while True:
+                        # 点击确认
+                        WebDriverWait(driver, 20, 1).until(
+                            EC.presence_of_element_located((By.XPATH, '/html/body/div/div/div[5]/div[2]'))
+                        ).click()
+
+                        # 检查元素是否存在
                         try:
-                            img = WebDriverWait(driver, 5).until(
-                                EC.presence_of_element_located(
+                            WebDriverWait(driver, 5).until(
+                                EC.presence_of_element_located((By.XPATH, '//*[@class="geetest_item_wrap"]'))
+                            )
+                            print("验证码元素已出现！")
+                            break  # 如果元素出现则退出循环
+                        except Exception:
+                            print("验证码元素未出现，重新点击确认...")
+                except Exception as e:
+                    print(f"发生错误: {e}")
+
+
+                while True:
+                    try:
+                        img = WebDriverWait(driver, 5).until(
+                            EC.presence_of_element_located(
+                                (By.XPATH, '//*[@class="geetest_item_wrap"]'))
+                        )
+                        f = img.get_attribute('style')
+                        attempt = 0  # 初始化尝试计数
+                        while ('url("' not in f) and (attempt < 10):
+                            f = img.get_attribute('style')
+                            attempt += 1
+                            time.sleep(0.5)
+                        print(attempt)
+                        url = re.search(r'url\("([^"]+?)\?[^"]*"\);', f).group(1)
+
+                        content = requests.get(url, proxies=proxies, timeout=(5, 10)).content
+
+                        plan = jy_click.JYClick().run(content)
+
+                        print(plan)
+
+                        a, b = get_location(img)
+                        lan_x = 306 / 334
+                        lan_y = 343 / 384
+
+                        for crop in plan:
+                            x1, y1, x2, y2 = crop
+                            x, y = [(x1 + x2) / 2, (y1 + y2) / 2]
+                            print(a + x * lan_x, b + y * lan_y, "点击坐标")
+
+                            # 执行点击操作
+                            ActionChains(driver).move_by_offset(a + x * lan_x, b + y * lan_y).click().perform()
+                            ActionChains(driver).move_by_offset(-(a + x * lan_x),
+                                                                -(b + y * lan_y)).perform()  # 恢复鼠标位置
+                            time.sleep(0.3)
+
+                        try:  # 执行点击确认按钮的操作
+                            element = WebDriverWait(driver, 10).until(
+                                EC.element_to_be_clickable((By.CLASS_NAME, 'geetest_commit_tip'))
+                            )
+                            element.click()  # 提交验证码
+                        except Exception as e:
+                            print(f"提交验证码时发生错误: {e}")
+                            try:
+                                refresh_element = WebDriverWait(driver, 10).until(
+                                    EC.element_to_be_clickable((By.CLASS_NAME, 'geetest_refresh'))
+                                )
+                                refresh_element.click()  # 点击刷新验证按钮
+                                print('已点击刷新按钮')
+                            except Exception as e:
+                                print('点击刷新按钮出错！')
+                                log_error('点击刷新按钮出错！')
+
+
+                        try:  # 等待 'geetest_item_wrap' 元素消失，表示验证码提交成功
+                            WebDriverWait(driver, 3).until(
+                                EC.invisibility_of_element_located(
                                     (By.XPATH, '//*[@class="geetest_item_wrap"]'))
                             )
-                            f = img.get_attribute('style')
-                            attempt = 0  # 初始化尝试计数
-                            while ('url("' not in f) and (attempt < 10):
-                                f = img.get_attribute('style')
-                                attempt += 1
-                                time.sleep(0.5)
-                            print(attempt)
-                            url = re.search(r'url\("([^"]+?)\?[^"]*"\);', f).group(1)
+                            print("验证码已消失！")
 
-                            content = requests.get(url, proxies=proxies, timeout=(5, 10)).content
+                            try:
+                                WebDriverWait(driver, 5).until(EC.alert_is_present())  # 等待最多5秒，直到弹窗出现
+                                alert = driver.switch_to.alert  # 切换到弹窗
+                                alert_text = alert.text  # 获取弹窗文本
+                                # 检查弹窗内容
+                                if not "-352" in alert_text:
+                                    alert.accept()
+                                    print("验证码验证成功！")
+                                    os.makedirs(success_directory, exist_ok=True)
+                                    success_name = url.split('/')[-1]
+                                    success_path = os.path.join(success_directory, success_name)
+                                    with open(success_path, 'wb') as file:
+                                        file.write(content)
+                                    # print(f"图片已保存至: {success_path}")
+                                    break
+                                else:
+                                    log_error('意外情况，弹窗出现-352')
 
-                            plan = jy_click.JYClick().run(content)
-
-                            print(plan)
-
-                            a, b = get_location(img)
-                            lan_x = 306 / 334
-                            lan_y = 343 / 384
-
-                            for crop in plan:
-                                x1, y1, x2, y2 = crop
-                                x, y = [(x1 + x2) / 2, (y1 + y2) / 2]
-                                print(a + x * lan_x, b + y * lan_y, "点击坐标")
-
-                                # 执行点击操作
-                                ActionChains(driver).move_by_offset(a + x * lan_x, b + y * lan_y).click().perform()
-                                ActionChains(driver).move_by_offset(-(a + x * lan_x),
-                                                                    -(b + y * lan_y)).perform()  # 恢复鼠标位置
-                                time.sleep(0.3)
-
-                            try:  # 执行点击确认按钮的操作
-                                element = WebDriverWait(driver, 10).until(
-                                    EC.element_to_be_clickable((By.CLASS_NAME, 'geetest_commit_tip'))
-                                )
-                                element.click()  # 提交验证码
-                            except Exception as e:
-                                print(f"提交验证码时发生错误: {e}")
-                                try:
-                                    refresh_element = WebDriverWait(driver, 10).until(
-                                        EC.element_to_be_clickable((By.CLASS_NAME, 'geetest_refresh'))
-                                    )
-                                    refresh_element.click()  # 点击刷新验证按钮
-                                    print('已点击刷新按钮')
-                                except Exception as e:
-                                    print('点击刷新按钮出错！')
-                                    log_error('点击刷新按钮出错！')
-
-
-                            try:  # 等待 'geetest_item_wrap' 元素消失，表示验证码提交成功
-                                WebDriverWait(driver, 3).until(
-                                    EC.invisibility_of_element_located(
-                                        (By.XPATH, '//*[@class="geetest_item_wrap"]'))
-                                )
-                                print("验证码已消失！")
-
-                                try:
-                                    WebDriverWait(driver, 5).until(EC.alert_is_present())  # 等待最多5秒，直到弹窗出现
-                                    alert = driver.switch_to.alert  # 切换到弹窗
-                                    alert_text = alert.text  # 获取弹窗文本
-                                    # 检查弹窗内容
-                                    if not "-352" in alert_text:
-                                        alert.accept()
-                                        print("验证码验证成功！")
-                                        os.makedirs(success_directory, exist_ok=True)
-                                        success_name = url.split('/')[-1]
-                                        success_path = os.path.join(success_directory, success_name)
-                                        with open(success_path, 'wb') as file:
-                                            file.write(content)
-                                        # print(f"图片已保存至: {success_path}")
-                                        break
-                                    else:
-                                        log_error('意外情况，弹窗出现-352')
-                                        sys.exit('意外情况，弹窗出现-352')
-                                except TimeoutException:
-                                    log_error('多次验证失败，程序退出')
-                                    sys.exit('多次验证失败，程序退出')
-
-
-                            except Exception as e:
-                                print(f"验证码验证失败！，错误: {e}")
-                                os.makedirs(fail_directory, exist_ok=True)
-                                fail_name = url.split('/')[-1]
-                                fail_path = os.path.join(fail_directory, fail_name)
-                                with open(fail_path, 'wb') as file:
-                                    file.write(content)
-                                # print(f"图片已保存至: {fail_path}")
-
+                            except TimeoutException:
+                                log_error('多次验证失败，程序退出')
+                                raise
 
 
                         except Exception as e:
-                            print(f"人机验证循环出错，错误: {e}")
-                            log_error(f"人机验证循环出错，错误: {e}")
-                            sys.exit('人机验证循环出错')  # 如果发生异常也退出程序
+                            print(f"验证码验证失败！，错误: {e}")
+                            os.makedirs(fail_directory, exist_ok=True)
+                            fail_name = url.split('/')[-1]
+                            fail_path = os.path.join(fail_directory, fail_name)
+                            with open(fail_path, 'wb') as file:
+                                file.write(content)
+                            # print(f"图片已保存至: {fail_path}")
+
+
+
+                    except Exception as e:
+                        print(f"人机验证循环出错，错误: {e}")
+                        log_error(f"人机验证循环出错，错误: {e}")
+                        raise
 
 
 
 ###############################################人机验证部分###############################################################
 
-                else:
-                    logs = driver.get_log('browser')
-                    warning_logs = [log for log in logs if log['level'] == 'WARNING']
-                    for log in warning_logs:
-                        print(log['message'])
-
-
-
-
-
-
-
-                remove_completed_uid(uid)
-                continue
-
-
-
             else:
-                print(f"UID {uid} 没有找到视频，继续下一个 UID。")
-                remove_completed_uid(uid)
-                continue  # 找不到任何视频，继续下一个 UID
-        except (requests.exceptions.HTTPError, requests.exceptions.RequestException) as e:
+                logs = driver.get_log('browser')
+                warning_logs = [log for log in logs if log['level'] == 'WARNING']
+                for log in warning_logs:
+                    print(log['message'])
+
+
+            remove_completed_uid(uid)
+            continue
+
+
+
+
+        except Exception as e:
             print(f"UID循环出错,错误UID：{uid}，错误: {e}")
             log_error(f"UID循环出错,错误UID：{uid}，错误: {e}")
-            sys.exit(f"UID循环出错,错误UID：{uid}")
+            raise
     driver.quit()  # 完成所有操作后关闭浏览器
 
 
 except Exception as e:
-    print(f"外层循环出错: {e}")
-    log_error(f"外层循环出错: {e}")
-    sys.exit('外层循环出错')
+    print(f"出错退出: {e}")
+    log_error(f"出错退出: {e}")
+    sys.exit('出错退出')
 
 
 finally:

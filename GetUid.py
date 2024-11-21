@@ -38,10 +38,6 @@ uids = set()
 ########################################################################################################################
 
 
-if os.path.exists(output_file):
-    os.remove(output_file)
-else:
-    print(f"文件 {output_file} 不存在，无需删除。")
 
 
 try:
@@ -122,15 +118,19 @@ for keyword in keywords:  # 遍历关键词列表，进行搜索和处理
                     break
                 href = link['href']
                 uid = href.split('/')[-1]  # 获取链接中最后的数字部分作为UID
-                uid_list.append(uid)
-                uids.add(uid)
+                try:
+                    uid = int(uid)
+                    uid_list.append(uid)
+                    uids.add(uid)
+                except ValueError:
+                    print(f"警告: '{stripped_line}' 不是有效的UID，已跳过。")
                 count += 1
             print(f" \"{keyword}\" UID：\n", uid_list)
 
             with open(output_file, 'a', encoding='utf-8') as f:
                 f.write(f" \"{keyword}\" UID：\n")
                 for uid in uid_list:
-                    f.write(uid + '\n')
+                    f.write(f'{uid}\n')
                 f.write('\n')  # 添加空行分隔每个关键词的UID列表
         except Exception as e:
             print(f"搜索页面请求失败：", e)
