@@ -1,11 +1,13 @@
+var callback = arguments[arguments.length - 1];
 let reportCount = 0
 let currentAidIndex = 0; // 当前处理的AID索引
 let currentPage = 1; // 初始页码
 let pageSize = 30;
-let time_video = 30
+let time_video = 2300
 let time_dynamic = 30
 let time_article = 30
 let aids = []; // 所有提取的AID
+let seasonIds= [];
 const floatingWindow = document.createElement('div');// 创建诊断信息窗口
 floatingWindow.style.position = 'fixed';
 floatingWindow.style.top = '100px';
@@ -66,6 +68,139 @@ function sendReportRequest() {
 //######################################################################################################################
 //###################################################举报主页部分#########################################################
 //######################################################################################################################
+
+function extractSeries() {
+    return new Promise((resolve, reject) => {
+        const currentUrl = window.location.href;
+        const midMatch = currentUrl.match(/space\.bilibili\.com\/(\d+)/);
+        if (midMatch && midMatch[1]) {
+            const mid = midMatch[1];
+            const apiUrl = `https://api.bilibili.com/x/polymer/web-space/seasons_series_list?mid=${mid}&page_num=1&page_size=1`;
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", apiUrl);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    try {
+                        const data = JSON.parse(xhr.responseText);
+                        if (data.code === 0 && data.data && data.data.items_lists) {
+                            seasonIds = data.data.items_lists.seasons_list.map(season => season.meta.season_id);// 提取 AID
+                            console.log("Extracted seasonIds:", seasonIds);
+                            currentAidIndex = 0; // 重置索引
+                            extractSeasonAIDs(seasonIds).then(() => {
+                                resolve("完成，结束");
+                            }).catch(err => {
+                                reject(err);
+                            });
+                        } else {
+                            console.log("没有找到记录:", data);
+                            resolve("没有找到记录，结束");
+                        }
+                    } catch (e) {
+                        console.log("Error parsing JSON:", e);
+                        reject("JSON解析错误");
+                    }
+                } else {
+                    console.log("Failed to fetch data, status:", xhr.status);
+                    reject(`请求失败，状态码: ${xhr.status}`);
+                }
+            };
+            xhr.onerror = function(err) {
+                console.log("Request failed:", err);
+                reject("请求失败");
+            };
+            xhr.send();
+        } else {
+            reject("MID 提取失败");
+        }
+    });
+}
+
+
+
+function extractSeasonAIDs() {
+    return new Promise((resolve, reject) => {
+        if (currentAidIndex < seasonIds.length) {
+            const seasonId = seasonIds[currentAidIndex];
+
+
+            const currentUrl = window.location.href;
+            const midMatch = currentUrl.match(/space\.bilibili\.com\/(\d+)/);
+
+            if (midMatch && midMatch[1]) {
+                const mid = midMatch[1];
+                const apiUrl = `https://api.bilibili.com/x/polymer/space/seasons_archives_list?mid=${mid}&sort_reverse=false&season_id=${seasonId}&page_num=1&page_size=30`;
+                const xhr = new XMLHttpRequest();
+                xhr.open("GET", apiUrl);
+                console.log(apiUrl)
+
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        try {
+                            const data = JSON.parse(xhr.responseText);
+                            if (data.code === 0 && data.data && data.data.archives) {
+                                aids = data.data.archives.map(archive => archive.aid); // 提取 AID
+                                console.log("Extracted AIDs:", aids);
+                                currentAidIndex = 0; // 重置索引
+
+                                // 使用 Promise.race 设置超时机制
+                                const submitPromise = submitNextAppeal(); // 假设此函数返回一个 Promise
+                                const timeoutPromise = new Promise((_, reject) =>
+                                    setTimeout(() => reject("提交超时"), 10000) // 10秒超时
+                                );
+
+                                Promise.race([submitPromise, timeoutPromise])
+                                    .then(() => {
+                                        resolve("完成，结束");
+                                    })
+                                    .catch(err => {
+                                        console.log(err);
+                                    });
+
+                            } else {
+                                console.log("没有找到记录:", data);
+                                resolve("没有找到记录，结束");
+                            }
+                        } catch (e) {
+                            console.log("Error parsing JSON:", e);
+                            reject("JSON解析错误");
+                        }
+                    } else {
+                        console.log("Failed to fetch data, status:", xhr.status);
+                        reject(`请求失败，状态码: ${xhr.status}`);
+                    }
+                };
+
+                xhr.onerror = function (err) {
+                    console.log("Request failed:", err);
+                    reject("请求失败");
+                };
+                xhr.send();
+            } else {
+                reject("MID 提取失败");
+            }
+
+
+
+        } else {
+            updateDiagnosticInfo('合集举报完成!<br>');
+            console.warn('合集举报完成!');
+            resolve(); // 完成后解除 Promise
+
+        }
+
+
+
+    })
+}
+
+
+
+
+//######################################################################################################################
+//###################################################举报合集部分#########################################################
+//######################################################################################################################
+
+
 
 function extractAndSubmitAIDs() {
     return new Promise((resolve, reject) => {
@@ -142,11 +277,12 @@ function submitAppeal(aid) {
             if (xhr.status === 200) {
                 const result = JSON.parse(xhr.responseText);
                 updateDiagnosticInfo(`视频：${this.response}<br>`);
-                console.warn(`视频：${this.response}`)
+                console.warn(`视频${reportCount}：${this.response}`)
 
                 if (result.code === -352) {
                     updateDiagnosticInfo(`视频：${this.response}<br>`);
-                    console.warn(`视频：${this.response}`)
+                    console.warn(`视频${reportCount}：${this.response}`)
+                    callback('352');
                     resolve(false); // 返回 false 表示结束
                     return;          // 退出当前函数
                 }
@@ -156,7 +292,7 @@ function submitAppeal(aid) {
             } else {
                 // 对于其他状态码，不作处理，直接解除 Promise
                 updateDiagnosticInfo(`视频：${this.response}<br>`);
-                console.warn(`视频：${this.response}`);
+                console.warn(`视频${reportCount}：${this.response}`);
 
                 resolve(true); // 继续执行后续逻辑
             }
@@ -220,6 +356,7 @@ function submitNextAppeal() {
         } else {
             updateDiagnosticInfo('视频举报完成!<br>');
             console.warn('视频举报完成!');
+            callback('视频举报完成!');
             resolve(); // 完成后解除 Promise
         }
     });
@@ -462,14 +599,21 @@ function reportDynamic(uid, dyid) {
 }
 
 //######################################################################################################################
-//###################################################函数入口部分#########################################################
+//###################################################举报动态部分#########################################################
 //######################################################################################################################
 
 async function main() {
     await sendReportRequest();//举报签名昵称头像
+    getAid(currentPage);//举报专栏
+    reportAllDynamic();//举报动态
+    await extractSeries();
     await extractAndSubmitAIDs(); //举报视频
-    await getAid(currentPage);//举报专栏
-    await reportAllDynamic();//举报动态
+
 }
 
 main();
+
+
+//######################################################################################################################
+//###################################################函数入口部分#########################################################
+//######################################################################################################################

@@ -373,6 +373,7 @@ function extractSeasonAIDs() {
                 await sendReportRequest();//举报签名昵称头像
                 await extractSeries();
                 await extractAndSubmitAIDs(); //举报视频
+
             }
 
             main();
