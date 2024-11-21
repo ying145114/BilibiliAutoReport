@@ -122,7 +122,7 @@ try:
                 print(f"UID:{uid}未找到投稿视频")
                 with open(title_file, 'a', encoding='utf-8') as file:
                     file.write(f"\nUID:{uid}未找到投稿视频")
-                    
+
                 search_url = f'https://api.bilibili.com/x/polymer/web-space/seasons_series_list?mid=${uid}&page_num=1&page_size=1'
                 headers = {
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
