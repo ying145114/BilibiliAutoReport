@@ -36,7 +36,7 @@ def log_error(message):
     with open(log_file, 'a', encoding='utf-8') as log:
         timestamp = datetime.now().strftime('[%Y-%m-%d %H:%M:%S]')
         log.write(f"\n\n{timestamp} {message}")
-
+    driver.save_screenshot(os.path.join(log_directory, f'screenshot_{timestamp}.png'))
 
 def remove_completed_uid(uid):
     try:
@@ -203,11 +203,14 @@ try:
                                 element.click()  # 提交验证码
                             except Exception as e:
                                 print(f"提交验证码时发生错误: {e}")
-                                refresh_element = WebDriverWait(driver, 10).until(
-                                    EC.element_to_be_clickable((By.CLASS_NAME, 'geetest_refresh'))
-                                )
-                                refresh_element.click()  # 点击刷新验证按钮
-                                print('已点击刷新按钮')
+                                try:
+                                    refresh_element = WebDriverWait(driver, 10).until(
+                                        EC.element_to_be_clickable((By.CLASS_NAME, 'geetest_refresh'))
+                                    )
+                                    refresh_element.click()  # 点击刷新验证按钮
+                                    print('已点击刷新按钮')
+                                except Exception as e:
+                                    print('点击刷新按钮出错！')
 
                             try:  # 等待 'geetest_item_wrap' 元素消失，表示验证码提交成功
                                 WebDriverWait(driver, 3).until(

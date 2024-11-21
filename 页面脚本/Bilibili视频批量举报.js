@@ -4,6 +4,7 @@ let reportCount = 0
 let currentAidIndex = 0; // 当前处理的AID索引
 let time_video = 2300
 let aids = []; // 所有提取的AID
+let seasonIds= [];
 const floatingWindow = document.createElement('div');// 创建诊断信息窗口
 floatingWindow.style.position = 'fixed';
 floatingWindow.style.top = '100px';
