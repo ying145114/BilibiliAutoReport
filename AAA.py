@@ -6,7 +6,7 @@ import os
 base_dir = os.path.dirname(os.path.abspath(__file__))
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
 chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
-chrome_driver_path = os.path.join(base_dir, '附加文件', '运行数据', 'chromedriver.exe')
+chrome_driver_path = os.path.join(base_dir, '附加文件',  'chromedriver.exe')
 options = webdriver.ChromeOptions()
 options.add_argument("--disable-blink-features=AutomationControlled")
 options.add_argument(f'--user-data-dir={user_data_dir}')

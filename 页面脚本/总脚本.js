@@ -472,7 +472,6 @@ function getUid() {
 
 function getAllDynamic(offset = '') {
     const uid = getUid();
-    updateDiagnosticInfo('提取的UID:', uid);
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         const url = `https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space?offset=${offset}&host_mid=${uid}&timezone_offset=-480&platform=web&features=itemOpusStyle,listOnlyfans,opusBigCover,onlyfansVote,decorationCard,forwardListHidden,ugcDelete,onlyfansQaCard&web_location=333.999`;
