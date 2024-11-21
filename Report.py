@@ -114,13 +114,35 @@ try:
                 first_video = data['data']['archives'][0]
                 aid = first_video.get('aid')
                 title = first_video.get('title')
-                print(f"UID:{uid},  AID: {aid}, 标题: {title}")
+                print(f"UID:{uid},  AID: {aid}, 投稿视频: {title}")
                 with open(title_file, 'a', encoding='utf-8') as file:
-                    file.write(f"\nUID:{uid},  AID: {aid}, 标题: {title}")
+                    file.write(f"\nUID:{uid},  AID: {aid}, 投稿视频: {title}")
 
             else:
                 print(f"UID:{uid}未找到投稿视频")
-            print(aid)
+                with open(title_file, 'a', encoding='utf-8') as file:
+                    file.write(f"\nUID:{uid}未找到投稿视频")
+                    
+                search_url = f'https://api.bilibili.com/x/polymer/web-space/seasons_series_list?mid=${uid}&page_num=1&page_size=1'
+                headers = {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
+                response = requests.get(search_url, headers=headers, proxies=proxies, timeout=(5, 10))
+                data = response.json()
+
+
+                if data.get('data', {}).get('items_lists', {}).get('seasons_list', []) :
+                    first_video = data['data']['items_lists']['seasons_list'][0]['archives'][0]
+                    aid = first_video.get('aid')
+                    title = first_video.get('title')
+                    print(f"UID:{uid},  AID: {aid}, 合集视频: {title}")
+                    with open(title_file, 'a', encoding='utf-8') as file:
+                        file.write(f"\nUID:{uid},  AID: {aid}, 合集视频: {title}")
+                else:
+                    print('f"\nUID:{uid}未找到合集视频"')
+
+
+
+
             userurl = f"https://space.bilibili.com/{uid}"
             driver.get(userurl)
             print(f'\n{userurl}\n')
