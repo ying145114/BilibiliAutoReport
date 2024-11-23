@@ -167,17 +167,14 @@ const dataObj = {
     plat: 1,
     oid: oid,
     type: 1,
-    message: `该作者标题中经常出现的词是: "${topWord[0]}", 出现次数: ${topWord[1]} \n这个视频是否存在某些问题？\n是    否\n👇    👇`,
-    // at_name_to_mid: JSON.stringify({"自动举报姬": 3494374224694043}), // 将对象转换为 JSON 字符串
+    message: `@哔哩哔哩社区小管家\n该作者标题中经常出现的词是: "${topWord[0]}", 出现次数: ${topWord[1]} \n此视频作者是否存在违规行为？\n是    否\n👇    👇`,
+    at_name_to_mid: JSON.stringify({"玩忽职守": 178362496}), // 将对象转换为 JSON 字符串
     sync_to_dynamic: 1,
     gaia_source: 'main_web',
     csrf: getCsrf(),
     statistics: JSON.stringify({ appId: 100, platform: 5 }) // 转换 statistics 对象为 JSON 字符串
 };
-
-
-// 使用 URLSearchParams 将对象转换为 URL 编码的字符串
-const data = new URLSearchParams(dataObj).toString();
+    const data = new URLSearchParams(dataObj).toString();
 
 
     let xhr = new XMLHttpRequest();
