@@ -20,7 +20,7 @@ function extractAndSubmitAIDs() {
         const mid = midMatch[1];
 
         // 构造API请求URL
-        const apiUrl = `https://api.bilibili.com/x/series/recArchivesByKeywords?mid=${mid}&keywords=&ps=0`;
+        const apiUrl = `https://api.bilibili.com/x/series/recArchivesByKeywords?mid=${mid}&keywords=&ps=50`;
 
         // 使用XMLHttpRequest进行请求
         const xhr = new XMLHttpRequest();
@@ -167,7 +167,7 @@ const dataObj = {
     plat: 1,
     oid: oid,
     type: 1,
-    message: `该作者标题中经常出现的词是: "${topWord[0]}", 出现次数: ${topWord[1]} 这个视频是否存在某些问题？\n是    否\n👇    👇`,
+    message: `该作者标题中经常出现的词是: "${topWord[0]}", 出现次数: ${topWord[1]} \n这个视频是否存在某些问题？\n是    否\n👇    👇`,
     // at_name_to_mid: JSON.stringify({"自动举报姬": 3494374224694043}), // 将对象转换为 JSON 字符串
     sync_to_dynamic: 1,
     gaia_source: 'main_web',
