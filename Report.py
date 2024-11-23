@@ -17,6 +17,7 @@ base_dir = os.path.dirname(os.path.abspath(__file__))
 ########################################################################################################################
 chrome_driver_path = os.path.join(base_dir, '附加文件','chromedriver.exe')
 report_video = os.path.join(base_dir,  '页面脚本', '总脚本.js')
+send_comment = os.path.join(base_dir,  '页面脚本', '在第一个视频下评论.js')
 chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
 ########################################################################################################################
@@ -146,9 +147,13 @@ try:
             userurl = f"https://space.bilibili.com/{uid}"
             driver.get(userurl)
             print(f'\n{userurl}\n')
+            with open(send_comment, "r", encoding="utf-8") as file:
+                comment = file.read()
+            driver.execute_script(comment)
             with open(report_video, "r", encoding="utf-8") as file:
                 report = file.read()
             result = driver.execute_async_script(report)
+
             if "352" in result:
                 print(result)
 
