@@ -92,6 +92,7 @@ function getCsrf() {
     type: 1,
     message: '这个视频是否存在某些问题？\n是    否\n👇    👇',
     //at_name_to_mid: JSON.stringify({"自动举报姬": 3494374224694043}), // 将对象转换为 JSON 字符串
+    sync_to_dynamic: 1,
     gaia_source: 'main_web',
     csrf: getCsrf(),
     statistics: JSON.stringify({ appId: 100, platform: 5 }) // 转换 statistics 对象为 JSON 字符串
