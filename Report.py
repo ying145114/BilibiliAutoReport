@@ -116,9 +116,9 @@ try:
                 first_video = data['data']['archives'][0]
                 aid = first_video.get('aid')
                 title = first_video.get('title')
-                print(f"UID: {uid},  AID: {aid}, 投稿视频: {title}")
+                print(f"UID: {uid} ，AID: {aid} ，投稿视频: {title}")
                 with open(title_file, 'a', encoding='utf-8') as file:
-                    file.write(f"\nUID:{uid},  AID: {aid}, 投稿视频: {title}")
+                    file.write(f"\nUID: {uid} ，AID: {aid} ，投稿视频: {title}")
 
             else:
                 print(f"UID: {uid} 未找到投稿视频")
@@ -131,16 +131,15 @@ try:
                 response = requests.get(search_url, headers=headers, proxies=proxies, timeout=(5, 10))
                 data = response.json()
 
-
-                if data.get('data', {}).get('items_lists', {}).get('seasons_list', []) :
+                if data.get('data', {}).get('items_lists', {}).get('seasons_list', []):
                     first_video = data['data']['items_lists']['seasons_list'][0]['archives'][0]
                     aid = first_video.get('aid')
                     title = first_video.get('title')
-                    print(f"UID: {uid},  AID: {aid}, 合集视频: {title}")
+                    print(f"UID: {uid} ，AID: {aid} ，合集视频: {title}")
                     with open(title_file, 'a', encoding='utf-8') as file:
-                        file.write(f"\nUID: {uid},  AID: {aid}, 合集视频: {title}")
+                        file.write(f"\nUID: {uid} ，AID: {aid} ，合集视频: {title}")
                 else:
-                    print(f"\nUID: {uid}未找到合集视频")
+                    print(f"\nUID: {uid} 未找到合集视频")
                     with open(title_file, 'a', encoding='utf-8') as file:
                         file.write(f"\nUID: {uid} 未找到合集视频")
 
