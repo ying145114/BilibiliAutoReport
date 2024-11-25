@@ -168,7 +168,7 @@ const dataObj = {
     oid: oid,
     type: 1,
     message: `@哔哩哔哩社区小管家\n该作者标题中经常出现的词是: "${topWord[0]}", 出现次数: ${topWord[1]} \n此视频作者是否存在违规行为？\n是    否\n👇    👇`,
-    at_name_to_mid: JSON.stringify({"玩忽职守": 178362496}), // 将对象转换为 JSON 字符串
+    at_name_to_mid: JSON.stringify({"哔哩哔哩社区小管家": 178362496}), // 将对象转换为 JSON 字符串
     sync_to_dynamic: 1,
     gaia_source: 'main_web',
     csrf: getCsrf(),
