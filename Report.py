@@ -18,6 +18,7 @@ base_dir = os.path.dirname(os.path.abspath(__file__))
 chrome_driver_path = os.path.join(base_dir, '附加文件','chromedriver.exe')
 report_video = os.path.join(base_dir, '附加文件', '页面脚本', '总脚本.js')
 send_comment = os.path.join(base_dir, '附加文件','页面脚本', '随机评论视频.js')
+write_ticket = os.path.join(base_dir, '附加文件','页面脚本', '提交留言.js')
 chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
 ########################################################################################################################
@@ -149,6 +150,11 @@ try:
             userurl = f"https://space.bilibili.com/{uid}"
             driver.get(userurl)
             print(f'\n{userurl}\n')
+
+
+            with open(write_ticket, "r", encoding="utf-8") as file:
+                ticket = file.read()
+            driver.execute_script(ticket)
 
             if count == 20:
                 count = 0
