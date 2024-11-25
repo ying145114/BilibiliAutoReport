@@ -1,6 +1,6 @@
 # BilibiliAutoReport  
 ## 使用[关键词](https://github.com/ayyayyayy2002/BilibiliAutoReport/blob/main/%E4%BA%91%E7%AB%AF%E6%96%87%E4%BB%B6/keyword.txt)搜索视频，举报作者的头像、签名、昵称、视频、专栏和动态  
-## 注意：本仓库有三个分支：[main](https://github.com/ayyayyayy2002/BilibiliAutoReport/tree/main)分支是开发者自用分支，[public](https://github.com/ayyayyayy2002/BilibiliAutoReport/tree/public)分支是公开的完整可运行代码，[distribution ](https://github.com/ayyayyayy2002/BilibiliAutoReport/tree/distribution )分支用于发布程序  
+## 注意：本仓库有两个分支：[main](https://github.com/ayyayyayy2002/BilibiliAutoReport/tree/main)分支是开发者自用分支，[public](https://github.com/ayyayyayy2002/BilibiliAutoReport/tree/public)分支是公开的完整可运行代码  
 ## 使用条款与免责声明
 本项目是开源的，遵循以下条款和条件。请在使用本项目之前仔细阅读。
 1. **无保证**：本项目以“现状”提供，不附带任何形式的明示或暗示保证，包括但不限于对适销性、特定用途适用性及不侵权的保证。  
@@ -28,12 +28,13 @@ B站也是离谱，发现举报变多了，不去治理被举报目标，反而�
 使用Pyinstaller打包了EXE文件，现在可以开袋即食了  
 
 ## 开袋即食（仅限Windows）😋   
-1，前往[release](https://github.com/ayyayyayy2002/BilibiliAutoReport/releases)页面下载程序并解压  
-2，双击AAA.exe，在打开的浏览器窗口登录账号。关闭浏览器  
-3，双击Start.exe，程序将自动开始运行
+1，前往[public](https://github.com/ayyayyayy2002/BilibiliAutoReport/tree/public)分支下载程序   
+2，前往[Release](https://github.com/ayyayyayy2002/BilibiliAutoReport/releases)页面下载驱动，并解压后将”附加文件“文件夹合并  
+3，双击AAA.exe，在打开的浏览器窗口登录账号。关闭浏览器，双击Start.exe，程序将自动开始运行  
 
 ## 源码使用方法（仅限Windows，可能需要下载PyCharm）🐍 
-1，前往[main](https://github.com/ayyayyayy2002/BilibiliAutoReport/tree/main)分支下载源码和程序，解压后将”附加文件“文件夹合并  
+1，前往[public](https://github.com/ayyayyayy2002/BilibiliAutoReport/tree/public)分支下载程序   
+2，前往[Release](https://github.com/ayyayyayy2002/BilibiliAutoReport/releases)页面下载驱动，并解压后将”附加文件“文件夹合并  
 2，下载安装[Python3.10](https://www.python.org/downloads/release/python-3100/)
   
 <details>
