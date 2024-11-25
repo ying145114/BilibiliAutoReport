@@ -4,7 +4,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver import ActionChains
 from selenium import webdriver
-from src import jy_click
+import jy_click
 import requests
 import time
 import os
@@ -16,8 +16,8 @@ import re
 base_dir = os.path.dirname(os.path.abspath(__file__))
 chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
 chrome_driver_path = os.path.join(base_dir, '附加文件', 'chromedriver.exe')
-success_directory = os.path.join(base_dir, '附加文件', '成功验证码')
-fail_directory = os.path.join(base_dir, '附加文件', '失败验证码')
+success_directory = os.path.join(base_dir, '运行记录', '成功验证码')
+fail_directory = os.path.join(base_dir, '运行记录', '失败验证码')
 
 
 

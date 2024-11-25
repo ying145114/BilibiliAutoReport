@@ -5,7 +5,7 @@ import os
 
 class JYClick(object):
     def __init__(self, per_path='pre_model_v6_quantized.onnx', yolo_path='YOLO.onnx'):
-        save_path = os.path.join(os.path.dirname(__file__))
+        save_path = os.path.join(os.path.dirname(__file__),"附加文件")
         path = lambda a, b: os.path.join(a, b)
         per_path = path(save_path, per_path)
         yolo_path = path(save_path, yolo_path)

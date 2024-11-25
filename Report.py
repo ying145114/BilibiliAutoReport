@@ -6,7 +6,7 @@ from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium import webdriver
 from datetime import datetime
-from src import jy_click
+import JYClick
 import requests
 import time
 import sys
@@ -16,16 +16,16 @@ import os
 base_dir = os.path.dirname(os.path.abspath(__file__))
 ########################################################################################################################
 chrome_driver_path = os.path.join(base_dir, '附加文件','chromedriver.exe')
-report_video = os.path.join(base_dir,  '页面脚本', '总脚本.js')
-send_comment = os.path.join(base_dir,  '页面脚本', '在第一个视频下评论.js')
+report_video = os.path.join(base_dir, '附加文件', '页面脚本', '总脚本.js')
+send_comment = os.path.join(base_dir, '附加文件','页面脚本', '随机评论视频.js')
 chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
 ########################################################################################################################
 title_file = os.path.join(base_dir, '运行记录','标题记录.txt')
 log_file = os.path.join(base_dir,  '运行记录','错误记录.txt')
-success_directory = os.path.join(base_dir,  '成功验证码')
+success_directory = os.path.join(base_dir,'运行记录',  '成功验证码')
 uid_file = os.path.join(base_dir, '附加文件', 'uid.txt')
-fail_directory = os.path.join(base_dir,  '失败验证码')
+fail_directory = os.path.join(base_dir,'运行记录',  '失败验证码')
 log_directory = os.path.join(base_dir, '运行记录')
 os.makedirs(log_directory, exist_ok=True)
 ########################################################################################################################
@@ -212,7 +212,7 @@ try:
 
                         content = requests.get(url, proxies=proxies, timeout=(5, 10)).content
 
-                        plan = jy_click.JYClick().run(content)
+                        plan = JYClick.JYClick().run(content)
 
                         print(plan)
 

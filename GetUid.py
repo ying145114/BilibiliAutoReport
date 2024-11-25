@@ -22,7 +22,7 @@ cloud_whitelist_filename = os.path.join(base_dir, '云端文件', 'whitelist.txt
 ########################################################################################################################
 chrome_driver_path = os.path.join(base_dir, '附加文件', 'chromedriver.exe')
 chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
-script_clear = os.path.join(base_dir, '页面脚本', '清空列表.js')
+script_clear = os.path.join(base_dir, '附加文件','页面脚本', '清空列表.js')
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
 ########################################################################################################################
 output_file = os.path.join(base_dir, '附加文件', 'uid.txt')
