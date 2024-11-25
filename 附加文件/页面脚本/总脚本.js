@@ -254,8 +254,8 @@ function submitAppeal(aid) {
             'attach': '',
             'block_author': 'false',
             'csrf': getCsrf(),
-            'desc': "侮辱国家领导人，宣扬台独反华内容。审核结果：下架此视频并永久封禁该账号",
-            'tid': '10014'
+            'desc': "视频封面标题以及内容违规，推广以原神、碧蓝档案等二次元游戏人物为主角的色情视频，侮辱国家领导人，宣扬台独反华内容。审核结果：下架此视频并永久封禁该账号",
+            'tid': '10019'
         }).toString();
         const xhr = new XMLHttpRequest();
         xhr.withCredentials = true;
