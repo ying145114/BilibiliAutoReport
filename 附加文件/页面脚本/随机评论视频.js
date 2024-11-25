@@ -2,7 +2,6 @@ let wordCount = {};
 let topWord = [];
 
 
-
 function getCsrf() {
     let csrfText = '';
     const cookieMatch = document.cookie.match(/bili_jct=(.*?);/) ?? [];
@@ -26,90 +25,48 @@ function extractAndSubmitAIDs() {
         const xhr = new XMLHttpRequest();
         xhr.open("GET", apiUrl, true);
 
-        xhr.onload = function() {
+        xhr.onload = function () {
             if (xhr.status === 200) {
                 try {
                     const data = JSON.parse(xhr.responseText);
                     if (data.code === 0 && data.data && data.data.archives) {
-                    const titles = data.data.archives.map(archive => archive.title);
+                        const titles = data.data.archives.map(archive => archive.title);
 
 // 统计词频
 
 
-titles.forEach(title => {
-    // 使用正则表达式提取中文和英文字符
-    const words = title.match(/[\u4e00-\u9fa5a-zA-Z]+/g);
-    if (words) {
-        words.forEach(word => {
-            // 过滤掉长度小于2的词
-            if (word.length > 1) {
-                const lowerCaseWord = word.toLowerCase(); // 转换为小写以便不区分大小写
-                wordCount[lowerCaseWord] = (wordCount[lowerCaseWord] || 0) + 1;
-            }
-        });
-    }
-});
+                        titles.forEach(title => {
+                            // 使用正则表达式提取中文和英文字符
+                            const words = title.match(/[\u4e00-\u9fa5a-zA-Z]+/g);
+                            if (words) {
+                                words.forEach(word => {
+                                    // 过滤掉长度小于2的词
+                                    if (word.length > 1) {
+                                        const lowerCaseWord = word.toLowerCase(); // 转换为小写以便不区分大小写
+                                        wordCount[lowerCaseWord] = (wordCount[lowerCaseWord] || 0) + 1;
+                                    }
+                                });
+                            }
+                        });
 
 // 获取出现频率最高的词
-const sortedWords = Object.entries(wordCount).sort((a, b) => b[1] - a[1]);
-const topWord = sortedWords[0];
+                        const sortedWords = Object.entries(wordCount).sort((a, b) => b[1] - a[1]);
+                        const topWord = sortedWords[0];
 
 // 输出结果
-if (topWord) {
-    console.log(`出现频率最高的词: "${topWord[0]}", 次数: ${topWord[1]}`);
+                        if (topWord) {
+                            console.log(`出现频率最高的词: "${topWord[0]}", 次数: ${topWord[1]}`);
 
-} else {
-    console.log("没有找到任何词。");
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                        } else {
+                            console.log("没有找到任何词。");
+                        }
 
 
                         // 提取第一个AID
                         const firstAid = data.data.archives[0]?.aid;
                         if (firstAid) {
                             console.log("Extracted AID:", firstAid);
-                            sendComment(firstAid,topWord); // 使用第一个AID调用sendComment函数
+                            sendComment(firstAid, topWord); // 使用第一个AID调用sendComment函数
                         } else {
                             console.error("No AID found in the response.");
                         }
@@ -124,7 +81,7 @@ if (topWord) {
             }
         };
 
-        xhr.onerror = function() {
+        xhr.onerror = function () {
             console.error("Request failed.");
         };
 
@@ -135,45 +92,19 @@ if (topWord) {
     }
 }
 
-// 使用示例，调用提取和提交函数
 
-
-// 使用示例，调用提取和提交函数
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    function sendComment(oid,topWord) {
-const dataObj = {
-    plat: 1,
-    oid: oid,
-    type: 1,
-    message: `@哔哩哔哩社区小管家\n该作者标题中经常出现的词是: "${topWord[0]}", 出现次数: ${topWord[1]} ，可能存在违规行为\n此评论由脚本自动发送，可能存在误判`,
-    at_name_to_mid: JSON.stringify({"哔哩哔哩社区小管家": 178362496}), // 将对象转换为 JSON 字符串
-    sync_to_dynamic: 1,
-    gaia_source: 'main_web',
-    csrf: getCsrf(),
-    statistics: JSON.stringify({ appId: 100, platform: 5 }) // 转换 statistics 对象为 JSON 字符串
-};
+function sendComment(oid, topWord) {
+    const dataObj = {
+        plat: 1,
+        oid: oid,
+        type: 1,
+        message: `@哔哩哔哩社区小管家\n该作者标题中经常出现的词是: "${topWord[0]}", 出现次数: ${topWord[1]} ，可能存在违规行为\n此评论由脚本自动发送，可能存在误判`,
+        at_name_to_mid: JSON.stringify({"哔哩哔哩社区小管家": 178362496}), // 将对象转换为 JSON 字符串
+        sync_to_dynamic: 1,
+        gaia_source: 'main_web',
+        csrf: getCsrf(),
+        statistics: JSON.stringify({appId: 100, platform: 5}) // 转换 statistics 对象为 JSON 字符串
+    };
     const data = new URLSearchParams(dataObj).toString();
 
 
@@ -184,7 +115,7 @@ const dataObj = {
     xhr.setRequestHeader('accept-language', 'zh-CN,zh-TW;q=0.9,zh;q=0.8,en;q=0.7,ja;q=0.6');
     xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
 
-    xhr.onload = function() {
+    xhr.onload = function () {
         console.log(xhr.response);
     };
 

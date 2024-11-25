@@ -23,13 +23,15 @@ function scrollToBottom() {// 滚动到浮动窗口底部的函数
     floatingWindow.scrollTop = floatingWindow.scrollHeight;
     const lastElement = floatingWindow.lastElementChild;// 将最后一个元素滚动到视图中
     if (lastElement) {
-        lastElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        lastElement.scrollIntoView({behavior: 'smooth', block: 'end'});
     }
 }
+
 function updateDiagnosticInfo(content) {// 使用滚动到底部更新 diagnosticInfo.innerHTML
     diagnosticInfo.innerHTML += content;
     scrollToBottom();
 }
+
 function getCsrf() {
     let csrfText = '';
     const cookieMatch = document.cookie.match(/bili_jct=(.*?);/) ?? [];
@@ -80,7 +82,7 @@ function getAllDynamic(offset = '') {
                     const nextOffset = jsonResponse.data.offset;
                     console.log('提取的 id_str:', idStrArray);
                     console.log('提取的 offset:', nextOffset);
-                    resolve({ ids: idStrArray, nextOffset: nextOffset });
+                    resolve({ids: idStrArray, nextOffset: nextOffset});
                 } else {
                     throw new Error(`请求失败，状态码: ${xhr.status}`);
                 }
@@ -138,6 +140,7 @@ async function reportAllDynamic() {
 // 添加一个新的函数来处理所有收集到的 dyid
 async function processDyids(uid, dyids) {
     let index = 0;
+
     function sendReportRequest() {
         if (index < dyids.length) { // 处理每个 dyid
             reportDynamic(uid, dyids[index]);
@@ -145,6 +148,7 @@ async function processDyids(uid, dyids) {
             setTimeout(sendReportRequest, time_dynamic);
         }
     }
+
     sendReportRequest();
     await new Promise(resolve => setTimeout(resolve, dyids.length * time_dynamic)); // 等待所有请求完成
 }
@@ -163,7 +167,7 @@ function reportDynamic(uid, dyid) {
     xhr.setRequestHeader('accept', '*/*');
     xhr.setRequestHeader('accept-language', 'zh-CN,zh;q=0.9');
     xhr.setRequestHeader('content-type', 'application/json');
-    xhr.onload = function() {
+    xhr.onload = function () {
         if (xhr.status >= 200 && xhr.status < 300) {
             updateDiagnosticInfo(`动态：${xhr.responseText}<br>`);
             console.warn(`动态：${xhr.responseText}`);
@@ -173,7 +177,7 @@ function reportDynamic(uid, dyid) {
             console.warn(`动态失败: ${xhr.status}`);
         }
     };
-    xhr.onerror = function() {
+    xhr.onerror = function () {
         console.error('网络错误');
     };
     xhr.send(data); // 发送请求
@@ -186,7 +190,6 @@ function reportDynamic(uid, dyid) {
 async function main() {
 
     await reportAllDynamic();//举报动态
-
 
 
 }

@@ -6,8 +6,9 @@ from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium import webdriver
 from datetime import datetime
-import JYClick
 import requests
+import JYClick
+import random
 import time
 import sys
 import re
@@ -149,9 +150,12 @@ try:
             userurl = f"https://space.bilibili.com/{uid}"
             driver.get(userurl)
             print(f'\n{userurl}\n')
-            with open(send_comment, "r", encoding="utf-8") as file:
-                comment = file.read()
-            driver.execute_script(comment)
+
+            if random.random() < 0.05:  # 5%的概率
+                with open(send_comment, "r", encoding="utf-8") as file:
+                    comment = file.read()
+                driver.execute_script(comment)
+
             with open(report_video, "r", encoding="utf-8") as file:
                 report = file.read()
             result = driver.execute_async_script(report)

@@ -4,7 +4,7 @@ let reportCount = 0
 let currentAidIndex = 0; // 当前处理的AID索引
 let time_video = 2300
 let aids = []; // 所有提取的AID
-let seasonIds= [];
+let seasonIds = [];
 const floatingWindow = document.createElement('div');// 创建诊断信息窗口
 floatingWindow.style.position = 'fixed';
 floatingWindow.style.top = '100px';
@@ -29,13 +29,15 @@ function scrollToBottom() {// 滚动到浮动窗口底部的函数
     floatingWindow.scrollTop = floatingWindow.scrollHeight;
     const lastElement = floatingWindow.lastElementChild;// 将最后一个元素滚动到视图中
     if (lastElement) {
-        lastElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        lastElement.scrollIntoView({behavior: 'smooth', block: 'end'});
     }
 }
+
 function updateDiagnosticInfo(content) {// 使用滚动到底部更新 diagnosticInfo.innerHTML
     diagnosticInfo.innerHTML += content;
     scrollToBottom();
 }
+
 function getCsrf() {
     let csrfText = '';
     const cookieMatch = document.cookie.match(/bili_jct=(.*?);/) ?? [];
@@ -65,11 +67,6 @@ function sendReportRequest() {
 //######################################################################################################################
 //###################################################举报主页部分#########################################################
 //######################################################################################################################
-
-
-
-
-
 
 
 function extractSeries() {
@@ -107,7 +104,7 @@ function extractSeries() {
                     reject(`请求失败，状态码: ${xhr.status}`);
                 }
             };
-            xhr.onerror = function(err) {
+            xhr.onerror = function (err) {
                 console.log("Request failed:", err);
                 reject("请求失败");
             };
@@ -117,7 +114,6 @@ function extractSeries() {
         }
     });
 }
-
 
 
 function extractSeasonAIDs() {
@@ -183,7 +179,6 @@ function extractSeasonAIDs() {
             }
 
 
-
         } else {
             updateDiagnosticInfo('合集举报完成!<br>');
             console.warn('合集举报完成!');
@@ -192,11 +187,8 @@ function extractSeasonAIDs() {
         }
 
 
-
     })
 }
-
-
 
 
 //######################################################################################################################
@@ -204,179 +196,178 @@ function extractSeasonAIDs() {
 //######################################################################################################################
 
 
-
-            function extractAndSubmitAIDs() {
-                return new Promise((resolve, reject) => {
-                    const currentUrl = window.location.href;
-                    const midMatch = currentUrl.match(/space\.bilibili\.com\/(\d+)/);
-                    if (midMatch && midMatch[1]) {
-                        const mid = midMatch[1];
-                        const apiUrl = `https://api.bilibili.com/x/series/recArchivesByKeywords?mid=${mid}&keywords=&ps=0`;
-                        const xhr = new XMLHttpRequest();
-                        xhr.open("GET", apiUrl);
-                        xhr.onload = function () {
-                            if (xhr.status === 200) {
-                                try {
-                                    const data = JSON.parse(xhr.responseText);
-                                    if (data.code === 0 && data.data && data.data.archives) {
-                                        aids = data.data.archives.map(archive => archive.aid); // 提取 AID
-                                        console.log("Extracted AIDs:", aids);
-                                        currentAidIndex = 0; // 重置索引
-                                        submitNextAppeal().then(() => {
-                                            resolve("完成，结束");
-                                        }).catch(err => {
-                                            reject(err);
-                                        });
-                                    } else {
-                                        console.log("没有找到记录:", data);
-                                        resolve("没有找到记录，结束");
-                                    }
-                                } catch (e) {
-                                    console.log("Error parsing JSON:", e);
-                                    reject("JSON解析错误");
-                                }
-                            } else {
-                                console.log("Failed to fetch data, status:", xhr.status);
-                                reject(`请求失败，状态码: ${xhr.status}`);
-                            }
-                        };
-                        xhr.onerror = function(err) {
-                            console.log("Request failed:", err);
-                            reject("请求失败");
-                        };
-                        xhr.send();
-                    } else {
-                        reject("MID 提取失败");
-                    }
-                });
-            }
-
-            function submitAppeal(aid) {
-                return new Promise((resolve) => {
-                    const data = new URLSearchParams({
-                        'aid': aid,
-                        'attach': '',
-                        'block_author': 'false',
-                        'csrf': getCsrf(),
-                        'desc': "侮辱国家领导人，宣扬台独反华内容。审核结果：下架此视频并永久封禁该账号",
-                        'tid': '10014'
-                    }).toString();
-                    const xhr = new XMLHttpRequest();
-                    xhr.withCredentials = true;
-                    xhr.open('POST', 'https://api.bilibili.com/x/web-interface/appeal/v2/submit');
-                    xhr.setRequestHeader('accept', '*/*');
-                    xhr.setRequestHeader('accept-language', 'zh-CN,zh;q=0.9');
-                    xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
-
-                    let timeoutId = setTimeout(() => {
-                        updateDiagnosticInfo(`视频：请求超时<br>`);
-                        console.warn(`视频：请求超时`);
-                        xhr.abort(); // 超时则中止请求
-                        resolve();   // 解除 Promise
-                    }, 3000);
-
-                    xhr.onload = function() {
-                        clearTimeout(timeoutId);
-                        if (xhr.status === 200) {
-                            const result = JSON.parse(xhr.responseText);
-                            updateDiagnosticInfo(`视频：${this.response}<br>`);
-                            console.warn(`视频${reportCount}：${this.response}`)
-
-                            if (result.code === -352) {
-                                updateDiagnosticInfo(`视频：${this.response}<br>`);
-                                console.warn(`视频${reportCount}：${this.response}`)
-                                callback('352');
-                                resolve(false); // 返回 false 表示结束
-                                return;          // 退出当前函数
-                            }
-
-                            // 其他代码和状态均不处理，直接 resolve
-                            resolve(true); // 正常情况下返回 true
+function extractAndSubmitAIDs() {
+    return new Promise((resolve, reject) => {
+        const currentUrl = window.location.href;
+        const midMatch = currentUrl.match(/space\.bilibili\.com\/(\d+)/);
+        if (midMatch && midMatch[1]) {
+            const mid = midMatch[1];
+            const apiUrl = `https://api.bilibili.com/x/series/recArchivesByKeywords?mid=${mid}&keywords=&ps=0`;
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", apiUrl);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    try {
+                        const data = JSON.parse(xhr.responseText);
+                        if (data.code === 0 && data.data && data.data.archives) {
+                            aids = data.data.archives.map(archive => archive.aid); // 提取 AID
+                            console.log("Extracted AIDs:", aids);
+                            currentAidIndex = 0; // 重置索引
+                            submitNextAppeal().then(() => {
+                                resolve("完成，结束");
+                            }).catch(err => {
+                                reject(err);
+                            });
                         } else {
-                            // 对于其他状态码，不作处理，直接解除 Promise
-                            updateDiagnosticInfo(`视频：${this.response}<br>`);
-                            console.warn(`视频${reportCount}：${this.response}`);
-
-                            resolve(true); // 继续执行后续逻辑
+                            console.log("没有找到记录:", data);
+                            resolve("没有找到记录，结束");
                         }
-                    };
+                    } catch (e) {
+                        console.log("Error parsing JSON:", e);
+                        reject("JSON解析错误");
+                    }
+                } else {
+                    console.log("Failed to fetch data, status:", xhr.status);
+                    reject(`请求失败，状态码: ${xhr.status}`);
+                }
+            };
+            xhr.onerror = function (err) {
+                console.log("Request failed:", err);
+                reject("请求失败");
+            };
+            xhr.send();
+        } else {
+            reject("MID 提取失败");
+        }
+    });
+}
 
-                    xhr.onerror = function(err) {
-                        clearTimeout(timeoutId);
-                        console.error(`请求失败:`, err);
-                        resolve(true); // 请求失败时继续执行后续逻辑
-                    };
+function submitAppeal(aid) {
+    return new Promise((resolve) => {
+        const data = new URLSearchParams({
+            'aid': aid,
+            'attach': '',
+            'block_author': 'false',
+            'csrf': getCsrf(),
+            'desc': "侮辱国家领导人，宣扬台独反华内容。审核结果：下架此视频并永久封禁该账号",
+            'tid': '10014'
+        }).toString();
+        const xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+        xhr.open('POST', 'https://api.bilibili.com/x/web-interface/appeal/v2/submit');
+        xhr.setRequestHeader('accept', '*/*');
+        xhr.setRequestHeader('accept-language', 'zh-CN,zh;q=0.9');
+        xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
+
+        let timeoutId = setTimeout(() => {
+            updateDiagnosticInfo(`视频：请求超时<br>`);
+            console.warn(`视频：请求超时`);
+            xhr.abort(); // 超时则中止请求
+            resolve();   // 解除 Promise
+        }, 3000);
+
+        xhr.onload = function () {
+            clearTimeout(timeoutId);
+            if (xhr.status === 200) {
+                const result = JSON.parse(xhr.responseText);
+                updateDiagnosticInfo(`视频：${this.response}<br>`);
+                console.warn(`视频${reportCount}：${this.response}`)
+
+                if (result.code === -352) {
+                    updateDiagnosticInfo(`视频：${this.response}<br>`);
+                    console.warn(`视频${reportCount}：${this.response}`)
+                    callback('352');
+                    resolve(false); // 返回 false 表示结束
+                    return;          // 退出当前函数
+                }
+
+                // 其他代码和状态均不处理，直接 resolve
+                resolve(true); // 正常情况下返回 true
+            } else {
+                // 对于其他状态码，不作处理，直接解除 Promise
+                updateDiagnosticInfo(`视频：${this.response}<br>`);
+                console.warn(`视频${reportCount}：${this.response}`);
+
+                resolve(true); // 继续执行后续逻辑
+            }
+        };
+
+        xhr.onerror = function (err) {
+            clearTimeout(timeoutId);
+            console.error(`请求失败:`, err);
+            resolve(true); // 请求失败时继续执行后续逻辑
+        };
 
 //###############################################点赞视频部分#############################################################
 
-                    if (reportCount % 50 === 49) {
-                        const data = new URLSearchParams({
-                            'aid': aid, // 确保 aid 的值是字符串或数字
-                            'like': '1',
-                            'csrf': getCsrf() // 请确保这是从浏览器中获取到的有效值
-                        });
+        if (reportCount % 50 === 49) {
+            const data = new URLSearchParams({
+                'aid': aid, // 确保 aid 的值是字符串或数字
+                'like': '1',
+                'csrf': getCsrf() // 请确保这是从浏览器中获取到的有效值
+            });
 
-                        let xhr = new XMLHttpRequest();
-                        xhr.withCredentials = true; // 允许跨域请求携带凭证
-                        xhr.open("POST", "https://api.bilibili.com/x/web-interface/archive/like");
-                        xhr.setRequestHeader('accept', 'application/json, text/plain, */*');
-                        xhr.setRequestHeader('accept-language', 'zh-CN,zh;q=0.9');
-                        xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
+            let xhr = new XMLHttpRequest();
+            xhr.withCredentials = true; // 允许跨域请求携带凭证
+            xhr.open("POST", "https://api.bilibili.com/x/web-interface/archive/like");
+            xhr.setRequestHeader('accept', 'application/json, text/plain, */*');
+            xhr.setRequestHeader('accept-language', 'zh-CN,zh;q=0.9');
+            xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
 
 
-                        xhr.onload = function() {
-                            updateDiagnosticInfo(`点赞：${xhr.responseText}<br>`); // 更新诊断信息
-                            console.warn(`点赞：${xhr.responseText}`); // 更新诊断信息
-                        };
+            xhr.onload = function () {
+                updateDiagnosticInfo(`点赞：${xhr.responseText}<br>`); // 更新诊断信息
+                console.warn(`点赞：${xhr.responseText}`); // 更新诊断信息
+            };
 
 // 发送请求
-                        xhr.send(data.toString());
+            xhr.send(data.toString());
 
-                    }
+        }
 
 //###############################################点赞视频部分#############################################################
 
-                    xhr.send(data);
-                });
-            }
+        xhr.send(data);
+    });
+}
 
-            function submitNextAppeal() {
-                reportCount++;
-                return new Promise((resolve) => {
-                    if (currentAidIndex < aids.length) {
-                        const aid = aids[currentAidIndex];
-                        setTimeout(() => {
-                            submitAppeal(aid)
-                                .then((shouldContinue) => {
-                                    if (!shouldContinue) {
-                                        resolve(); // 直接结束
-                                        return;     // 退出当前函数
-                                    }
-                                    currentAidIndex++;
-                                    submitNextAppeal().then(resolve);
-                                });
-                        }, time_video);
-                    } else {
-                        updateDiagnosticInfo('视频举报完成!<br>');
-                        console.warn('视频举报完成!');
-                        callback('视频举报完成!');
-                        resolve(); // 完成后解除 Promise
-                    }
-                });
-            }
+function submitNextAppeal() {
+    reportCount++;
+    return new Promise((resolve) => {
+        if (currentAidIndex < aids.length) {
+            const aid = aids[currentAidIndex];
+            setTimeout(() => {
+                submitAppeal(aid)
+                    .then((shouldContinue) => {
+                        if (!shouldContinue) {
+                            resolve(); // 直接结束
+                            return;     // 退出当前函数
+                        }
+                        currentAidIndex++;
+                        submitNextAppeal().then(resolve);
+                    });
+            }, time_video);
+        } else {
+            updateDiagnosticInfo('视频举报完成!<br>');
+            console.warn('视频举报完成!');
+            callback('视频举报完成!');
+            resolve(); // 完成后解除 Promise
+        }
+    });
+}
 
 //######################################################################################################################
 //###################################################举报视频部分#########################################################
 //######################################################################################################################
 
-    async function main() {
-                await sendReportRequest();//举报签名昵称头像
-                await extractSeries();
-                await extractAndSubmitAIDs(); //举报视频
+async function main() {
+    await sendReportRequest();//举报签名昵称头像
+    await extractSeries();
+    await extractAndSubmitAIDs(); //举报视频
 
-            }
+}
 
-            main();
+main();
 //######################################################################################################################
 //###################################################函数入口部分#########################################################
 //######################################################################################################################
