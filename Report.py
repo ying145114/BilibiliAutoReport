@@ -8,7 +8,6 @@ from selenium import webdriver
 from datetime import datetime
 import requests
 import JYClick
-import random
 import time
 import sys
 import re
@@ -33,6 +32,7 @@ os.makedirs(log_directory, exist_ok=True)
 proxies = {'http': None, 'https': None}
 uids = set()
 aid = ''
+count = 1
 
 def log_error(message):
     with open(log_file, 'a', encoding='utf-8') as log:
@@ -151,10 +151,13 @@ try:
             driver.get(userurl)
             print(f'\n{userurl}\n')
 
-            if random.random() < 0.05:  # 5%的概率
+            if count == 20:
+                count = 0
                 with open(send_comment, "r", encoding="utf-8") as file:
                     comment = file.read()
                 driver.execute_script(comment)
+            else:
+                count += 1
 
             with open(report_video, "r", encoding="utf-8") as file:
                 report = file.read()
