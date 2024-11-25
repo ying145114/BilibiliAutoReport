@@ -14,3 +14,5 @@
 /附加文件/blacklist.txt
 *.onnx
 
+/build
+*.spec
