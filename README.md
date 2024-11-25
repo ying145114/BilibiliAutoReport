@@ -1,5 +1,5 @@
 # BilibiliAutoReport  
-## 使用[关键词](https://github.com/ayyayyayy2002/BilibiliAutoReport/blob/main/%E4%BA%91%E7%AB%AF%E6%96%87%E4%BB%B6/keyword.txt)搜索视频，举报作者的头像、签名、昵称、视频
+## 使用[关键词](https://github.com/ayyayyayy2002/BilibiliAutoReport/blob/main/%E4%BA%91%E7%AB%AF%E6%96%87%E4%BB%B6/keyword.txt)搜索视频，举报作者的头像、签名、昵称、视频、专栏和动态  
 ## 注意：本仓库有三个分支：[main](https://github.com/ayyayyayy2002/BilibiliAutoReport/tree/main)分支是开发者自用分支，[public](https://github.com/ayyayyayy2002/BilibiliAutoReport/tree/public)分支是公开的完整可运行代码，[distribution ](https://github.com/ayyayyayy2002/BilibiliAutoReport/tree/distribution )分支用于发布程序  
 ## 使用条款与免责声明
 本项目是开源的，遵循以下条款和条件。请在使用本项目之前仔细阅读。
