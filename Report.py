@@ -152,9 +152,7 @@ try:
             print(f'\n{userurl}\n')
 
 
-            with open(write_ticket, "r", encoding="utf-8") as file:
-                ticket = file.read()
-            driver.execute_script(ticket)
+
 
             if count == 20:
                 count = 0
@@ -168,8 +166,13 @@ try:
                 report = file.read()
             result = driver.execute_async_script(report)
 
+
             if "352" in result:
                 print(result)
+
+                with open(write_ticket, "r", encoding="utf-8") as file:
+                    ticket = file.read()
+                driver.execute_script(ticket)
 
 
 #                logs = driver.get_log('browser')
@@ -317,6 +320,10 @@ try:
 #                for log in warning_logs:
 #                    print(log['message'])
                 print(result)
+
+                with open(write_ticket, "r", encoding="utf-8") as file:
+                    ticket = file.read()
+                driver.execute_script(ticket)
 
             remove_completed_uid(uid)
             continue
