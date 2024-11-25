@@ -142,7 +142,7 @@ try:
                 else:
                     print(f"\nUID: {uid}未找到合集视频")
                     with open(title_file, 'a', encoding='utf-8') as file:
-                        file.write(f"\nUID: {uid}未找到合集视频")
+                        file.write(f"\nUID: {uid} 未找到合集视频")
 
 
 
