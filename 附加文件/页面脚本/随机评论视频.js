@@ -98,7 +98,7 @@ function sendComment(oid, topWord) {
         plat: 1,
         oid: oid,
         type: 1,
-        message: `@哔哩哔哩社区小管家\n该作者标题中经常出现的词是: "${topWord[0]}", 出现次数: ${topWord[1]} ，可能存在违规行为\n此评论由脚本自动发送，可能存在误判`,
+        message: `@哔哩哔哩社区小管家\n该作者标题中经常出现的词是: "${topWord[0]}", 出现次数: ${topWord[1]} ，可能存在违规行为\n此评论由程序自动发送，可能存在误判`,
         at_name_to_mid: JSON.stringify({"哔哩哔哩社区小管家": 178362496}), // 将对象转换为 JSON 字符串
         sync_to_dynamic: 1,
         gaia_source: 'main_web',
