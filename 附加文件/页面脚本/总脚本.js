@@ -264,7 +264,7 @@ function submitAppeal(aid) {
             'attach': '',
             'block_author': 'false',
             'csrf': getCsrf(),
-            'desc': "键政",
+            'desc': "安卓直装神作汉化slg act gal rpg 全动态汉化游戏 不正经同人大佬 动态同人总站 AKT sodeno19 VICINEKO 新作 rinhee yesui",
 
             //'desc': "该账号发布的视频标题和封面是动漫人物色情二创作品的名称或截图，以此吸引用户点击。并在置顶动态和评论暗示用户进行互动以获取色情内容，侮辱国家领导人，宣扬台独反华内容。审核结果：下架此视频并永久封禁该账号",
             'tid': '10019'
