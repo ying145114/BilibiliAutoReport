@@ -163,9 +163,13 @@ try:
             if "352" in result:
                 print(result)
 
-                with open(write_ticket, "r", encoding="utf-8") as file:
-                    ticket = file.read()
-                driver.execute_script(ticket)
+                try:
+                    with open(write_ticket, "r", encoding="utf-8") as file:
+                        ticket = file.read()
+                    driver.execute_script(ticket)
+                except Exception as e:
+                    print(f"提交留言出错,错误UID：{uid}，错误: {e}")
+                    log_error(f"提交留言出错,错误UID：{uid}，错误: {e}")
 
 
 #                logs = driver.get_log('browser')
@@ -314,9 +318,13 @@ try:
 #                    print(log['message'])
                 print(result)
 
-                with open(write_ticket, "r", encoding="utf-8") as file:
-                    ticket = file.read()
-                driver.execute_script(ticket)
+                try:
+                    with open(write_ticket, "r", encoding="utf-8") as file:
+                        ticket = file.read()
+                    driver.execute_script(ticket)
+                except Exception as e:
+                    print(f"提交留言出错,错误UID：{uid}，错误: {e}")
+                    log_error(f"提交留言出错,错误UID：{uid}，错误: {e}")
 
             remove_completed_uid(uid)
             continue
