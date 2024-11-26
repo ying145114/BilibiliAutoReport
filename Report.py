@@ -154,13 +154,6 @@ try:
 
 
 
-            if count == 20:
-                count = 0
-                with open(send_comment, "r", encoding="utf-8") as file:
-                    comment = file.read()
-                driver.execute_script(comment)
-            else:
-                count += 1
 
             with open(report_video, "r", encoding="utf-8") as file:
                 report = file.read()
