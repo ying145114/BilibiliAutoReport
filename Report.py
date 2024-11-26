@@ -157,19 +157,23 @@ try:
 
             with open(report_video, "r", encoding="utf-8") as file:
                 report = file.read()
-            result = driver.execute_async_script(report)
+            report_result = driver.execute_async_script(report)
+
+            try:
+                with open(write_ticket, "r", encoding="utf-8") as file:
+                    ticket = file.read()
+                ticket_result = driver.execute_async_script(ticket)
+                print(ticket_result)
+
+            except Exception as e:
+                print(f"提交留言出错,错误UID：{uid}，错误: {e}")
+                log_error(f"提交留言出错,错误UID：{uid}，错误: {e}")
 
 
-            if "352" in result:
-                print(result)
+            if "352" in report_result:
+                print(report_result)
 
-                try:
-                    with open(write_ticket, "r", encoding="utf-8") as file:
-                        ticket = file.read()
-                    driver.execute_script(ticket)
-                except Exception as e:
-                    print(f"提交留言出错,错误UID：{uid}，错误: {e}")
-                    log_error(f"提交留言出错,错误UID：{uid}，错误: {e}")
+
 
 
 #                logs = driver.get_log('browser')
@@ -316,15 +320,9 @@ try:
 #                warning_logs = [log for log in logs if log['level'] == 'WARNING']
 #                for log in warning_logs:
 #                    print(log['message'])
-                print(result)
+                print(report_result)
 
-                try:
-                    with open(write_ticket, "r", encoding="utf-8") as file:
-                        ticket = file.read()
-                    driver.execute_script(ticket)
-                except Exception as e:
-                    print(f"提交留言出错,错误UID：{uid}，错误: {e}")
-                    log_error(f"提交留言出错,错误UID：{uid}，错误: {e}")
+               
 
             remove_completed_uid(uid)
             continue
