@@ -1,4 +1,5 @@
 var callback = arguments[arguments.length - 1];
+let contentlocation = `${window.location.href}\n`;
 let reportCount = 0
 let currentAidIndex = 0; // 当前处理的AID索引
 let currentPage = 1; // 初始页码
@@ -217,6 +218,15 @@ function extractAndSubmitAIDs() {
                         if (data.code === 0 && data.data && data.data.archives) {
                             aids = data.data.archives.map(archive => archive.aid); // 提取 AID
                             console.log("Extracted AIDs:", aids);
+
+
+                            // 针对 aid 数组中的每个元素进行处理
+                            aids.forEach(id => {
+                                contentlocation += `https://www.bilibili.com/video/av${id}\n`;
+                            });
+
+                            // 输出最终的 location 变量
+                            console.log(contentlocation);
                             currentAidIndex = 0; // 重置索引
                             submitNextAppeal().then(() => {
                                 resolve("完成，结束");

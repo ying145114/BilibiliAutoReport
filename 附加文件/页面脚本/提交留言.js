@@ -1,5 +1,8 @@
 //let output = ''
 //const mid = window.location.pathname.split('/')[1];
+
+
+
 const itemNodes = document.querySelectorAll('.small-item');// 查找所有类名为 small-item 的 <div> 元素
 const urls = [];
 for (const itemNode of itemNodes) {// 使用 for...of 循环遍历找到的元素，并提取 srcset URL
@@ -14,7 +17,7 @@ for (const itemNode of itemNodes) {// 使用 for...of 循环遍历找到的元�
 }
 
 console.log(urls);// 输出提取到的链接
-const output = urls.map(url => url.split('@')[0]).join(',');// 输出提取到的链接并格式化为期望的字符串
+const imglink = urls.map(url => url.split('@')[0]).join(',');// 输出提取到的链接并格式化为期望的字符串
 console.log(output);// 输出结果
 function getCsrf() {
     let csrfText = '';
@@ -26,12 +29,18 @@ function getCsrf() {
 }
 
 
+
+
+
+
+
+
 const ticketData = {
     write_type: 0,
     ticket_info: {
         ticket_id: "",
         business_info: {
-            business_id: 10059
+            business_id: 10047
         },
         template_id: 10010,
         source_type: 4,
@@ -40,10 +49,10 @@ const ticketData = {
             problem_desc: `账号${mid}多次发布具有色情内容暗示的视频，使用标题和封面吸引眼球，并推广色情群组链接获利`,
             customer_demand: "下架视频并封禁该账号",
             tipoff_reason: "该账号发布的视频标题和封面是动漫人物色情二创作品的名称或截图，以此吸引用户点击。并在置顶动态和评论暗示用户进行互动以获取色情内容。",
-            tipoff_content_position: window.location.href,
+            tipoff_content_position: contentlocation,
             violation_uid: `${mid}`,
             contact_tel: "18147294457",
-            pic: output,
+            pic: imglink,
             uid: DedeUserID
         },
         create_channel_type: 9,
