@@ -100,7 +100,7 @@ function extractSeasonAIDs() {
 
             if (midMatch && midMatch[1]) {
                 const mid = midMatch[1];
-                const apiUrl = `https://api.bilibili.com/x/polymer/space/seasons_archives_list?mid=${mid}&sort_reverse=false&season_id=${seasonId}&page_num=1&page_size=30`;
+                const apiUrl = `https://api.bilibili.com/x/polymer/space/seasons_archives_list?mid=${mid}&sort_reverse=false&season_id=${seasonId}&page_num=1&page_size=20`;
                 const xhr = new XMLHttpRequest();
                 xhr.open("GET", apiUrl);
                 console.log(apiUrl)
@@ -186,7 +186,7 @@ function extractAndSubmitAIDs() {
         const midMatch = currentUrl.match(/space\.bilibili\.com\/(\d+)/);
         if (midMatch && midMatch[1]) {
             const mid = midMatch[1];
-            const apiUrl = `https://api.bilibili.com/x/series/recArchivesByKeywords?mid=${mid}&keywords=&ps=0`;
+            const apiUrl = `https://api.bilibili.com/x/series/recArchivesByKeywords?mid=${mid}&keywords=&ps=20`;
             const xhr = new XMLHttpRequest();
             xhr.open("GET", apiUrl);
             xhr.onload = function () {
@@ -242,9 +242,9 @@ function sendTicket(contentlocation){
             source_type: 4,
             is_visible: true,
             info: {
-                problem_desc: `${contentlocation}以上视频具有色情内容暗示，使用标题和封面吸引眼球，并推广色情群组链接获利`,
-                customer_demand: "下架该账号的违规视频",
-                tipoff_reason: "这些视频的标题和封面是动漫人物色情二创作品的名称或截图，以此吸引用户点击。视频内容是色情游戏的剪辑和录屏，侮辱国家领导人，宣扬台独反华内容，并在置顶动态和评论暗示用户进行互动以获取色情内容。",
+                problem_desc: `举报https://www.bilibili.com/video/av${aids[0]} 等视频`,
+                customer_demand: "举报违规视频",
+                tipoff_reason: "这些视频的内容是色情游戏的剪辑和录屏、动漫游戏色情二创作品、真人擦边视频剪辑和嫖娼引流黑产，侮辱国家领导人，宣扬台独反华内容，并在置顶动态和评论暗示用户进行互动以获取色情内容。",
                 tipoff_content_position: contentlocation,
                 violation_uid: `${mid}`,
                 contact_tel: "18147294457",

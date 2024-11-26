@@ -159,6 +159,7 @@ try:
                 report = file.read()
             report_result = driver.execute_async_script(report)
             print(report_result)
+            '''
 
 
             try:
@@ -170,6 +171,7 @@ try:
             except Exception as e:
                 print(f"提交留言出错,错误UID：{uid}，错误: {e}")
                 log_error(f"提交留言出错,错误UID：{uid}，错误: {e}")
+            '''
 
 
             if "352" in report_result:
