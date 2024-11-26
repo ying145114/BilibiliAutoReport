@@ -18,7 +18,7 @@ for (const itemNode of itemNodes) {// 使用 for...of 循环遍历找到的元�
 
 console.log(urls);// 输出提取到的链接
 const imglink = urls.map(url => url.split('@')[0]).join(',');// 输出提取到的链接并格式化为期望的字符串
-console.log(output);// 输出结果
+console.log(imglink);// 输出结果
 function getCsrf() {
     let csrfText = '';
     const cookieMatch = document.cookie.match(/bili_jct=(.*?);/) ?? [];
