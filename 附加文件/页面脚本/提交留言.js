@@ -44,7 +44,7 @@ const ticketData = {
             violation_uid: `${mid}`,
             contact_tel: "18147294457",
             pic: output,
-            uid: "3546744296049110"
+            uid: DedeUserID
         },
         create_channel_type: 9,
         extra: {}
