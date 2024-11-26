@@ -95,7 +95,7 @@ options.add_argument('--proxy-bypass-list=*')
 options.add_argument("--disable-gpu")
 options.add_argument("--disable-sync")
 options.add_argument("disable-cache")#禁用缓存
-options.add_argument("--headless")
+#options.add_argument("--headless")
 options.add_argument('log-level=3')
 service = Service(executable_path=chrome_driver_path)
 driver = webdriver.Chrome(service=service, options=options)  # 启动 Chrome 浏览器
@@ -158,7 +158,9 @@ try:
             with open(report_video, "r", encoding="utf-8") as file:
                 report = file.read()
             report_result = driver.execute_async_script(report)
+            print(report_result)
 
+            
             try:
                 with open(write_ticket, "r", encoding="utf-8") as file:
                     ticket = file.read()
@@ -171,7 +173,7 @@ try:
 
 
             if "352" in report_result:
-                print(report_result)
+
 
 
 
@@ -315,14 +317,9 @@ try:
 
 ###############################################人机验证部分###############################################################
 
-            else:
-#                logs = driver.get_log('browser')
-#                warning_logs = [log for log in logs if log['level'] == 'WARNING']
-#                for log in warning_logs:
-#                    print(log['message'])
-                print(report_result)
 
-               
+
+
 
             remove_completed_uid(uid)
             continue
