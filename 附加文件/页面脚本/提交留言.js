@@ -244,7 +244,7 @@ function sendTicket(contentlocation){
             info: {
                 problem_desc: `${contentlocation}以上视频具有色情内容暗示，使用标题和封面吸引眼球，并推广色情群组链接获利`,
                 customer_demand: "下架该账号的违规视频",
-                tipoff_reason: "这些视频的标题和封面是动漫人物色情二创作品的名称或截图，以此吸引用户点击。并在置顶动态和评论暗示用户进行互动以获取色情内容。",
+                tipoff_reason: "这些视频的标题和封面是动漫人物色情二创作品的名称或截图，以此吸引用户点击。视频内容是色情游戏的剪辑和录屏，侮辱国家领导人，宣扬台独反华内容，并在置顶动态和评论暗示用户进行互动以获取色情内容。",
                 tipoff_content_position: contentlocation,
                 violation_uid: `${mid}`,
                 contact_tel: "18147294457",
