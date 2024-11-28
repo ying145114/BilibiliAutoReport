@@ -159,22 +159,18 @@ try:
                 report = file.read()
             report_result = driver.execute_async_script(report)
             print(report_result)
-            '''
+
+            if "412" in report_result:
+                log_error('报错412，等待5分钟')
+                time.sleep(300)
 
 
-            try:
-                with open(write_ticket, "r", encoding="utf-8") as file:
-                    ticket = file.read()
-                ticket_result = driver.execute_async_script(ticket)
-                print(ticket_result)
-
-            except Exception as e:
-                print(f"提交留言出错,错误UID：{uid}，错误: {e}")
-                log_error(f"提交留言出错,错误UID：{uid}，错误: {e}")
-            '''
 
 
-            if "352" in report_result:
+
+
+
+            if "352" in report_result or "412" in report_result:
 
 
 
