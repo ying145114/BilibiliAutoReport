@@ -161,7 +161,7 @@ try:
 
             if "412" in report_result:
                 log_error('报错412')
-                time.sleep(610)
+           
 
                 '''
 
@@ -218,11 +218,10 @@ try:
                             WebDriverWait(driver, 5).until(
                                 EC.presence_of_element_located((By.XPATH, '//*[@class="geetest_item_wrap"]'))
                             )
-                            print("验证码元素已出现！")
+                            log_error("验证码元素已出现！")
                             break  # 如果元素出现则退出循环
                         except Exception:
-                            timestamp = datetime.now().strftime('[%Y-%m-%d %H-%M-%S]')
-                            print(f"{timestamp} 验证码元素未出现，重新点击确认...")
+                            log_error("验证码元素未出现，重新点击确认...")
                         time.sleep(10)
                 except Exception as e:
                     print(f"发生错误: {e}")
