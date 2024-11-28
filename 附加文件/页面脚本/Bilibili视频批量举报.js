@@ -2,11 +2,12 @@ var callback = arguments[arguments.length - 1];
 
 let reportCount = 0
 let currentAidIndex = 0; // 当前处理的AID索引
-let time_video = 2300
+let time_video = 30
 let aids = [];
 let pics = [];
 let titles = [];
 let seasonIds = [];
+let output = ''
 const floatingWindow = document.createElement('div');// 创建诊断信息窗口
 floatingWindow.style.position = 'fixed';
 floatingWindow.style.top = '100px';
@@ -287,7 +288,7 @@ function submitNextAppeal() {
 }
 
 
-function submitAppeal(aid,title,pic) {
+function submitAppeal(aid, title, pic) {
     return new Promise((resolve) => {
         const data = new URLSearchParams({
             'aid': aid,
@@ -330,8 +331,15 @@ function submitAppeal(aid,title,pic) {
                     return;          // 退出当前函数
                 }
 
-                // 其他代码和状态均不处理，直接 resolve
+
                 resolve(true); // 正常情况下返回 true
+            } else if (xhr.status === 412) {
+                updateDiagnosticInfo(`视频：${this.response}<br>`);
+                console.log(`视频${reportCount}：${this.response}`)
+                output += `视频${reportCount}：${this.response}\n`
+                callback(output);
+                resolve(false); // 返回 false 表示结束
+
             } else {
                 // 对于其他状态码，不作处理，直接解除 Promise
                 updateDiagnosticInfo(`视频：${this.response}<br>`);

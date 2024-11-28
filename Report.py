@@ -16,9 +16,7 @@ import os
 base_dir = os.path.dirname(os.path.abspath(__file__))
 ########################################################################################################################
 chrome_driver_path = os.path.join(base_dir, '附加文件','chromedriver.exe')
-report_video = os.path.join(base_dir, '附加文件', '页面脚本', '总脚本.js')
-send_comment = os.path.join(base_dir, '附加文件','页面脚本', '随机评论视频.js')
-write_ticket = os.path.join(base_dir, '附加文件','页面脚本', '提交留言.js')
+report_video = os.path.join(base_dir, '附加文件', '页面脚本', 'Bilibili视频批量举报.js')
 chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
 ########################################################################################################################
@@ -91,11 +89,12 @@ options.add_argument("--disable-blink-features=AutomationControlled")
 options.add_argument(f'--user-data-dir={user_data_dir}')  # 设置用户数据目录
 options.binary_location = chrome_binary_path  # 指定 Chrome 浏览器的可执行文件路径
 options.add_argument('--proxy-server="direct://"')
+#options.add_argument('--proxy-server="127.0.0.1:7890"')
 options.add_argument('--proxy-bypass-list=*')
 options.add_argument("--disable-gpu")
 options.add_argument("--disable-sync")
 options.add_argument("disable-cache")#禁用缓存
-options.add_argument("--headless")
+#options.add_argument("--headless")
 options.add_argument('log-level=3')
 service = Service(executable_path=chrome_driver_path)
 driver = webdriver.Chrome(service=service, options=options)  # 启动 Chrome 浏览器
@@ -161,8 +160,11 @@ try:
             print(report_result)
 
             if "412" in report_result:
-                log_error('报错412，等待6分钟')
-                time.sleep(60)
+                log_error('报错412')
+                time.sleep(610)
+
+                '''
+
                 print('还剩5分钟')
                 time.sleep(60)
                 print('还剩4分钟')
@@ -174,6 +176,7 @@ try:
                 print('还剩1分钟')
                 time.sleep(60)
                 print('程序继续')
+                
 
 
 
@@ -181,6 +184,7 @@ try:
 
 
 
+            '''
             if "352" in report_result or "412" in report_result:
 
 
@@ -217,8 +221,9 @@ try:
                             print("验证码元素已出现！")
                             break  # 如果元素出现则退出循环
                         except Exception:
-                            print("验证码元素未出现，重新点击确认...")
-                        time.sleep(3)
+                            timestamp = datetime.now().strftime('[%Y-%m-%d %H-%M-%S]')
+                            print(f"{timestamp} 验证码元素未出现，重新点击确认...")
+                        time.sleep(10)
                 except Exception as e:
                     print(f"发生错误: {e}")
 
@@ -331,7 +336,7 @@ try:
 
 
 
-            remove_completed_uid(uid)
+            #remove_completed_uid(uid)
             continue
 
 

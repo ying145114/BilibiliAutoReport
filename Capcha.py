@@ -4,7 +4,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver import ActionChains
 from selenium import webdriver
-import jy_click
+import JYClick
 import requests
 import time
 import os
@@ -117,7 +117,7 @@ while True:
         url = re.search(r'url\("([^"]+?)\?[^"]*"\);', f).group(1)
         print(url)
         content = requests.get(url, proxies=proxies, timeout=(5, 10)).content
-        plan = jy_click.JYClick().run(content)
+        plan = JYClick.JYClick().run(content)
         print(plan)
         a, b = get_location(img)
         lan_x = 306 / 334
