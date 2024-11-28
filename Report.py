@@ -161,7 +161,7 @@ try:
 
             if "412" in report_result:
                 log_error('报错412')
-
+                time.sleep(180)
 
                 '''
 
@@ -221,7 +221,7 @@ try:
                             log_error("验证码元素已出现！")
                             break  # 如果元素出现则退出循环
                         except Exception:
-                            log_error("验证码元素未出现，重新点击确认...")
+                            print("验证码元素未出现，重新点击确认...")
                         time.sleep(10)
                 except Exception as e:
                     print(f"发生错误: {e}")

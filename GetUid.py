@@ -110,6 +110,7 @@ for keyword in keywords:  # 遍历关键词列表，进行搜索和处理
             # 添加头部信息
             headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',}
             response = requests.get(search_url, headers=headers, proxies=proxies, timeout=(5, 10))
+            print(response.text)
             soup = BeautifulSoup(response.text, 'html.parser')
             count = 0  # 计数器，用于限制获取的UID数量
             uid_list.clear()
