@@ -271,7 +271,7 @@ function submitNextAppeal() {
             const title = titles[currentAidIndex];
             const pic = pics[currentAidIndex];
             setTimeout(() => {
-                submitAppeal(aid,title,pic)
+                submitAppeal(aid, title, pic)
                     .then((shouldContinue) => {
                         if (!shouldContinue) {
                             resolve(); // 直接结束
@@ -292,7 +292,7 @@ function submitNextAppeal() {
 }
 
 
-function submitAppeal(aid,title,pic) {
+function submitAppeal(aid, title, pic) {
     return new Promise((resolve) => {
         const data = new URLSearchParams({
             'aid': aid,
@@ -334,19 +334,16 @@ function submitAppeal(aid,title,pic) {
                     resolve(false); // 返回 false 表示结束
                     return;          // 退出当前函数
                 }
-                if (result.code === 412) {
-                    updateDiagnosticInfo(`视频：${this.response}<br>`);
-                    console.log(`视频${reportCount}：${this.response}`)
-                    output += `视频${reportCount}：${this.response}\n`
-                    callback(output);
-                    resolve(false); // 返回 false 表示结束
-                    return;          // 退出当前函数
-                }
 
 
-
-                // 其他代码和状态均不处理，直接 resolve
                 resolve(true); // 正常情况下返回 true
+            } else if (xhr.status === 412) {
+                updateDiagnosticInfo(`视频：${this.response}<br>`);
+                console.log(`视频${reportCount}：${this.response}`)
+                output += `视频${reportCount}：${this.response}\n`
+                callback(output);
+                resolve(false); // 返回 false 表示结束
+
             } else {
                 // 对于其他状态码，不作处理，直接解除 Promise
                 updateDiagnosticInfo(`视频：${this.response}<br>`);
@@ -370,7 +367,6 @@ function submitAppeal(aid,title,pic) {
         xhr.send(data);
     });
 }
-
 
 
 //######################################################################################################################

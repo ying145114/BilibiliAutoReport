@@ -95,7 +95,7 @@ options.add_argument('--proxy-bypass-list=*')
 options.add_argument("--disable-gpu")
 options.add_argument("--disable-sync")
 options.add_argument("disable-cache")#禁用缓存
-options.add_argument("--headless")
+#options.add_argument("--headless")
 options.add_argument('log-level=3')
 service = Service(executable_path=chrome_driver_path)
 driver = webdriver.Chrome(service=service, options=options)  # 启动 Chrome 浏览器
@@ -162,7 +162,16 @@ try:
 
             if "412" in report_result:
                 log_error('报错412，等待5分钟')
-                time.sleep(300)
+                time.sleep(60)
+                print('还剩4分钟')
+                time.sleep(60)
+                print('还剩3分钟')
+                time.sleep(60)
+                print('还剩2分钟')
+                time.sleep(60)
+                print('还剩1分钟')
+                time.sleep(60)
+                print('程序继续')
 
 
 
