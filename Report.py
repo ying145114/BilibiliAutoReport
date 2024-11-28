@@ -33,14 +33,14 @@ os.makedirs(log_directory, exist_ok=True)
 proxies = {'http': None, 'https': None}
 uids = set()
 aid = ''
-count = 1
+
 
 def log_error(message):
     with open(log_file, 'a', encoding='utf-8') as log:
         timestamp = datetime.now().strftime('[%Y-%m-%d %H-%M-%S]')
         log.write(f"\n\n{timestamp} {message}")
     driver.save_screenshot(os.path.join(log_directory, f'screenshot_{timestamp}.png'))
-    print(message)
+    print(f'{timestamp} {message}')
     print(os.path.join(log_directory, f'screenshot_{timestamp}.png'))
 
 def remove_completed_uid(uid):
@@ -95,7 +95,7 @@ options.add_argument('--proxy-bypass-list=*')
 options.add_argument("--disable-gpu")
 options.add_argument("--disable-sync")
 options.add_argument("disable-cache")#禁用缓存
-#options.add_argument("--headless")
+options.add_argument("--headless")
 options.add_argument('log-level=3')
 service = Service(executable_path=chrome_driver_path)
 driver = webdriver.Chrome(service=service, options=options)  # 启动 Chrome 浏览器
