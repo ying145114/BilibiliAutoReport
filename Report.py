@@ -161,7 +161,9 @@ try:
             print(report_result)
 
             if "412" in report_result:
-                log_error('报错412，等待5分钟')
+                log_error('报错412，等待6分钟')
+                time.sleep(60)
+                print('还剩5分钟')
                 time.sleep(60)
                 print('还剩4分钟')
                 time.sleep(60)
