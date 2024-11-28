@@ -7,7 +7,9 @@ let pageSize = 30;
 let time_video = 2300
 let time_dynamic = 30
 let time_article = 30
-let aids = []; // 所有提取的AID
+let aids = [];
+let pics = [];
+let titles = [];
 let seasonIds = [];
 let output = ''
 const floatingWindow = document.createElement('div');// 创建诊断信息窗口
@@ -144,6 +146,12 @@ function extractSeasonAIDs() {
                             if (data.code === 0 && data.data && data.data.archives) {
                                 aids = data.data.archives.map(archive => archive.aid); // 提取 AID
                                 console.log("Extracted AIDs:", aids);
+
+                                titles = data.data.archives.map(archive => archive.title); // 提取 title
+                                console.log("Extracted Titles:", titles);
+
+                                pics = data.data.archives.map(archive => archive.pic); // 提取 pic
+                                console.log("Extracted Pics:", pics);
                                 currentAidIndex = 0; // 重置索引
 
                                 // 使用 Promise.race 设置超时机制
@@ -219,14 +227,12 @@ function extractAndSubmitAIDs() {
                             aids = data.data.archives.map(archive => archive.aid); // 提取 AID
                             console.log("Extracted AIDs:", aids);
 
+                            titles = data.data.archives.map(archive => archive.title); // 提取 title
+                            console.log("Extracted Titles:", titles);
 
-                            // 针对 aid 数组中的每个元素进行处理
-                            aids.forEach(id => {
-                                contentlocation += `https://www.bilibili.com/video/av${id}\n`;
-                            });
+                            pics = data.data.archives.map(archive => archive.pic); // 提取 pic
+                            console.log("Extracted Pics:", pics);
 
-                            // 输出最终的 location 变量
-                            console.log(contentlocation);
                             currentAidIndex = 0; // 重置索引
                             submitNextAppeal().then(() => {
                                 resolve("完成，结束");
@@ -257,15 +263,44 @@ function extractAndSubmitAIDs() {
     });
 }
 
-function submitAppeal(aid) {
+function submitNextAppeal() {
+    reportCount++;
+    return new Promise((resolve) => {
+        if (currentAidIndex < aids.length) {
+            const aid = aids[currentAidIndex];
+            const title = titles[currentAidIndex];
+            const pic = pics[currentAidIndex];
+            setTimeout(() => {
+                submitAppeal(aid,title,pic)
+                    .then((shouldContinue) => {
+                        if (!shouldContinue) {
+                            resolve(); // 直接结束
+                            return;     // 退出当前函数
+                        }
+                        currentAidIndex++;
+                        submitNextAppeal().then(resolve);
+                    });
+            }, time_video);
+        } else {
+            updateDiagnosticInfo('视频举报完成!<br>');
+            console.warn('视频举报完成!');
+            output += '视频举报完成!\n'
+            callback(output);
+            resolve(); // 完成后解除 Promise
+        }
+    });
+}
+
+
+function submitAppeal(aid,title,pic) {
     return new Promise((resolve) => {
         const data = new URLSearchParams({
             'aid': aid,
-            'attach': '',
+            'attach': pic,
             'block_author': 'false',
             'csrf': getCsrf(),
-            'desc': "视频封面标题以及内容违规，推广以原神、碧蓝档案等二次元游戏人物为主角的色情视频，侮辱国家领导人，宣扬台独反华内容。审核结果：下架此视频并永久封禁该账号",
-            
+            'desc': `视频标题${title}、视频封面以及视频内容违规，推广以原神、碧蓝档案等二次元游戏人物为主角的色情视频，侮辱国家领导人，宣扬台独反华内容。审核结果：下架此视频并永久封禁该账号`,
+
             //'desc': "该账号发布的视频标题和封面是动漫人物色情二创作品的名称或截图，以此吸引用户点击。并在置顶动态和评论暗示用户进行互动以获取色情内容，侮辱国家领导人，宣扬台独反华内容。审核结果：下架此视频并永久封禁该账号",
             'tid': '10019'
         }).toString();
@@ -326,31 +361,7 @@ function submitAppeal(aid) {
     });
 }
 
-function submitNextAppeal() {
-    reportCount++;
-    return new Promise((resolve) => {
-        if (currentAidIndex < aids.length) {
-            const aid = aids[currentAidIndex];
-            setTimeout(() => {
-                submitAppeal(aid)
-                    .then((shouldContinue) => {
-                        if (!shouldContinue) {
-                            resolve(); // 直接结束
-                            return;     // 退出当前函数
-                        }
-                        currentAidIndex++;
-                        submitNextAppeal().then(resolve);
-                    });
-            }, time_video);
-        } else {
-            updateDiagnosticInfo('视频举报完成!<br>');
-            console.warn('视频举报完成!');
-            output += '视频举报完成!\n'
-            callback(output);
-            resolve(); // 完成后解除 Promise
-        }
-    });
-}
+
 
 //######################################################################################################################
 //###################################################举报视频部分#########################################################
