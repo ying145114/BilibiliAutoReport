@@ -3,7 +3,9 @@ var callback = arguments[arguments.length - 1];
 let reportCount = 0
 let currentAidIndex = 0; // 当前处理的AID索引
 let time_video = 2300
-let aids = []; // 所有提取的AID
+let aids = [];
+let pics = [];
+let titles = [];
 let seasonIds = [];
 const floatingWindow = document.createElement('div');// 创建诊断信息窗口
 floatingWindow.style.position = 'fixed';
@@ -139,6 +141,12 @@ function extractSeasonAIDs() {
                             if (data.code === 0 && data.data && data.data.archives) {
                                 aids = data.data.archives.map(archive => archive.aid); // 提取 AID
                                 console.log("Extracted AIDs:", aids);
+
+                                titles = data.data.archives.map(archive => archive.title); // 提取 title
+                                console.log("Extracted Titles:", titles);
+
+                                pics = data.data.archives.map(archive => archive.pic); // 提取 pic
+                                console.log("Extracted Pics:", pics);
                                 currentAidIndex = 0; // 重置索引
 
                                 // 使用 Promise.race 设置超时机制
@@ -181,7 +189,8 @@ function extractSeasonAIDs() {
 
         } else {
             updateDiagnosticInfo('合集举报完成!<br>');
-            console.warn('合集举报完成!');
+            console.log('合集举报完成!');
+            output += '合集举报完成!\n'
             resolve(); // 完成后解除 Promise
 
         }
@@ -212,6 +221,13 @@ function extractAndSubmitAIDs() {
                         if (data.code === 0 && data.data && data.data.archives) {
                             aids = data.data.archives.map(archive => archive.aid); // 提取 AID
                             console.log("Extracted AIDs:", aids);
+
+                            titles = data.data.archives.map(archive => archive.title); // 提取 title
+                            console.log("Extracted Titles:", titles);
+
+                            pics = data.data.archives.map(archive => archive.pic); // 提取 pic
+                            console.log("Extracted Pics:", pics);
+
                             currentAidIndex = 0; // 重置索引
                             submitNextAppeal().then(() => {
                                 resolve("完成，结束");
@@ -242,15 +258,46 @@ function extractAndSubmitAIDs() {
     });
 }
 
-function submitAppeal(aid) {
+function submitNextAppeal() {
+    reportCount++;
+    return new Promise((resolve) => {
+        if (currentAidIndex < aids.length) {
+            const aid = aids[currentAidIndex];
+            const title = titles[currentAidIndex];
+            const pic = pics[currentAidIndex];
+            setTimeout(() => {
+                submitAppeal(aid,title,pic)
+                    .then((shouldContinue) => {
+                        if (!shouldContinue) {
+                            resolve(); // 直接结束
+                            return;     // 退出当前函数
+                        }
+                        currentAidIndex++;
+                        submitNextAppeal().then(resolve);
+                    });
+            }, time_video);
+        } else {
+            updateDiagnosticInfo('视频举报完成!<br>');
+            console.warn('视频举报完成!');
+            output += '视频举报完成!\n'
+            callback(output);
+            resolve(); // 完成后解除 Promise
+        }
+    });
+}
+
+
+function submitAppeal(aid,title,pic) {
     return new Promise((resolve) => {
         const data = new URLSearchParams({
             'aid': aid,
-            'attach': '',
+            'attach': pic,
             'block_author': 'false',
             'csrf': getCsrf(),
-            'desc': "侮辱国家领导人，宣扬台独反华内容。审核结果：下架此视频并永久封禁该账号",
-            'tid': '10014'
+            'desc': `视频标题${title}、视频封面以及视频内容违规，推广以原神、碧蓝档案等二次元游戏人物为主角的色情视频，侮辱国家领导人，宣扬台独反华内容。审核结果：下架此视频并永久封禁该账号`,
+
+            //'desc': "该账号发布的视频标题和封面是动漫人物色情二创作品的名称或截图，以此吸引用户点击。并在置顶动态和评论暗示用户进行互动以获取色情内容，侮辱国家领导人，宣扬台独反华内容。审核结果：下架此视频并永久封禁该账号",
+            'tid': '10019'
         }).toString();
         const xhr = new XMLHttpRequest();
         xhr.withCredentials = true;
@@ -271,12 +318,14 @@ function submitAppeal(aid) {
             if (xhr.status === 200) {
                 const result = JSON.parse(xhr.responseText);
                 updateDiagnosticInfo(`视频：${this.response}<br>`);
-                console.warn(`视频${reportCount}：${this.response}`)
+                console.log(`视频${reportCount}：${this.response}`)
+                output += `视频${reportCount}：${this.response}\n`
 
                 if (result.code === -352) {
                     updateDiagnosticInfo(`视频：${this.response}<br>`);
-                    console.warn(`视频${reportCount}：${this.response}`)
-                    callback('352');
+                    console.log(`视频${reportCount}：${this.response}`)
+                    output += `视频${reportCount}：${this.response}\n`
+                    callback(output);
                     resolve(false); // 返回 false 表示结束
                     return;          // 退出当前函数
                 }
@@ -286,8 +335,8 @@ function submitAppeal(aid) {
             } else {
                 // 对于其他状态码，不作处理，直接解除 Promise
                 updateDiagnosticInfo(`视频：${this.response}<br>`);
-                console.warn(`视频${reportCount}：${this.response}`);
-
+                console.log(`视频${reportCount}：${this.response}`);
+                output += `视频${reportCount}：${this.response}\n`
                 resolve(true); // 继续执行后续逻辑
             }
         };
@@ -300,30 +349,6 @@ function submitAppeal(aid) {
 
 //###############################################点赞视频部分#############################################################
 
-        if (reportCount % 50 === 49) {
-            const data = new URLSearchParams({
-                'aid': aid, // 确保 aid 的值是字符串或数字
-                'like': '1',
-                'csrf': getCsrf() // 请确保这是从浏览器中获取到的有效值
-            });
-
-            let xhr = new XMLHttpRequest();
-            xhr.withCredentials = true; // 允许跨域请求携带凭证
-            xhr.open("POST", "https://api.bilibili.com/x/web-interface/archive/like");
-            xhr.setRequestHeader('accept', 'application/json, text/plain, */*');
-            xhr.setRequestHeader('accept-language', 'zh-CN,zh;q=0.9');
-            xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
-
-
-            xhr.onload = function () {
-                updateDiagnosticInfo(`点赞：${xhr.responseText}<br>`); // 更新诊断信息
-                console.warn(`点赞：${xhr.responseText}`); // 更新诊断信息
-            };
-
-// 发送请求
-            xhr.send(data.toString());
-
-        }
 
 //###############################################点赞视频部分#############################################################
 
@@ -331,30 +356,7 @@ function submitAppeal(aid) {
     });
 }
 
-function submitNextAppeal() {
-    reportCount++;
-    return new Promise((resolve) => {
-        if (currentAidIndex < aids.length) {
-            const aid = aids[currentAidIndex];
-            setTimeout(() => {
-                submitAppeal(aid)
-                    .then((shouldContinue) => {
-                        if (!shouldContinue) {
-                            resolve(); // 直接结束
-                            return;     // 退出当前函数
-                        }
-                        currentAidIndex++;
-                        submitNextAppeal().then(resolve);
-                    });
-            }, time_video);
-        } else {
-            updateDiagnosticInfo('视频举报完成!<br>');
-            console.warn('视频举报完成!');
-            callback('视频举报完成!');
-            resolve(); // 完成后解除 Promise
-        }
-    });
-}
+
 
 //######################################################################################################################
 //###################################################举报视频部分#########################################################
