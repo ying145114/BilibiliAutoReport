@@ -16,10 +16,11 @@ import os
 base_dir = os.path.dirname(os.path.abspath(__file__))
 ########################################################################################################################
 chrome_driver_path = os.path.join(base_dir, '附加文件','chromedriver.exe')
-report_script = os.path.join(base_dir, '附加文件', '页面脚本', 'Bilibili视频批量举报.js')
+report_script = os.path.join(base_dir, '附加文件', '页面脚本', '总脚本.js')
 chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
 ########################################################################################################################
+cloud_whitelist_filename = os.path.join(base_dir, '云端文件', 'whitelist.txt')
 title_file = os.path.join(base_dir, '运行记录','标题记录.txt')
 log_file = os.path.join(base_dir,  '运行记录','错误记录.txt')
 success_directory = os.path.join(base_dir,'运行记录',  '成功验证码')
@@ -142,6 +143,13 @@ try:
                     print(f"UID: {uid} 未找到合集视频")
                     with open(title_file, 'a', encoding='utf-8') as file:
                         file.write(f"\nUID: {uid} 未找到合集视频\n")
+                    with open(cloud_whitelist_filename, 'r', encoding='utf-8') as f:
+                        lines = f.readlines()
+                    with open(cloud_whitelist_filename, 'w', encoding='utf-8') as f:
+                        for line in lines:
+                            if line.strip() != uid:
+                                f.write(line)
+                    print(f"删除无视频UID: {uid}")
                     continue
 
 
@@ -163,38 +171,9 @@ try:
                 log_error('报错412')
                 time.sleep(180)
 
-                '''
-
-                print('还剩5分钟')
-                time.sleep(60)
-                print('还剩4分钟')
-                time.sleep(60)
-                print('还剩3分钟')
-                time.sleep(60)
-                print('还剩2分钟')
-                time.sleep(60)
-                print('还剩1分钟')
-                time.sleep(60)
-                print('程序继续')
-                
-
-
-
-
-
-
-
-            '''
             if "352" in report_result or "412" in report_result:
 
 
-
-
-
-#                logs = driver.get_log('browser')
-#                warning_logs = [log for log in logs if log['level'] == 'WARNING']
-#                for log in warning_logs:
-#                    print(log['message'])
 ###############################################人机验证部分###############################################################
                 url = f"https://www.bilibili.com/appeal/?avid={aid}"
                 driver.get(url)
