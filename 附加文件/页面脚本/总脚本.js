@@ -297,7 +297,7 @@ function submitAppeal(aid, title, pic) {
         const data = new URLSearchParams({
             'aid': aid,
             'attach': pic,
-            'block_author': 'false',
+            'block_author': 'true',
             'csrf': getCsrf(),
             'desc': `视频标题${title}、视频封面以及视频内容违规，推广以原神、碧蓝档案等二次元游戏人物为主角的色情视频，侮辱国家领导人，宣扬台独反华内容。审核结果：下架此视频并永久封禁该账号`,
 
@@ -336,6 +336,12 @@ function submitAppeal(aid, title, pic) {
                 }
 
 
+
+
+
+                else{callback(output);}
+
+
                 resolve(true); // 正常情况下返回 true
             } else if (xhr.status === 412) {
                 updateDiagnosticInfo(`视频：${this.response}<br>`);
@@ -349,10 +355,6 @@ function submitAppeal(aid, title, pic) {
                 updateDiagnosticInfo(`视频：${this.response}<br>`);
                 console.log(`视频${reportCount}：${this.response}`);
                 output += `视频${reportCount}：${this.response}\n`
-
-
-                callback(output);
-
                 resolve(true); // 继续执行后续逻辑
             }
         };
