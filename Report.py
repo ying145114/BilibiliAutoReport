@@ -78,12 +78,15 @@ def get_location(target):
     return left_x, top_y
 
 
-
-with open(uid_file, 'r', encoding='utf-8') as f:  # 以读取模式打开文件
-    for line in f:
-        line = line.strip()  # 去掉行首尾的空白字符
-        if line:  # 如果不是空行，则认为是UID
-            uids.add(line)
+try:
+    with open(uid_file, 'r', encoding='utf-8') as f:  # 以读取模式打开文件
+        for line in f:
+            line = line.strip()  # 去掉行首尾的空白字符
+            if line:  # 如果不是空行，则认为是UID
+                uids.add(line)
+except Exception as e:
+    print('无法读取UID文件')
+    exit(0)
 
 if not uids:
     print("uid.txt 文件中没有可处理的UID，程序退出")

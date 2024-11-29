@@ -2,15 +2,14 @@ import sys
 from datetime import datetime
 import subprocess
 import os
-
-
+from unittest import skipIf
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 ########################################################################################################################
 log_file = os.path.join(base_dir,'运行记录','错误记录.txt')
 log_directory = os.path.join(base_dir, '运行记录')
 os.makedirs(log_directory, exist_ok=True)
-
+skip = True
 
 
 def log_error(message):
@@ -22,6 +21,11 @@ def log_error(message):
 
 while True:
     while True:
+        if skip:
+            print('第一个循环，跳过Getuid.py')
+            skip = False
+
+            break
         print('启动Getuid.py')
         getuid_process = subprocess.Popen([sys.executable, 'GetUid.py'], shell=True)
         getuid_process.wait()  # 等待 Getuid.py 结束
