@@ -157,6 +157,7 @@ try:
                             if line.strip() != uid:
                                 f.write(line)
                     print(f"删除无视频UID: {uid}")
+                    #remove_completed_uid(uid)
                     continue
 
 
