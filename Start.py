@@ -16,6 +16,7 @@ os.makedirs(log_directory, exist_ok=True)
 def log_error(message):
     with open(log_file, 'a', encoding='utf-8') as log:
         timestamp = datetime.now().strftime('[%Y-%m-%d %H:%M:%S]')
+        print(f"\n{timestamp} {message}")
         log.write(f"\n\n{timestamp} {message}")
 
 

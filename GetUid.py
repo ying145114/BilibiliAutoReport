@@ -22,12 +22,16 @@ blacklist_filename = os.path.join(base_dir, '附加文件','blacklist.txt')
 keywords_filename = os.path.join(base_dir, '附加文件', 'keyword.txt')
 cloud_whitelist_filename = os.path.join(base_dir, '云端文件', 'whitelist.txt')
 ########################################################################################################################
+clearscript_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/附加文件/页面脚本/清空列表.js'
+reportscript_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/附加文件/页面脚本/总脚本.js'
 chrome_driver_path = os.path.join(base_dir, '附加文件', 'chromedriver.exe')
 chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
-script_clear = os.path.join(base_dir, '附加文件','页面脚本', '清空列表.js')
+clear_script = os.path.join(base_dir, '附加文件','页面脚本', '清空列表.js')
+report_script = os.path.join(base_dir, '附加文件', '页面脚本', '总脚本.js')
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
 ########################################################################################################################
 output_file = os.path.join(base_dir, '附加文件', 'uid.txt')
+log_file = os.path.join(base_dir,'运行记录','错误记录.txt')
 log_directory = os.path.join(base_dir, '运行记录')
 os.makedirs(log_directory, exist_ok=True)
 proxies = {'http': None, 'https': None}
@@ -39,47 +43,39 @@ uid_list = []
 uids = set()
 ########################################################################################################################
 
+def fetch_file (cloud_link,local_path,autoupdate = True):
+    download = requests.get(cloud_link, proxies=proxies, timeout=(3, 3))
+    if autoupdate:
+        if download.status_code == 200:
+            with open(local_path, 'wb') as out:
+                out.write(download.content)
+            print(f"成功下载文件并保存为 {local_path}")
+        else:
+            print(f"无法访问URL{cloud_link}，状态码：{download.status_code}")
+    else:
+        print('不进行自动更新')
+
+def log_error(message):
+    with open(log_file, 'a', encoding='utf-8') as log:
+        timestamp = datetime.now().strftime('[%Y-%m-%d %H:%M:%S]')
+        print(f"\n{timestamp} {message}")
+        log.write(f"\n\n{timestamp} {message}")
+
+
+
 if os.path.exists(output_file):
     os.remove(output_file)
 else:
     print(f"文件 {output_file} 不存在，无需删除。")
 
-
 try:
-    download = requests.get(keywords_url, proxies=proxies, timeout=(3, 3))
-    if download.status_code == 200:
-        with open(keywords_filename, 'wb') as out:
-            out.write(download.content)
-        print(f"成功下载关键词文件并保存为 {keywords_filename}")
-    else:
-        print(f"无法访问URL，状态码：{download.status_code}")
-except requests.exceptions.RequestException as e:
-    print(f"下载关键词文件发生异常：{e}")
-
-
-try:
-    download = requests.get(whitelist_url, proxies=proxies, timeout=(3, 3))
-    if download.status_code == 200:
-        with open(whitelist_filename, 'wb') as out:
-            out.write(download.content)
-        print(f"成功下载白名单文件并保存为 {keywords_filename}")
-    else:
-        print(f"无法访问URL，状态码：{download.status_code}")
-except requests.exceptions.RequestException as e:
-    print(f"下载白名单文件发生异常：{e}")
-
-
-try:
-    download = requests.get(blacklist_url, proxies=proxies, timeout=(3, 3))
-    if download.status_code == 200:
-        with open(blacklist_filename, 'wb') as out:
-            out.write(download.content)
-        print(f"成功下载黑名单文件并保存为 {keywords_filename}")
-    else:
-        print(f"无法访问URL，状态码：{download.status_code}")
-
-except requests.exceptions.RequestException as e:
-    print(f"下载黑名单文件发生异常：{e}")
+    fetch_file(blacklist_url,blacklist_filename,True)
+    fetch_file(whitelist_url,whitelist_filename,True)
+    fetch_file(keywords_url,keywords_filename,True)
+    fetch_file(clearscript_url,clear_script,True)
+    fetch_file(reportscript_url,report_script,True)
+except Exception as e:
+    print(f"删除UID时发生错误: {e}")
 
 
 with open(keywords_filename, 'r', encoding='utf-8') as f:
@@ -182,7 +178,7 @@ for element in elements:
     uid_start = href.rfind("/") + 1  # 找到最后一个斜杠后面的位置
     watchlater = href[uid_start:]  # 截取UID部分
     watchlaters.append(watchlater)
-with open(script_clear, "r", encoding="utf-8") as file:
+with open(clear_script, "r", encoding="utf-8") as file:
     clear = file.read()
 driver.execute_script(clear)
 with open(cloud_whitelist_filename, 'a') as file:  # 以追加方式打开文件
