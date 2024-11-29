@@ -3,8 +3,8 @@ let contentlocation = `${window.location.href}\n`;
 let reportCount = 0
 let currentAidIndex = 0; // 当前处理的AID索引
 let currentPage = 1; // 初始页码
-let pageSize = 30;
-let time_video = 2300
+let pageSize = 2300;
+let time_video = 3
 let time_dynamic = 30
 let time_article = 30
 let aids = [];
@@ -311,12 +311,7 @@ function submitAppeal(aid, title, pic) {
         xhr.setRequestHeader('accept-language', 'zh-CN,zh;q=0.9');
         xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
 
-        let timeoutId = setTimeout(() => {
-            updateDiagnosticInfo(`视频：请求超时<br>`);
-            console.warn(`视频：请求超时`);
-            xhr.abort(); // 超时则中止请求
-            resolve();   // 解除 Promise
-        }, 3000);
+        let timeoutId;
 
         xhr.onload = function () {
             clearTimeout(timeoutId);
@@ -354,7 +349,7 @@ function submitAppeal(aid, title, pic) {
 
 
                 resolve(true); // 正常情况下返回 true
-            } else if (xhr.status === 412) {
+            } else if (xhr.status ===412) {
                 updateDiagnosticInfo(`视频：${this.response}<br>`);
                 console.log(`视频${reportCount}：${this.response}`)
                 output += `视频${reportCount}：${this.response}\n`
@@ -375,6 +370,12 @@ function submitAppeal(aid, title, pic) {
             console.error(`请求失败:`, err);
             resolve(true); // 请求失败时继续执行后续逻辑
         };
+        timeoutId = setTimeout(() => {
+            updateDiagnosticInfo(`视频：请求超时<br>`);
+            console.warn(`视频：请求超时`);
+            xhr.abort(); // 超时则中止请求
+            resolve();   // 解除 Promise
+        }, 3000);
 
 //###############################################点赞视频部分#############################################################
 

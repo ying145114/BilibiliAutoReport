@@ -34,7 +34,6 @@ uids = set()
 
 
 
-
 with open(log_file, 'w', encoding='utf-8') as log:
     timestamp = datetime.now().strftime('[%Y-%m-%d %H-%M-%S]')
     log.write(f"{timestamp} 清空log")
