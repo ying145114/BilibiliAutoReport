@@ -2,7 +2,7 @@ import sys
 from datetime import datetime
 import subprocess
 import os
-from unittest import skipIf
+
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 ########################################################################################################################
