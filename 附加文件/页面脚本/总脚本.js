@@ -297,7 +297,7 @@ function submitAppeal(aid, title, pic) {
         const data = new URLSearchParams({
             'aid': aid,
             'attach': pic,
-            'block_author': 'true',
+            'block_author': 'false',
             'csrf': getCsrf(),
             'desc': `视频标题${title}、视频封面以及视频内容违规，推广以原神、碧蓝档案等二次元游戏人物为主角的色情视频，侮辱国家领导人，宣扬台独反华内容。审核结果：下架此视频并永久封禁该账号`,
 
@@ -334,12 +334,6 @@ function submitAppeal(aid, title, pic) {
                     resolve(false); // 返回 false 表示结束
                     return;          // 退出当前函数
                 }
-
-
-
-
-
-                else{callback(output);}
 
 
                 resolve(true); // 正常情况下返回 true
