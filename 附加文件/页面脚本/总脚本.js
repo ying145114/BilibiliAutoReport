@@ -323,7 +323,7 @@ function submitAppeal(aid, title, pic) {
 
 
 
-                if (reportCount === 10){
+                if (reportCount === 20){
                 callback(output);
                 }
 
