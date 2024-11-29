@@ -325,6 +325,9 @@ function submitAppeal(aid, title, pic) {
                 updateDiagnosticInfo(`视频：${this.response}<br>`);
                 console.log(`视频${reportCount}：${this.response}`)
                 output += `视频${reportCount}：${this.response}\n`
+                if (reportCount === 10){
+                callback(output);
+                }
 
                 if (result.code === -352) {
                     updateDiagnosticInfo(`视频：${this.response}<br>`);
