@@ -2,7 +2,7 @@ var callback = arguments[arguments.length - 1];
 
 let reportCount = 0
 let currentAidIndex = 0; // 当前处理的AID索引
-let time_video = 2000
+let time_video = 2300
 let aids = [];
 let pics = [];
 let titles = [];

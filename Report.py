@@ -116,7 +116,7 @@ try:
                 first_video = data['data']['archives'][0]
                 aid = first_video.get('aid')
                 title = first_video.get('title')
-                print(f"UID: {uid} ，AID: {aid} ，投稿视频: {title}")
+                print(f"\nUID: {uid} ，AID: {aid} ，投稿视频: {title}")
                 with open(title_file, 'a', encoding='utf-8') as file:
                     file.write(f"\nUID: {uid} ，AID: {aid} ，投稿视频: {title}")
 
