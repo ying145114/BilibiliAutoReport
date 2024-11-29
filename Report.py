@@ -121,7 +121,7 @@ try:
                     file.write(f"\nUID: {uid} ，AID: {aid} ，投稿视频: {title}")
 
             else:
-                print(f"UID: {uid} 未找到投稿视频")
+                print(f"\nUID: {uid} 未找到投稿视频")
                 with open(title_file, 'a', encoding='utf-8') as file:
                     file.write(f"\nUID: {uid} 未找到投稿视频")
 
@@ -137,11 +137,11 @@ try:
                     title = first_video.get('title')
                     print(f"UID: {uid} ，AID: {aid} ，合集视频: {title}")
                     with open(title_file, 'a', encoding='utf-8') as file:
-                        file.write(f"\nUID: {uid} ，AID: {aid} ，合集视频: {title}")
+                        file.write(f"\nUID: {uid} ，AID: {aid} ，合集视频: {title}\n")
                 else:
-                    print(f"\nUID: {uid} 未找到合集视频")
+                    print(f"UID: {uid} 未找到合集视频")
                     with open(title_file, 'a', encoding='utf-8') as file:
-                        file.write(f"\nUID: {uid} 未找到合集视频")
+                        file.write(f"\nUID: {uid} 未找到合集视频\n")
                     continue
 
 

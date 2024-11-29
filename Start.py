@@ -22,7 +22,7 @@ def log_error(message):
 while True:
     while True:
         print('启动Getuid.py')
-        getuid_process = subprocess.Popen([sys.executable, 'GetUidaaa.py'], shell=True)
+        getuid_process = subprocess.Popen([sys.executable, 'GetUid.py'], shell=True)
         getuid_process.wait()  # 等待 Getuid.py 结束
 
 
