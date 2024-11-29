@@ -34,6 +34,12 @@ uids = set()
 aid = ''
 
 
+
+
+with open(log_file, 'w', encoding='utf-8') as log:
+    timestamp = datetime.now().strftime('[%Y-%m-%d %H-%M-%S]')
+    log.write(f"{timestamp} 清空log")
+
 def log_error(message):
     with open(log_file, 'a', encoding='utf-8') as log:
         timestamp = datetime.now().strftime('[%Y-%m-%d %H-%M-%S]')
@@ -171,7 +177,7 @@ try:
                 log_error('报错412')
                 time.sleep(180)
 
-            if "352" in report_result or "412" in report_result:
+            if "352" in report_result or "4121" in report_result:
 
 
 ###############################################人机验证部分###############################################################
@@ -299,8 +305,6 @@ try:
                                 file.write(content)
                             # print(f"图片已保存至: {fail_path}")
 
-
-
                     except Exception as e:
                         print(f"人机验证循环出错，错误: {e}")
                         log_error(f"人机验证循环出错，错误: {e}")
@@ -311,14 +315,8 @@ try:
 ###############################################人机验证部分###############################################################
 
 
-
-
-
             remove_completed_uid(uid)
             continue
-
-
-
 
         except Exception as e:
             print(f"UID循环出错,错误UID：{uid}，错误: {e}")
