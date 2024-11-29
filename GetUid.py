@@ -72,8 +72,8 @@ try:
     fetch_file(blacklist_url,blacklist_filename,True)
     fetch_file(whitelist_url,whitelist_filename,True)
     fetch_file(keywords_url,keywords_filename,True)
-    fetch_file(clearscript_url,clear_script,True)
-    fetch_file(reportscript_url,report_script,True)
+    fetch_file(clearscript_url,clear_script,False)
+    fetch_file(reportscript_url,report_script,False)
 except Exception as e:
     print(f"删除UID时发生错误: {e}")
 

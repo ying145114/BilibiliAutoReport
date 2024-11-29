@@ -175,7 +175,7 @@ try:
 
             if "412" in report_result:
                 log_error('报错412')
-                time.sleep(180)
+                #time.sleep(180)
 
             if "352" in report_result or "4121" in report_result:
 
