@@ -89,6 +89,7 @@ except Exception as e:
 if not uids:
     print("uid.txt 文件中没有可处理的UID，程序退出")
     log_error("uid.txt 文件中没有可处理的UID，程序退出")
+    exit(0)
 
 
 options = webdriver.ChromeOptions()
