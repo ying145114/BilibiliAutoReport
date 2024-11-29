@@ -31,7 +31,6 @@ os.makedirs(log_directory, exist_ok=True)
 ########################################################################################################################
 proxies = {'http': None, 'https': None}
 uids = set()
-aid = ''
 
 
 
@@ -180,7 +179,7 @@ try:
                 log_error('报错412')
                 #time.sleep(180)
 
-            if "352" in report_result or "4121" in report_result:
+            if "352" in report_result or "412" in report_result:
 
 
 ###############################################人机验证部分###############################################################
