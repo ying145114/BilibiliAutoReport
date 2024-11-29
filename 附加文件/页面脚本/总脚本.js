@@ -612,10 +612,9 @@ function reportDynamic(uid, dyid) {
 //######################################################################################################################
 
 async function main() {
-    await console.clear();
     await sendReportRequest();//举报签名昵称头像
-    getAid(currentPage);//举报专栏
-    reportAllDynamic();//举报动态
+    //getAid(currentPage);//举报专栏
+    //reportAllDynamic();//举报动态
     await extractSeries();
     await extractAndSubmitAIDs(); //举报视频
 

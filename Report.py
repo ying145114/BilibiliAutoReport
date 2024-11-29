@@ -16,7 +16,7 @@ import os
 base_dir = os.path.dirname(os.path.abspath(__file__))
 ########################################################################################################################
 chrome_driver_path = os.path.join(base_dir, '附加文件','chromedriver.exe')
-report = os.path.join(base_dir, '附加文件', '页面脚本', 'Bilibili视频批量举报.js')
+report_script = os.path.join(base_dir, '附加文件', '页面脚本', 'Bilibili视频批量举报.js')
 chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
 ########################################################################################################################
@@ -154,7 +154,7 @@ try:
 
 
 
-            with open(report, "r", encoding="utf-8") as file:
+            with open(report_script, "r", encoding="utf-8") as file:
                 report = file.read()
             report_result = driver.execute_async_script(report)
             print(report_result)

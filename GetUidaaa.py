@@ -46,7 +46,7 @@ else:
 
 
 try:
-    download = requests.get(keywords_url, proxies=proxies, timeout=(5, 10))
+    download = requests.get(keywords_url, proxies=proxies, timeout=(3, 3))
     if download.status_code == 200:
         with open(keywords_filename, 'wb') as out:
             out.write(download.content)
@@ -58,7 +58,7 @@ except requests.exceptions.RequestException as e:
 
 
 try:
-    download = requests.get(whitelist_url, proxies=proxies, timeout=(5, 10))
+    download = requests.get(whitelist_url, proxies=proxies, timeout=(3, 3))
     if download.status_code == 200:
         with open(whitelist_filename, 'wb') as out:
             out.write(download.content)
@@ -70,7 +70,7 @@ except requests.exceptions.RequestException as e:
 
 
 try:
-    download = requests.get(blacklist_url, proxies=proxies, timeout=(5, 10))
+    download = requests.get(blacklist_url, proxies=proxies, timeout=(3, 3))
     if download.status_code == 200:
         with open(blacklist_filename, 'wb') as out:
             out.write(download.content)
@@ -140,7 +140,7 @@ for keyword in keywords:  # 遍历关键词列表，进行搜索和处理
         count += 1
         if count >= 10:
             break
-    print(f'\n关键词：{keyword}时间  排序结果：\n{uid_list}')
+    print(f'\n关键词：{keyword}  时间排序结果：\n{uid_list}')
     with open(output_file, 'a', encoding='utf-8') as f:
         f.write(f'\n关键词：{keyword}  时间排序结果：\n{uid_list}')
     print(pubdate)
