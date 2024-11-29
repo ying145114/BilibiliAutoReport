@@ -2,7 +2,7 @@ var callback = arguments[arguments.length - 1];
 
 let reportCount = 0
 let currentAidIndex = 0; // 当前处理的AID索引
-let time_video = 100
+let time_video = 2000
 let aids = [];
 let pics = [];
 let titles = [];
@@ -293,7 +293,7 @@ function submitAppeal(aid, title, pic) {
         const data = new URLSearchParams({
             'aid': aid,
             'attach': pic,
-            'block_author': 'false',
+            'block_author': 'true',
             'csrf': getCsrf(),
             'desc': `视频标题${title}、视频封面以及视频内容违规，推广以原神、碧蓝档案等二次元游戏人物为主角的色情视频，侮辱国家领导人，宣扬台独反华内容。审核结果：下架此视频并永久封禁该账号`,
 
