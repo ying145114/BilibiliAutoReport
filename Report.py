@@ -95,7 +95,7 @@ options.binary_location = chrome_binary_path  # 指定 Chrome 浏览器的可执
 options.add_argument("--disable-gpu")
 options.add_argument("--disable-sync")
 options.add_argument("disable-cache")#禁用缓存
-#options.add_argument("--headless")
+options.add_argument("--headless")
 options.add_argument('log-level=3')
 service = Service(executable_path=chrome_driver_path)
 driver = webdriver.Chrome(service=service, options=options)  # 启动 Chrome 浏览器

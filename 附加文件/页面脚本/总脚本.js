@@ -4,7 +4,7 @@ let reportCount = 0
 let currentAidIndex = 0; // 当前处理的AID索引
 let currentPage = 1; // 初始页码
 let pageSize = 30;
-let time_video = 2300
+let time_video = 2000
 let time_dynamic = 30
 let time_article = 30
 let aids = [];
@@ -327,6 +327,14 @@ function submitAppeal(aid, title, pic) {
                 output += `视频${reportCount}：${this.response}\n`
 
                 if (result.code === -352) {
+                    updateDiagnosticInfo(`视频：${this.response}<br>`);
+                    console.log(`视频${reportCount}：${this.response}`)
+                    output += `视频${reportCount}：${this.response}\n`
+                    callback(output);
+                    resolve(false); // 返回 false 表示结束
+                    return;          // 退出当前函数
+                }
+                else if (result.code === 62009) {
                     updateDiagnosticInfo(`视频：${this.response}<br>`);
                     console.log(`视频${reportCount}：${this.response}`)
                     output += `视频${reportCount}：${this.response}\n`
