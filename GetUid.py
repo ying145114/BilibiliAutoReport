@@ -123,7 +123,7 @@ for keyword in keywords:  # 遍历关键词列表，进行搜索和处理
         uids.add(uid)
         uid_list.append(uid)  # 添加 UID 到集合中
         count += 1
-        if count >= 10:
+        if count >= 5:
             break
     print(f'\n关键词：{keyword}  默认排序结果：\n{uid_list}')
     with open(output_file, 'a', encoding='utf-8') as f:
@@ -145,7 +145,7 @@ for keyword in keywords:  # 遍历关键词列表，进行搜索和处理
         uids.add(uid)
         uid_list.append(uid)  # 添加 UID 到集合中
         count += 1
-        if count >= 10:
+        if count >= 5:
             break
     print(f'\n关键词：{keyword}  时间排序结果：\n{uid_list}')
     with open(output_file, 'a', encoding='utf-8') as f:
