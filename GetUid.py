@@ -21,11 +21,15 @@ whitelist_filename = os.path.join(base_dir, '附加文件','whitelist.txt')
 blacklist_filename = os.path.join(base_dir, '附加文件','blacklist.txt')
 keywords_filename = os.path.join(base_dir, '附加文件', 'keyword.txt')
 cloud_whitelist_filename = os.path.join(base_dir, '云端文件', 'whitelist.txt')
+cloud_atlist_filename = os.path.join(base_dir, '云端文件', 'atlist.txt')
+
 ########################################################################################################################
 clearscript_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/附加文件/页面脚本/清空列表.js'
 reportscript_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/附加文件/页面脚本/总脚本.js'
+atscript_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/附加文件/页面脚本/获取被提及视频.js'
 chrome_driver_path = os.path.join(base_dir, '附加文件', 'chromedriver.exe')
 chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
+at_script = os.path.join(base_dir, '附加文件','页面脚本', '获取被提及视频.js')
 clear_script = os.path.join(base_dir, '附加文件','页面脚本', '清空列表.js')
 report_script = os.path.join(base_dir, '附加文件', '页面脚本', '总脚本.js')
 user_data_dir = os.path.join(base_dir, '附加文件', 'User Data')
@@ -43,9 +47,9 @@ uid_list = []
 uids = set()
 ########################################################################################################################
 
-def fetch_file (cloud_link,local_path,autoupdate = True):
-    download = requests.get(cloud_link, proxies=proxies, timeout=(3, 3))
-    if autoupdate:
+def fetch_file (cloud_link,local_path,autoupdate):
+    if autoupdate == True:
+        download = requests.get(cloud_link, proxies=proxies, timeout=(3, 3))
         if download.status_code == 200:
             with open(local_path, 'wb') as out:
                 out.write(download.content)
@@ -74,6 +78,7 @@ try:
     fetch_file(keywords_url,keywords_filename,True)
     fetch_file(clearscript_url,clear_script,False)
     fetch_file(reportscript_url,report_script,False)
+    fetch_file(atscript_url, at_script, False)
 except Exception as e:
     print(f"删除UID时发生错误: {e}")
 
@@ -112,7 +117,10 @@ for keyword in keywords:  # 遍历关键词列表，进行搜索和处理
     for element in elements:
         href = element.get_attribute("href")
         match = re.search(r"space.bilibili.com/(\d+)", href)  # 在 href 中搜索匹配的内容
+        if not match:
+            continue
         uid = match.group(1)  # 获取匹配到的UID部分
+        uids.add(uid)
         uid_list.append(uid)  # 添加 UID 到集合中
         count += 1
         if count >= 30:
@@ -131,7 +139,10 @@ for keyword in keywords:  # 遍历关键词列表，进行搜索和处理
     for element in elements:
         href = element.get_attribute("href")
         match = re.search(r"space.bilibili.com/(\d+)", href)  # 在 href 中搜索匹配的内容
+        if not match:
+            continue
         uid = match.group(1)  # 获取匹配到的UID部分
+        uids.add(uid)
         uid_list.append(uid)  # 添加 UID 到集合中
         count += 1
         if count >= 30:
@@ -186,9 +197,50 @@ with open(cloud_whitelist_filename, 'a') as file:  # 以追加方式打开文件
         print(watchlater)
         file.write(f"\n{watchlater}")
 uids.update(watchlaters)
-driver.quit()
 with open(cloud_whitelist_filename, 'r', encoding='utf-8') as file:
     lines = file.readlines()
+
+with open(at_script, "r", encoding="utf-8") as file:
+    at = file.read()
+aids = driver.execute_async_script(at)
+driver.quit()
+for aid in aids:
+    print(f'被提及的视频：{aid}')
+    headers = {
+        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'accept-language': 'zh-CN,zh-TW;q=0.9,zh;q=0.8,en;q=0.7,ja;q=0.6',
+        'cache-control': 'max-age=0',
+        'dnt': '1',
+        'priority': 'u=0, i',
+        'sec-ch-ua': '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Windows"',
+        'sec-fetch-dest': 'document',
+        'sec-fetch-mode': 'navigate',
+        'sec-fetch-site': 'none',
+        'sec-fetch-user': '?1',
+        'upgrade-insecure-requests': '1',
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+    }
+
+    params = {
+        'aid': aid,
+    }
+
+    response = requests.get('https://api.bilibili.com/x/web-interface/view', params=params,
+                            headers=headers,proxies=proxies, timeout=(3, 3))
+    response_json = response.json()
+    if response.status_code == 200:
+        mid = response_json.get("data", {}).get("owner", {}).get("mid")
+        if mid:
+            print("AID: ", aid,"MID: ",mid)
+            with open(cloud_atlist_filename, 'a', encoding='utf-8') as file:
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                file.write(f"\n\n {mid}  {timestamp}")
+            uids.add(mid)
+
+
+
 
 
 for line in lines:
@@ -204,6 +256,8 @@ sorted_numbers = sorted(numbers)
 with open(cloud_whitelist_filename, 'w', encoding='utf-8') as file:
     for number in sorted_numbers:
         file.write(f"{number}\n")
+
+
 
 
 
