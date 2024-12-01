@@ -123,7 +123,7 @@ for keyword in keywords:  # 遍历关键词列表，进行搜索和处理
         uids.add(uid)
         uid_list.append(uid)  # 添加 UID 到集合中
         count += 1
-        if count >= 5:
+        if count >= 1:
             break
     print(f'\n关键词：{keyword}  默认排序结果：\n{uid_list}')
     with open(output_file, 'a', encoding='utf-8') as f:
@@ -145,7 +145,7 @@ for keyword in keywords:  # 遍历关键词列表，进行搜索和处理
         uids.add(uid)
         uid_list.append(uid)  # 添加 UID 到集合中
         count += 1
-        if count >= 5:
+        if count >= 1:
             break
     print(f'\n关键词：{keyword}  时间排序结果：\n{uid_list}')
     with open(output_file, 'a', encoding='utf-8') as f:
@@ -171,13 +171,7 @@ with open(whitelist_filename, 'r', encoding='utf-8') as f:  # 处理 whitelist_f
            uids.add(uid)
 
 
-with open(blacklist_filename, 'r', encoding='utf-8') as exclude_file:
-    exclude_lines = exclude_file.readlines()
-    for line in exclude_lines:
-        exclude_uid = line.strip()
-        if exclude_uid.isdigit():  # 假设 UID 是数字格式
-            exclude_uids.add(exclude_uid)
-uids -= exclude_uids
+
 
 
 
@@ -259,7 +253,13 @@ with open(cloud_whitelist_filename, 'w', encoding='utf-8') as file:
 
 
 
-
+with open(blacklist_filename, 'r', encoding='utf-8') as exclude_file:
+    exclude_lines = exclude_file.readlines()
+    for line in exclude_lines:
+        exclude_uid = line.strip()
+        if exclude_uid.isdigit():  # 假设 UID 是数字格式
+            exclude_uids.add(exclude_uid)
+uids -= exclude_uids
 
 
 
