@@ -21,6 +21,11 @@ def log_error(message):
 
 while True:
     while True:
+
+        print('启动CheckAt.py')
+        getuid_process = subprocess.Popen([sys.executable, 'CheckAt.py'], shell=True)
+        getuid_process.wait()  # 等待 CheckAt.py 结束
+
         if skip:
             print('第一个循环，跳过Getuid.py')
             skip = False
