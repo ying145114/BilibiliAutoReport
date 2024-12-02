@@ -1,3 +1,4 @@
+import json
 import re
 import time
 
@@ -39,7 +40,6 @@ log_directory = os.path.join(base_dir, '运行记录')
 os.makedirs(log_directory, exist_ok=True)
 proxies = {'http': None, 'https': None}
 exclude_uids = set()
-watchlaters = []
 numbers = set()
 keywords = []
 uid_list = []
@@ -63,6 +63,8 @@ def log_error(message):
         timestamp = datetime.now().strftime('[%Y-%m-%d %H:%M:%S]')
         print(f"\n{timestamp} {message}")
         log.write(f"\n\n{timestamp} {message}")
+
+
 
 
 
@@ -168,31 +170,29 @@ except IOError as e:
 
 
 
-url = f"https://www.bilibili.com/watchlater/?spm_id_from=333.1007.0.0#/list"
+url = f"https://api.bilibili.com/x/v2/history/toview"
 driver.get(url)
-elements = driver.find_elements(By.XPATH, "//*[@id='app']/main/section/div/div[1]/div[1]/div/div[2]/div[2]/a")
-for element in elements:
-    href = element.get_attribute("href")  # 获取 href 属性
-    uid_start = href.rfind("/") + 1  # 找到最后一个斜杠后面的位置
-    watchlater = href[uid_start:]  # 截取UID部分
-    watchlaters.append(watchlater)
+json_data = driver.find_element("tag name", "pre").text  # 假设 API 返回的 JSON 数据在 <pre> 标签内
+data = json.loads(json_data)
+for item in data['data']['list']:
+    mid = item['owner']['mid']
+    uids.add(mid)
+    print(mid)
+    with open(cloud_whitelist_filename, 'a') as file:  # 以追加方式打开文件
+        file.write(f"\n{mid}")
+
+
 with open(clear_script, "r", encoding="utf-8") as file:
     clear = file.read()
 driver.execute_script(clear)
-with open(cloud_whitelist_filename, 'a') as file:  # 以追加方式打开文件
-    for watchlater in watchlaters:
-        print(watchlater)
-        file.write(f"\n{watchlater}")
-uids.update(watchlaters)
+
+
+
+
+
+
 with open(cloud_whitelist_filename, 'r', encoding='utf-8') as file:
     lines = file.readlines()
-
-
-
-
-
-
-
 for line in lines:
     stripped_line = line.strip()
     if stripped_line:  # 确保不是空行
