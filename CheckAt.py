@@ -18,8 +18,11 @@ chrome_driver_path = os.path.join(base_dir, '附加文件', 'chromedriver.exe')
 log_file = os.path.join(base_dir, '附加文件', 'ATLOG.txt')
 output_file = os.path.join(base_dir, '附加文件', 'uid.txt')
 proxies = {'http': None, 'https': None}
+mids = set()
 
 
+with open(log_file, 'a', encoding='utf-8') as file:
+    file.write(f"{(datetime.utcnow() + timedelta(hours=8)).strftime('%Y-%m-%d %H-%M-%S')}\n")
 
 options = webdriver.ChromeOptions()
 options.add_argument("--disable-blink-features=AutomationControlled")
@@ -63,15 +66,17 @@ response = requests.get('https://api.bilibili.com/x/msgfeed/at', proxies=proxies
 data = json.loads(response.text)
 subject_ids = []
 source_ids = []
+source_contents = []
 
 for i, item in enumerate(data['data']['items']):
     if i >= at:  # 达到 n 时停止
         break
     subject_ids.append(item['item']['subject_id'])
     source_ids.append(item['item']['source_id'])
-print(subject_ids, source_ids)
+    source_contents.append(item['item']['source_content'])
+print(subject_ids, source_ids,source_contents)
 
-for subject_id, source_id in zip(subject_ids, source_ids):
+for subject_id, source_id,source_content in zip(subject_ids, source_ids,source_contents):
     headers = {'cookie': COOKIE, 'user-agent': UA}
     data = {
         'oid': subject_id,
@@ -85,57 +90,24 @@ for subject_id, source_id in zip(subject_ids, source_ids):
     print('点赞评论：', response.text)
 
     headers = {'cookie': COOKIE, 'user-agent': UA}
-    files = {'aid': (None, subject_id), 'csrf': (None, re.search(r'bili_jct=([^;]*)', COOKIE).group(1)), }
-    response = requests.post('https://api.bilibili.com/x/v2/history/toview/add', proxies=proxies, headers=headers,
-                             files=files)
-    print('添加列表：', response.text)
-
-    headers = {'cookie': COOKIE, 'user-agent': UA}
     params = {'aid': subject_id}
-    response = requests.get('https://api.bilibili.com/x/web-interface/view', proxies=proxies, params=params,
-                            headers=headers)
+    response = requests.get('https://api.bilibili.com/x/web-interface/view', proxies=proxies, params=params,headers=headers)
     data = json.loads(response.text)
     try:
         mid = data['data']['owner']['mid']
-        print(mid)
-        with open(log_file, 'a', encoding='utf-8') as file:
-            file.write(f"{(datetime.utcnow() + timedelta(hours=8)).strftime('%Y-%m-%d %H-%M-%S')}\n")
-        headers = {'cookie': COOKIE, 'user-agent': UA}
-        data = {
-            'plat': '1',
-            'oid': subject_id,
-            'type': '17',
-            'message': f'',
-            'root': source_id,
-            'parent': source_id,
-            'at_name_to_mid': '{}',
-            'gaia_source': 'main_web',
-            'csrf': re.search(r'bili_jct=([^;]*)', COOKIE).group(1),
-            'statistics': '{"appId":100,"platform":5}'
-        }
-        response = requests.post('https://api.bilibili.com/x/v2/reply/add', proxies=proxies, headers=headers, data=data)
-        with open(output_file, 'a', encoding='utf-8') as file:
-            file.write(f"{mid}\n")
+        print('解析的UID:',mid)
+        mids.add(mid)
     except Exception as e:
         print('出错')
-        headers = {'cookie': COOKIE, 'user-agent': UA}
-        data = {
-            'plat': '1',
-            'oid': subject_id,
-            'type': '17',
-            'message': '出现错误，可能的原因有：\n1、程序无法从动态获取目标\n2、视频已被删除\n[吃瓜]',
-            'root': source_id,
-            'parent': source_id,
-            'at_name_to_mid': '{}',
-            'gaia_source': 'main_web',
-            'csrf': re.search(r'bili_jct=([^;]*)', COOKIE).group(1),
-            'statistics': '{"appId":100,"platform":5}'
-        }
-
-        response = requests.post('https://api.bilibili.com/x/v2/reply/add', proxies=proxies, headers=headers, data=data)
-        with open(log_file, 'a', encoding='utf-8') as file:
-            file.write(f"出现错误，可能的原因有：\n1、程序无法从动态获取目标\n2、视频已被删除\n[吃瓜]\n")
-
-    time.sleep(3)
+    uids = re.findall(r'\d+', source_content)
+    print('提取的UID: ',uids)
+    mids.update(uids)
+    time.sleep(1)
 
 
+
+for mid in mids:
+    with open(output_file, 'a', encoding='utf-8') as file:
+        file.write(f"{mid}\n")
+    with open(log_file, 'a', encoding='utf-8') as file:
+        file.write(f"{mid}\n")

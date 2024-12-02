@@ -22,12 +22,11 @@ whitelist_filename = os.path.join(base_dir, '附加文件','whitelist.txt')
 blacklist_filename = os.path.join(base_dir, '附加文件','blacklist.txt')
 keywords_filename = os.path.join(base_dir, '附加文件', 'keyword.txt')
 cloud_whitelist_filename = os.path.join(base_dir, '云端文件', 'whitelist.txt')
-cloud_atlist_filename = os.path.join(base_dir, '云端文件', 'atlist.txt')
+
 
 ########################################################################################################################
 clearscript_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/附加文件/页面脚本/清空列表.js'
 reportscript_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/附加文件/页面脚本/总脚本.js'
-atscript_url = 'https://raw.kkgithub.com/ayyayyayy2002/BiliBiliVideoAutoReport/main/附加文件/页面脚本/获取被提及视频.js'
 chrome_driver_path = os.path.join(base_dir, '附加文件', 'chromedriver.exe')
 chrome_binary_path = os.path.join(base_dir, '附加文件', 'chrome-win', 'chrome.exe')
 clear_script = os.path.join(base_dir, '附加文件','页面脚本', '清空列表.js')
@@ -44,6 +43,7 @@ numbers = set()
 keywords = []
 uid_list = []
 uids = set()
+watchlaters = set()
 ########################################################################################################################
 
 def fetch_file (cloud_link,local_path,autoupdate):
@@ -69,7 +69,14 @@ def log_error(message):
 
 
 if os.path.exists(output_file):
+    with open(output_file, 'r', encoding='utf-8') as f:  # 以读取模式打开文件
+        for line in f:
+            line = line.strip()  # 去掉行首尾的空白字符
+            if line:  # 如果不是空行，则认为是UID
+                uids.add(line)
     os.remove(output_file)
+
+
 else:
     print(f"文件 {output_file} 不存在，无需删除。")
 
@@ -123,7 +130,7 @@ for keyword in keywords:  # 遍历关键词列表，进行搜索和处理
         uids.add(uid)
         uid_list.append(uid)  # 添加 UID 到集合中
         count += 1
-        if count >= 1:
+        if count >= 5:
             break
     print(f'\n关键词：{keyword}  默认排序结果：\n{uid_list}')
     with open(output_file, 'a', encoding='utf-8') as f:
@@ -145,7 +152,7 @@ for keyword in keywords:  # 遍历关键词列表，进行搜索和处理
         uids.add(uid)
         uid_list.append(uid)  # 添加 UID 到集合中
         count += 1
-        if count >= 1:
+        if count >= 5:
             break
     print(f'\n关键词：{keyword}  时间排序结果：\n{uid_list}')
     with open(output_file, 'a', encoding='utf-8') as f:
@@ -176,20 +183,28 @@ json_data = driver.find_element("tag name", "pre").text  # 假设 API 返回的 
 data = json.loads(json_data)
 for item in data['data']['list']:
     mid = item['owner']['mid']
-    uids.add(mid)
-    print(mid)
     with open(cloud_whitelist_filename, 'a') as file:  # 以追加方式打开文件
         file.write(f"\n{mid}")
-
-
-with open(clear_script, "r", encoding="utf-8") as file:
-    clear = file.read()
-#driver.execute_script(clear)
-
+    watchlaters.add(mid)
+    uids.add(mid)
+    print(mid)
 
 
 
 
+
+
+
+
+
+
+
+with open(whitelist_filename, 'r', encoding='utf-8') as file:
+    lines = file.readlines()
+    for line in lines:
+        uid = line.strip()
+        if uid.isdigit():  # 假设 UID 是数字格式
+            uids.add(uid)
 
 with open(cloud_whitelist_filename, 'r', encoding='utf-8') as file:
     lines = file.readlines()
@@ -209,6 +224,8 @@ with open(cloud_whitelist_filename, 'w', encoding='utf-8') as file:
 
 
 
+
+
 with open(blacklist_filename, 'r', encoding='utf-8') as exclude_file:
     exclude_lines = exclude_file.readlines()
     for line in exclude_lines:
@@ -216,15 +233,6 @@ with open(blacklist_filename, 'r', encoding='utf-8') as exclude_file:
         if exclude_uid.isdigit():  # 假设 UID 是数字格式
             exclude_uids.add(exclude_uid)
 uids -= exclude_uids
-
-
-
-
-
-
-
-
-
 
 
 

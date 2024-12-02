@@ -21,7 +21,6 @@ def log_error(message):
 
 while True:
     while True:
-
         print('启动CheckAt.py')
         getuid_process = subprocess.Popen([sys.executable, 'CheckAt.py'], shell=True)
         getuid_process.wait()  # 等待 CheckAt.py 结束
@@ -48,6 +47,7 @@ while True:
 
 
     while True:
+
         print('启动Report.py')
         report_process = subprocess.Popen([sys.executable, 'Report.py'], shell=True)
         report_process.wait()  # 等待 Report.py 结束

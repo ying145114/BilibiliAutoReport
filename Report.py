@@ -148,15 +148,6 @@ try:
                         file.write(f"\nUID: {uid} ，AID: {aid} ，合集视频: {title}\n")
                 else:
                     print(f"UID: {uid} 未找到合集视频")
-                    with open(title_file, 'a', encoding='utf-8') as file:
-                        file.write(f"\nUID: {uid} 未找到合集视频\n")
-                    with open(cloud_whitelist_filename, 'r', encoding='utf-8') as f:
-                        lines = f.readlines()
-                    with open(cloud_whitelist_filename, 'w', encoding='utf-8') as f:
-                        for line in lines:
-                            if line.strip() != uid:
-                                f.write(line)
-                    print(f"删除无视频UID: {uid}")
                     remove_completed_uid(uid)
                     continue
 
