@@ -184,7 +184,7 @@ for item in data['data']['list']:
 
 with open(clear_script, "r", encoding="utf-8") as file:
     clear = file.read()
-driver.execute_script(clear)
+#driver.execute_script(clear)
 
 
 
