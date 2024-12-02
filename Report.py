@@ -97,9 +97,9 @@ options.timeouts = { 'script': 119000 }
 options.add_argument("--disable-blink-features=AutomationControlled")
 options.add_argument(f'--user-data-dir={user_data_dir}')  # 设置用户数据目录
 options.binary_location = chrome_binary_path  # 指定 Chrome 浏览器的可执行文件路径
-#options.add_argument('--proxy-server="direct://"')
+options.add_argument('--proxy-server="direct://"')
 #options.add_argument('--proxy-server="127.0.0.1:7890"')
-#options.add_argument('--proxy-bypass-list=*')
+options.add_argument('--proxy-bypass-list=*')
 options.add_argument("--disable-gpu")
 options.add_argument("--disable-sync")
 options.add_argument("disable-cache")#禁用缓存
